@@ -8,6 +8,9 @@ Die oeffentliche Testinstanz muss dieselbe Anwendung ausliefern wie das lokale
 Cockpit. Insbesondere bleibt `POST /api/render` erhalten. Eine rein statische
 GitHub-Pages-Ausgabe ist deshalb kein vollstaendiger Ersatz.
 
+Der oeffentliche Repository- und Dienstname lautet verbindlich
+`gleichungsloeser`.
+
 ## Vorrang der Fachvertraege
 
 Die Bereitstellung darf weder den Core noch seine funktionale Geometrie
