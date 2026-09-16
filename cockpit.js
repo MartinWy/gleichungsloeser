@@ -1,3 +1,8 @@
+import {
+    createPreviewObjectUrl,
+    revokePreviewObjectUrl
+} from "./scripts/cockpit_preview_delivery/browser.js";
+
 const elements = {
     form: document.getElementById("cockpitForm"),
     equationInput: document.getElementById("equationInput"),
@@ -21,7 +26,9 @@ const state = {
     hiddenStepIndexes: [],
     colorPalette: [],
     runtimeEngine: "genesis_runtime",
-    powerInverseStyle: "root"
+    powerInverseStyle: "root",
+    previewObjectUrl: "",
+    pdfObjectUrl: ""
 };
 
 let autoRenderTimer = null;
@@ -103,16 +110,39 @@ function readStateFromUrl() {
 }
 
 function showPlaceholder(message) {
+    releasePreviewObjectUrls();
     elements.previewImage.hidden = true;
     elements.previewImage.removeAttribute("src");
     elements.previewPlaceholder.hidden = false;
     elements.previewPlaceholder.textContent = message;
 }
 
-function showPreview(previewUrl) {
+function releasePreviewObjectUrls() {
+    revokePreviewObjectUrl(state.previewObjectUrl);
+    revokePreviewObjectUrl(state.pdfObjectUrl);
+    state.previewObjectUrl = "";
+    state.pdfObjectUrl = "";
+}
+
+function showPreviewArtifacts(previewArtifact, pdfArtifact) {
+    const nextPreviewObjectUrl = createPreviewObjectUrl(previewArtifact, "image/png");
+    let nextPdfObjectUrl = "";
+
+    try {
+        nextPdfObjectUrl = createPreviewObjectUrl(pdfArtifact, "application/pdf");
+    } catch (error) {
+        revokePreviewObjectUrl(nextPreviewObjectUrl);
+        throw error;
+    }
+
+    releasePreviewObjectUrls();
+    state.previewObjectUrl = nextPreviewObjectUrl;
+    state.pdfObjectUrl = nextPdfObjectUrl;
     elements.previewPlaceholder.hidden = true;
     elements.previewImage.hidden = false;
-    elements.previewImage.src = previewUrl;
+    elements.previewImage.src = state.previewObjectUrl;
+    elements.pdfLink.href = state.pdfObjectUrl;
+    elements.pdfLink.hidden = false;
 }
 
 function pruneComponentColors(colorTargets, componentColors) {
@@ -271,9 +301,7 @@ async function handleSubmit(event) {
 
     try {
         const payload = await requestRender(equation, targetVariable, runtimeEngine);
-        showPreview(payload.previewUrl);
-        elements.pdfLink.href = payload.pdfUrl;
-        elements.pdfLink.hidden = false;
+        showPreviewArtifacts(payload.previewArtifact, payload.pdfArtifact);
         state.runtimeEngine = payload.runtimeEngine || "";
         state.powerInverseStyle = payload.powerInverseStyle === "fractional-exponent"
             ? "fractional-exponent"

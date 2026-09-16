@@ -21,7 +21,7 @@ ausgleichen oder uebermalen.
 
 ## Gesamturteil
 
-Der Standardlauf umfasst 90 aktive Tests. Alle 90 sind gruen; kein aktives
+Der Standardlauf umfasst 91 aktive Tests. Alle 91 sind gruen; kein aktives
 Modul steht wegen eines roten Tests auf Rot. Gelbe Eintraege bezeichnen nur
 noch begrenzte oder geplante Ausbauzonen.
 
@@ -95,6 +95,7 @@ Sie berechnen keine semantische, funktionale oder visuelle Geometrie.
 | Column Layout | gruen | Physische Slotabbildung, Prozessraumtreue sowie Bruch-, Wurzel- und Exponentspuren gruen. |
 | Produktiver Render-Kern | gruen | Basiskern und Stretch-Metrik gruen. |
 | LaTeX/PDF-Exporter | gruen | Atomare Potenz-, Bruch-, Funktions-, Logarithmus- und Wurzelabbildung gruen. |
+| Cockpit-Vorschauauslieferung | gruen | PNG und PDF werden bytegleich innerhalb derselben Renderantwort transportiert und im Browser als lokale Objekt-URLs genutzt; kein Folgezugriff auf ein Instanzdateisystem. |
 | Produktives Cockpit | gruen | Serversteuerung, Farbziele, Theorie-Label und Browser-Bundle gruen. |
 | Atomarer DOM-Renderer | gruen | Produktiver Druckansichtstest und atomare Zielidentitaet gruen. |
 

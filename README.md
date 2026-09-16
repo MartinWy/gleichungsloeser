@@ -26,7 +26,9 @@ oder korrigieren.
 ## Oeffentlicher Betrieb
 
 Der Server benoetigt wegen der PDF- und PNG-Erzeugung eine Node-, LaTeX- und
-Poppler-Laufzeit. `Dockerfile` und `render.yaml` beschreiben diese Umgebung.
+Poppler-Laufzeit. Fuer die primaere Vercel-Testinstanz beschreibt
+`Dockerfile.vercel` diese Umgebung; `Dockerfile` und `render.yaml` bleiben als
+alternative Containerkonfiguration erhalten.
 Der vollstaendige Vertrag steht in
 [`docs/Deployment/PUBLIC_RELEASE.md`](docs/Deployment/PUBLIC_RELEASE.md).
 

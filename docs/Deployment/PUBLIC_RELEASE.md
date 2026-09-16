@@ -26,8 +26,8 @@ ausgleichen.
    `127.0.0.1:4173` der Standard; im Container wird auf `0.0.0.0` gebunden.
 3. `pdflatex` und `pdftoppm` werden ueber Umgebungsvariablen oder den `PATH`
    gefunden. Benutzerbezogene absolute Pfade sind kein Deployment-Vertrag.
-4. Jeder Renderauftrag erhaelt einen eigenen Arbeitsraum und eigene URLs.
-   Gleichzeitige Nutzer duerfen niemals dieselben `current.*`-Dateien teilen.
+4. Jeder Renderauftrag erhaelt einen eigenen Arbeitsraum. Gleichzeitige Nutzer
+   duerfen niemals dieselben `current.*`-Dateien teilen.
 5. Ausgelieferte Pfade muessen innerhalb des jeweils erlaubten Wurzelordners
    liegen. Pfadtraversalen werden abgewiesen.
 6. Der JSON-Request-Body ist begrenzt. Uebergrosse Requests werden vor Core und
@@ -36,6 +36,23 @@ ausgleichen.
    mathematische Verarbeitung.
 8. Der Container enthaelt Node.js, LaTeX und Poppler. Das Dateisystem der
    Hosting-Instanz gilt als fluechtig; Vorschauen sind keine dauerhafte Ablage.
+9. PNG und PDF werden innerhalb desselben `POST /api/render` erzeugt und als
+   unveraenderte Artefakte in dessen Antwort uebergeben. Das Cockpit darf fuer
+   diese Ausgabe keinen zweiten Dateiaufruf an dieselbe Instanz voraussetzen.
+10. Die Vorschauauslieferung liest fertige Dateien nur ein und kodiert sie. Sie
+    darf weder Core-Wahrheit noch funktionale oder visuelle Geometrie deuten,
+    reparieren oder neu rendern.
+
+## Vercel-Hobby-Vertrag
+
+Die primaere oeffentliche Testinstanz laeuft als Vercel-Container aus
+`Dockerfile.vercel`. Der Server bindet an `0.0.0.0` und an den von Vercel
+uebergebenen Port. `Dockerfile` und `render.yaml` bleiben nur alternative
+Containerbeschreibungen; sie bestimmen nicht den Vercel-Lauf.
+
+Da eine Folgeanfrage auf einer anderen zustandslosen Instanz landen kann,
+sind lokale Vorschaupfade kein oeffentlicher Ausgabevertrag. Temporaere
+Arbeitsraeume dienen ausschliesslich der Erzeugung waehrend eines Renderauftrags.
 
 ## Veroeffentlichungsfolge
 
@@ -44,6 +61,7 @@ ausgleichen.
 3. Cockpit im Browser gegen den lokalen Server pruefen.
 4. Einen sauberen Export des Projektordners erzeugen.
 5. Den Export als eigenes oeffentliches GitHub-Repository veroeffentlichen.
-6. Die Node-Anwendung aus diesem Repository als Docker-Webdienst bereitstellen.
+6. Die Node-Anwendung aus diesem Repository ueber `Dockerfile.vercel` mit dem
+   Vercel-Hobby-Konto bereitstellen.
 7. Gesundheitsroute und einen echten Renderauftrag ueber die oeffentliche URL
    pruefen.

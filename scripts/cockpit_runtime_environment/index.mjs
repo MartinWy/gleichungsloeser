@@ -36,8 +36,7 @@ export function resolveCockpitRuntimeEnvironment(env = process.env) {
             "PDFTOPPM_BINARY",
             [
                 "/opt/homebrew/bin/pdftoppm",
-                "/usr/local/bin/pdftoppm",
-                "/Users/martinwyrwich/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override/pdftoppm"
+                "/usr/local/bin/pdftoppm"
             ],
             "pdftoppm"
         )

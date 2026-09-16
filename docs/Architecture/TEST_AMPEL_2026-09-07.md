@@ -24,8 +24,8 @@ Gemessen mit `npm test` am 16. September 2026:
 | Menge | Gesamt | Gruen | Rot |
 | :--- | ---: | ---: | ---: |
 | Kernvalidierungen unter `core/` | 5 | 5 | 0 |
-| Dateien unter `tests/active/` | 85 | 85 | 0 |
-| Standardlauf insgesamt | 90 | 90 | 0 |
+| Dateien unter `tests/active/` | 86 | 86 | 0 |
+| Standardlauf insgesamt | 91 | 91 | 0 |
 
 Es stehen keine aktiven Tests mehr auf Rot.
 
@@ -70,6 +70,8 @@ Auch die Abnehmer hinter dem Core sind im Standardlauf gruen:
 - beidseitige Breitenisolation der A1- und A2-Prozessraeume bei gemeinsamem Gleichheitsanker
 - atomare freie Logarithmusbasis sowie vollstaendige, exakt aus A2 uebernommene Funktionsklammern nach Bridge B
 - atomarer DOM- und LaTeX/PDF-Export
+- zustandslose PNG-/PDF-Auslieferung innerhalb derselben Renderantwort samt
+  bytegleicher Browser-Objekt-URL
 - Render-Scene-Vertrag und blinder Renderer-Kernel-Ingest
 
 Die frueher roten LaTeX-Tests verlangten die entfernte Sammelrenderer-Semantik.

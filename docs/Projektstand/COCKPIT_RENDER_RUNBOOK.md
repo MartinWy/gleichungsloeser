@@ -118,22 +118,28 @@ Der relevante Serverpfad ist:
 - `POST /api/render`
 
 Er liefert:
-- `previewUrl`
-- `pdfUrl`
+- `previewArtifact` mit MIME-Typ und unveraenderten PNG-Bytes
+- `pdfArtifact` mit MIME-Typ und unveraenderten PDF-Bytes
 - Cockpit-Farbziele
 
-Zur Laufzeit schreibt der Server nach:
+Zur Laufzeit schreibt jeder Renderauftrag in einen eigenen temporaeren
+Arbeitsraum:
 
-- `.cockpit-preview/current.tex`
-- `.cockpit-preview/current.pdf`
-- `.cockpit-preview/current.png`
+- `.cockpit-preview/render-*/current.tex`
+- `.cockpit-preview/render-*/current.pdf`
+- `.cockpit-preview/render-*/current.png`
 
-Davon ist fuer Sichtpruefungen besonders wichtig:
+Davon ist fuer lokale Sichtpruefungen besonders wichtig:
 
-- `.cockpit-preview/current.png`
+- `.cockpit-preview/render-*/current.png`
 
 Das ist die naechste technische Wahrheit zu dem,
 was der Nutzer links im Cockpit sieht.
+
+Die fertigen PNG- und PDF-Dateien werden noch im selben `POST /api/render`
+durch das isolierte Modul `scripts/cockpit_preview_delivery/` ausgeliefert.
+Das Cockpit erzeugt daraus lokale Browser-Objekt-URLs. Es darf keine spaetere
+Erreichbarkeit des temporaeren Server-Dateisystems voraussetzen.
 
 Die Cockpit-Farbsteuerung kommt aus derselben Serverantwort
 und darf nicht als zweite lokale Sonderlogik daneben gebaut werden.
@@ -164,7 +170,7 @@ Ein korrekter Cockpit-Lauf erfuellt gleichzeitig:
 - die Seite laeuft auf `127.0.0.1:4173`
 - der `Start / Go`-Button erzeugt links eine neue gerenderte Ausgabe
 - `PDF oeffnen` zeigt dieselbe Gleichung als Export
-- `.cockpit-preview/current.png` passt zur sichtbaren linken Seite
+- das neueste `.cockpit-preview/render-*/current.png` passt zur sichtbaren linken Seite
 - die Cockpit-Farbziele reagieren auf den aktuellen Umformungsfall
 - die Farbwahl wird direkt in die gerenderte Ausgabe uebertragen
 - die Ausgabe ist kein freihand gesetztes HTML-Experiment
@@ -222,7 +228,7 @@ Dann gilt:
 2. `4173` frisch starten
 3. den Nutzer auf `http://127.0.0.1:4173/` schicken
 4. wenn noetig gezielt `POST /api/render` ausloesen
-5. `.cockpit-preview/current.png` gegen die sichtbare Ausgabe halten
+5. das neueste `.cockpit-preview/render-*/current.png` gegen die sichtbare Ausgabe halten
 6. pruefen, ob Cockpit-Farbziele und PDF-Link fuer den aktuellen Lauf mitkommen
 
 ## Wichtig fuer neue Threads
@@ -231,7 +237,7 @@ dass das Cockpit "schon irgendwie offen" ist.
 
 Er muss explizit wissen:
 - der Standard-Link ist `4173`
-- die sichtbare Wahrheit kommt aus `.cockpit-preview/current.png`
+- die lokale Sichtkontrolle kommt aus dem neuesten `.cockpit-preview/render-*/current.png`
 - der produktive Renderpfad laeuft ueber `scripts/cockpit_server.mjs`
 - `index.html` ist nur die Huelle vor diesem Serverpfad
 - die Nutzerarbeit umfasst Eingabe, Faerbung und Live-Sichtkontrolle auf derselben Seite
@@ -252,7 +258,7 @@ reicht als operative Erinnerung:
 1. `4173` ist der Standard
 2. Cockpit gleich Serverpfad, nicht Dateidemo
 3. linke Seite = gerenderte Produktansicht
-4. `.cockpit-preview/current.png` ist die schnelle Sichtkontrolle
+4. das neueste `.cockpit-preview/render-*/current.png` ist die schnelle lokale Sichtkontrolle
 5. bei Zweifel zuerst Server neu starten, dann erst Code verdaechtigen
 
 ## Verifikation nach Aenderungen

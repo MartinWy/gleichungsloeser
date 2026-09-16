@@ -32,6 +32,7 @@ import {
     createPreviewWorkspace,
     pruneExpiredPreviewWorkspaces
 } from "./cockpit_preview_workspace/index.mjs";
+import { buildPreviewDeliveryArtifacts } from "./cockpit_preview_delivery/index.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1311,12 +1312,16 @@ async function renderPreview(
         throw new Error("Die Vorschau konnte nicht erzeugt werden.");
     }
 
+    const deliveryArtifacts = buildPreviewDeliveryArtifacts({
+        pngPath: workspace.pngPath,
+        pdfPath: workspace.pdfPath
+    });
+
     return {
         equation: normalizedEquation.normalized,
         targetVariable: result.targetVariable || targetVariable || "",
         runtimeEngine: solveOptions.runtimeEngine || "",
-        previewUrl: `/preview/${workspace.id}/current.png`,
-        pdfUrl: `/preview/${workspace.id}/current.pdf`,
+        ...deliveryArtifacts,
         colorTargets: colorTargets.map((target) => ({
             id: target.id,
             stepIndex: target.stepIndex,
@@ -1368,20 +1373,6 @@ const server = http.createServer(async (request, response) => {
             sendJson(response, Number(error?.statusCode) || 400, {
                 fehler: error instanceof Error ? error.message : String(error)
             });
-        }
-        return;
-    }
-
-    if (request.method === "GET" && requestUrl.pathname.startsWith("/preview/")) {
-        try {
-            const previewPath = resolvePathWithinRoot(
-                previewDir,
-                requestUrl.pathname.slice("/preview/".length)
-            );
-            sendFile(response, previewPath);
-        } catch {
-            response.writeHead(404);
-            response.end("Nicht gefunden");
         }
         return;
     }

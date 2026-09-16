@@ -201,6 +201,7 @@ Ohne Implementierung und eigenen registrierten Test sind sie keine aktiven Modul
 | Column Layout | `components/Arbeitsblatt_Druckansicht/columnLayoutCore/Handbuch.md` | `components/Arbeitsblatt_Druckansicht/columnLayoutCore/` | `latex_p4_column_layout.test.js`, `latex_export_display_slot_fidelity.test.js`, `worksheet_process_space_position_fidelity.test.js`, `worksheet_process_space_width_isolation.test.js` | semantische Spalten oder Breitenprofile verschiedener Prozessraeume zusammenlegen oder Shell-Baender umdeuten |
 | Produktiver Render-Kern | `components/Arbeitsblatt_Druckansicht/renderKernelCore/README.md` | `components/Arbeitsblatt_Druckansicht/renderKernelCore/` | `render_kernel.test.js`, `render_stretch_metrics.test.js` | funktionale Schachtelung aus Text rekonstruieren |
 | LaTeX/PDF-Exporter | `scripts/export_projection_pdf_core/README.md` | `scripts/export_projection_pdf_core/` | `latex_atomic_projection_rendering.test.js`, `latex_export_display_slot_fidelity.test.js`, `active_runtime_export_wrappers.test.js`, `latex_shell_color_inheritance_regression.test.js` | Zellen konsumieren oder Bruch-, Wurzel- und Potenzaggregate neu aufbauen |
+| Cockpit-Vorschauauslieferung | `scripts/cockpit_preview_delivery/README.md` | `scripts/cockpit_preview_delivery/index.mjs`, `browser.js` | `cockpit_preview_delivery.test.js` | Dateien ueber einen spaeteren Request oder eine bestimmte Serverinstanz erreichbar voraussetzen; Inhalte rendern, veraendern oder deuten |
 | Produktives Cockpit | `docs/Projektstand/COCKPIT_RENDER_RUNBOOK.md` | `index.html`, `cockpit.js`, `cockpit.css`, `scripts/cockpit_server.mjs` | `browser_bundle.test.js`, `cockpit_server_controls.test.js`, `cockpit_color_targets.test.js`, `cockpit_fraction_collapse_color_trace.test.js` | Solver-, P4- oder Renderkorrekturen in der Bedienhuelle |
 | Atomarer DOM-Renderer | `components/Arbeitsblatt_Druckansicht/DOM_RENDER_CONTRACT.md` | DOM-Erzeugung in `components/Arbeitsblatt_Druckansicht/logic.js` | `arbeitsblatt_druckansicht.test.js`; fokussierter Eins-zu-eins-Test folgt | Zellen unterdruecken, buendeln, konsumieren, ergaenzen oder verschieben |
 
@@ -234,10 +235,10 @@ Der Runner entdeckt jede Datei `tests/active/*.test.js` automatisch.
 Damit ist eine aktive Testdatei ohne Standardregistrierung technisch ausgeschlossen.
 Manuelle, diagnostische oder historische Tests gehoeren nicht unter `tests/active/`.
 
-Gemessener Stand am 16. September 2026: 85 Dateien unter `tests/active/`
-plus 5 direkte Core-Validierungen, insgesamt 90 von 90 gruen. Drei aktive
-Tests sichern Laufzeitumgebung, HTTP-Grenze und isolierte
-Vorschau-Arbeitsraeume fuer den oeffentlichen Betrieb; der fokussierte
+Gemessener Stand am 16. September 2026: 86 Dateien unter `tests/active/`
+plus 5 direkte Core-Validierungen, insgesamt 91 von 91 gruen. Vier aktive
+Tests sichern Laufzeitumgebung, HTTP-Grenze, isolierte Vorschau-Arbeitsraeume
+und die zustandslose Vorschauauslieferung fuer den oeffentlichen Betrieb; der fokussierte
 Spursegment-Test beweist zusaetzlich, dass ein algebraischer Wiedereintritt
 keine fruehere Bruchbelegung verbreitert.
 
