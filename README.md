@@ -27,8 +27,10 @@ oder korrigieren.
 
 Der Server benoetigt wegen der PDF- und PNG-Erzeugung eine Node-, LaTeX- und
 Poppler-Laufzeit. Fuer die primaere Vercel-Testinstanz beschreibt
-`Dockerfile.vercel` diese Umgebung; `Dockerfile` und `render.yaml` bleiben als
-alternative Containerkonfiguration erhalten.
+`Dockerfile.vercel` diese Umgebung. `vercel.json` startet sie als
+Container-Service und leitet alle Routen an diesen Prozess weiter;
+`Dockerfile` und `render.yaml` bleiben als alternative Containerkonfiguration
+erhalten.
 Der vollstaendige Vertrag steht in
 [`docs/Deployment/PUBLIC_RELEASE.md`](docs/Deployment/PUBLIC_RELEASE.md).
 

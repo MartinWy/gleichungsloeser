@@ -21,7 +21,7 @@ ausgleichen oder uebermalen.
 
 ## Gesamturteil
 
-Der Standardlauf umfasst 91 aktive Tests. Alle 91 sind gruen; kein aktives
+Der Standardlauf umfasst 92 aktive Tests. Alle 92 sind gruen; kein aktives
 Modul steht wegen eines roten Tests auf Rot. Gelbe Eintraege bezeichnen nur
 noch begrenzte oder geplante Ausbauzonen.
 
@@ -96,6 +96,7 @@ Sie berechnen keine semantische, funktionale oder visuelle Geometrie.
 | Produktiver Render-Kern | gruen | Basiskern und Stretch-Metrik gruen. |
 | LaTeX/PDF-Exporter | gruen | Atomare Potenz-, Bruch-, Funktions-, Logarithmus- und Wurzelabbildung gruen. |
 | Cockpit-Vorschauauslieferung | gruen | PNG und PDF werden bytegleich innerhalb derselben Renderantwort transportiert und im Browser als lokale Objekt-URLs genutzt; kein Folgezugriff auf ein Instanzdateisystem. |
+| Vercel-Containervertrag | gruen | Ein expliziter Container-Service startet `Dockerfile.vercel`; eine Catch-all-Regel leitet jeden HTTP-Pfad unveraendert an denselben Prozess weiter. |
 | Produktives Cockpit | gruen | Serversteuerung, Farbziele, Theorie-Label und Browser-Bundle gruen. |
 | Atomarer DOM-Renderer | gruen | Produktiver Druckansichtstest und atomare Zielidentitaet gruen. |
 

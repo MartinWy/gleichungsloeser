@@ -46,8 +46,13 @@ ausgleichen.
 ## Vercel-Hobby-Vertrag
 
 Die primaere oeffentliche Testinstanz laeuft als Vercel-Container aus
-`Dockerfile.vercel`. Der Server bindet an `0.0.0.0` und an den von Vercel
-uebergebenen Port. `Dockerfile` und `render.yaml` bleiben nur alternative
+`Dockerfile.vercel`. `vercel.json` deklariert dafuer genau den Container-Service
+`api` und leitet mit einer Catch-all-Regel jeden HTTP-Pfad an diesen Dienst
+weiter. Ohne diese explizite Service- und Routingdeklaration gilt ein
+erfolgreicher statischer Vercel-Build nicht als bereitgestellte Anwendung.
+
+Der Server bindet an `0.0.0.0` und an den von Vercel uebergebenen Port.
+`Dockerfile` und `render.yaml` bleiben nur alternative
 Containerbeschreibungen; sie bestimmen nicht den Vercel-Lauf.
 
 Da eine Folgeanfrage auf einer anderen zustandslosen Instanz landen kann,
@@ -61,7 +66,8 @@ Arbeitsraeume dienen ausschliesslich der Erzeugung waehrend eines Renderauftrags
 3. Cockpit im Browser gegen den lokalen Server pruefen.
 4. Einen sauberen Export des Projektordners erzeugen.
 5. Den Export als eigenes oeffentliches GitHub-Repository veroeffentlichen.
-6. Die Node-Anwendung aus diesem Repository ueber `Dockerfile.vercel` mit dem
-   Vercel-Hobby-Konto bereitstellen.
+6. Die Node-Anwendung aus diesem Repository ueber den in `vercel.json`
+   deklarierten Service und `Dockerfile.vercel` mit dem Vercel-Hobby-Konto
+   bereitstellen.
 7. Gesundheitsroute und einen echten Renderauftrag ueber die oeffentliche URL
    pruefen.
