@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 820" width="980" height="820" role="img" aria-labelledby="title desc">
+  <title id="title">B only complex exponent transition</title>
+  <desc id="desc">Zwei Varianten des einzelnen Systemwechsels B: einmal von y durch a gleich B hoch 2x minus 1 zu Logarithmus von y durch a gleich 2x minus 1 und einmal spiegelbildlich auf der anderen Seite.</desc>
+
+  <defs>
+    <style>
+      .bg { fill: #fbf8f3; }
+      .panel { fill: rgba(255,255,255,0.88); stroke: rgba(26,23,20,0.08); stroke-width: 1; }
+      .card { fill: rgba(255,255,255,0.74); stroke: rgba(26,23,20,0.08); stroke-width: 1; }
+      .soft-blue { fill: rgba(37, 99, 235, 0.10); stroke: rgba(37, 99, 235, 0.18); stroke-width: 1; }
+      .soft-orange { fill: rgba(221, 74, 58, 0.10); stroke: rgba(221, 74, 58, 0.18); stroke-width: 1; }
+      .soft-teal { fill: rgba(15, 118, 110, 0.09); stroke: rgba(15, 118, 110, 0.18); stroke-width: 1; }
+      .ink { fill: #1a1714; }
+      .muted { fill: #6b6258; }
+      .blue { fill: #2563eb; }
+      .orange { fill: #dd4a3a; }
+      .font { font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; }
+      .kicker { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
+      .title { font-size: 24px; }
+      .body { font-size: 15px; }
+      .math-lg { font-size: 52px; }
+      .math-md { font-size: 44px; }
+      .math-sm { font-size: 40px; }
+      .math-xs { font-size: 38px; }
+      .math-paren { font-size: 46px; }
+      .math-sub { font-size: 22px; }
+      .math-exp { font-size: 28px; }
+      .math-op { font-size: 36px; }
+      .italic { font-style: italic; }
+      .centerline { stroke: rgba(26,23,20,0.18); stroke-width: 2; }
+      .frac { stroke: #1a1714; stroke-width: 3; stroke-linecap: round; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="980" height="820" rx="0"/>
+  <rect class="panel" x="24" y="24" width="932" height="772" rx="28"/>
+
+  <text class="font muted kicker" x="52" y="64">B Nur</text>
+  <text class="font ink" x="52" y="102" style="font-size:34px;">Komplexer Exponent: genau ein Grenzschritt</text>
+  <text class="font muted body" x="52" y="132">Nur der Systemwechsel selbst: komplexer Exponent bleibt oben kompakt und landet unten als normaler Termraum.</text>
+
+  <rect class="card" x="38" y="162" width="904" height="288" rx="24"/>
+  <text class="font muted kicker" x="62" y="194">Linksvariante</text>
+  <text class="font ink title" x="62" y="222">y/a = B^(2x-1) wird zu log_B(y/a) = 2x - 1</text>
+  <text class="font muted body" x="62" y="246">Blau ist die Operatorgeschichte B -> log_B. Orange ist derselbe Exponenteninhalt 2x - 1 im normalen Termraum.</text>
+
+  <rect class="soft-teal" x="354" y="274" width="56" height="142" rx="18"/>
+  <rect class="soft-orange" x="472" y="350" width="228" height="66" rx="20"/>
+  <line class="centerline" x1="700" y1="284" x2="700" y2="414"/>
+
+  <line class="frac" x1="178" y1="306" x2="270" y2="306"/>
+  <text class="font ink math-sm italic" x="208" y="278">y</text>
+  <text class="font ink math-sm italic" x="214" y="344">a</text>
+  <text class="font ink math-xs" x="368" y="314">=</text>
+  <text class="font blue math-lg italic" x="478" y="314">B</text>
+  <text class="font orange math-exp italic" x="552" y="268">2</text>
+  <text class="font orange math-exp italic" x="590" y="268">x</text>
+  <text class="font orange" x="632" y="268" style="font-size:26px;">-</text>
+  <text class="font orange math-exp italic" x="666" y="268">1</text>
+
+  <text class="font blue math-md" x="64" y="392">log</text>
+  <text class="font blue math-sub italic" x="116" y="416">B</text>
+  <text class="font ink math-paren" x="148" y="392">(</text>
+  <line class="frac" x1="198" y1="388" x2="290" y2="388"/>
+  <text class="font ink math-sm italic" x="228" y="360">y</text>
+  <text class="font ink math-sm italic" x="234" y="426">a</text>
+  <text class="font ink math-paren" x="310" y="392">)</text>
+  <text class="font ink math-xs" x="368" y="392">=</text>
+  <text class="font orange math-md italic" x="500" y="392">2</text>
+  <text class="font orange math-md italic" x="548" y="392">x</text>
+  <text class="font orange math-op" x="604" y="392">-</text>
+  <text class="font orange math-md italic" x="650" y="392">1</text>
+
+  <rect class="card" x="38" y="484" width="904" height="288" rx="24"/>
+  <text class="font muted kicker" x="62" y="516">Rechtsvariante</text>
+  <text class="font ink title" x="62" y="544">B^(2x-1) = y/a wird zu 2x - 1 = log_B(y/a)</text>
+  <text class="font muted body" x="62" y="568">Hier wird der rechte Zielraum fuer log_B(y/a) sofort reserviert. B macht nur die Landung, nicht die Folgeschritte.</text>
+
+  <rect class="soft-teal" x="410" y="596" width="56" height="142" rx="18"/>
+  <rect class="soft-blue" x="508" y="672" width="320" height="66" rx="20"/>
+
+  <text class="font blue math-lg italic" x="116" y="636">B</text>
+  <text class="font orange math-exp italic" x="190" y="590">2</text>
+  <text class="font orange math-exp italic" x="228" y="590">x</text>
+  <text class="font orange" x="270" y="590" style="font-size:26px;">-</text>
+  <text class="font orange math-exp italic" x="304" y="590">1</text>
+  <text class="font ink math-xs" x="426" y="636">=</text>
+  <line class="frac" x1="582" y1="628" x2="674" y2="628"/>
+  <text class="font ink math-sm italic" x="612" y="600">y</text>
+  <text class="font ink math-sm italic" x="618" y="666">a</text>
+
+  <text class="font orange math-md italic" x="116" y="714">2</text>
+  <text class="font orange math-md italic" x="164" y="714">x</text>
+  <text class="font orange math-op" x="220" y="714">-</text>
+  <text class="font orange math-md italic" x="266" y="714">1</text>
+  <text class="font ink math-xs" x="426" y="714">=</text>
+  <text class="font blue math-md" x="524" y="714">log</text>
+  <text class="font blue math-sub italic" x="576" y="738">B</text>
+  <text class="font ink math-paren" x="608" y="714">(</text>
+  <line class="frac" x1="658" y1="710" x2="750" y2="710"/>
+  <text class="font ink math-sm italic" x="688" y="682">y</text>
+  <text class="font ink math-sm italic" x="694" y="748">a</text>
+  <text class="font ink math-paren" x="770" y="714">)</text>
+</svg>

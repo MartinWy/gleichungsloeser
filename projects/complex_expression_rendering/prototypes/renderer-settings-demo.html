@@ -1,0 +1,1605 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Designer-Ansicht fuer den Renderer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f5f1;
+      --panel: #fffdf7;
+      --ink: #111827;
+      --muted: #6b7280;
+      --line: #d4d0c4;
+      --accent: #1f4d3b;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: linear-gradient(180deg, #f8f6ef 0%, #f1eee6 100%);
+      color: var(--ink);
+    }
+
+    .app {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .panel {
+      background: rgba(255, 253, 247, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 12px 40px rgba(17, 24, 39, 0.06);
+    }
+
+    .controls {
+      padding: 18px;
+      position: sticky;
+      top: 18px;
+      align-self: start;
+    }
+
+    .preview {
+      padding: 18px;
+      min-height: 620px;
+    }
+
+    .panel-eyebrow {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .panel-copy {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      line-height: 1.1;
+      font-weight: 600;
+    }
+
+    .lede {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    select,
+    input[type="number"],
+    input[type="range"] {
+      width: 100%;
+    }
+
+    select,
+    input[type="number"] {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+      padding: 10px 12px;
+      font: inherit;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      list-style: none;
+      padding: 12px 14px;
+      font-weight: 700;
+      font-size: 15px;
+      background: #faf7ef;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+
+    .details-body {
+      padding: 12px 14px 2px;
+    }
+
+    .range-row {
+      display: grid;
+      grid-template-columns: 1fr 72px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .hint {
+      margin: 4px 0 12px;
+      font-size: 12px;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: white;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    button:disabled {
+      cursor: default;
+      opacity: 0.55;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 18px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .meta h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .meta p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .canvas {
+      min-height: 520px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.92), rgba(250,247,239,0.95)),
+        radial-gradient(circle at top left, rgba(31,77,59,0.05), transparent 40%);
+      padding: 24px;
+    }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .preview-grid--single {
+      grid-template-columns: 1fr;
+    }
+
+    .preview-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 253, 247, 0.7);
+      padding: 14px;
+    }
+
+    .preview-card .meta {
+      margin-bottom: 10px;
+    }
+
+    .preview-card .meta h2 {
+      font-size: 20px;
+    }
+
+    .preview-card .canvas {
+      min-height: 420px;
+      padding: 18px;
+    }
+
+    .svg-wrap {
+      max-width: 100%;
+      overflow: auto;
+    }
+
+    .footnote {
+      margin-top: 14px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    .component-note,
+    .debug-hint {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .summary-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .summary-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+      font-size: 13px;
+    }
+
+    .summary-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      border: 1px solid rgba(17, 24, 39, 0.12);
+    }
+
+    .preview-bridge {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .toggle-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .toggle-line input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+
+    .designer-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .live-lab {
+      margin-top: 18px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255, 253, 247, 0.7);
+    }
+
+    .live-lab__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .live-lab__header h2 {
+      margin: 0 0 8px;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .live-lab__copy {
+      margin: 0;
+      max-width: 58rem;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .live-lab__actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .live-lab__form {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(180px, 0.8fr);
+      gap: 14px;
+      margin-bottom: 16px;
+      align-items: end;
+    }
+
+    .live-lab__field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .live-lab__input,
+    .live-lab__textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: white;
+      color: var(--ink);
+      padding: 11px 12px;
+      font: inherit;
+    }
+
+    .live-lab__textarea {
+      min-height: 84px;
+      resize: vertical;
+    }
+
+    .live-lab__submit {
+      min-height: 46px;
+    }
+
+    .live-lab__frame {
+      width: 100%;
+      min-height: 1120px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .check-item label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+
+    .check-item .arrow {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .swatch-row {
+      display: grid;
+      gap: 12px;
+    }
+
+    .swatch-field {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 70px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    input[type="color"] {
+      width: 100%;
+      height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      padding: 4px;
+    }
+
+    .panel-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 14px 0;
+    }
+
+    [data-component-section][hidden] {
+      display: none;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        position: static;
+      }
+
+      .preview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .live-lab__form {
+        grid-template-columns: 1fr;
+      }
+
+      .live-lab__frame {
+        min-height: 900px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel controls">
+      <span class="panel-eyebrow">Designer</span>
+      <h1>Render-Configurator</h1>
+      <p class="lede">Globale Stellschrauben fuer den Renderer. Hier wird die Geometrie von Wurzeln, Klammern und Exponenten feinjustiert, unabhaengig von einer konkreten Aufgabe.</p>
+
+      <details open>
+        <summary>Demonstratoren</summary>
+        <div class="details-body">
+          <div class="field">
+            <label for="example-select">Beispiel</label>
+            <select id="example-select"></select>
+          </div>
+
+          <label class="toggle-line">
+            <input id="showcase-toggle" type="checkbox" checked />
+            Kontrollfall zeigen
+          </label>
+          <p class="hint">Links steht das reduzierte Beispiel, rechts der verschachtelte Kontrollfall mit Wurzeln, Klammern und Potenzen.</p>
+        </div>
+      </details>
+
+      <div class="field">
+        <label for="component-select">Komponente</label>
+        <select id="component-select">
+          <option value="root">Wurzeln</option>
+          <option value="fraction">Brueche</option>
+          <option value="group">Klammern</option>
+          <option value="power">Potenz an Klammer</option>
+        </select>
+      </div>
+
+      <p class="component-note" id="component-note"></p>
+
+      <details open data-component-section="root">
+        <summary>Wurzeln</summary>
+        <div class="details-body">
+          <div class="field">
+            <label for="root-column-width">Wurzelspalte</label>
+            <div class="range-row">
+              <input id="root-column-width" type="range" min="18" max="56" step="1" />
+              <input id="root-column-width-number" type="number" min="18" max="56" step="1" />
+            </div>
+            <p class="hint">Breite der eigenen Spalte links vom Inhalt.</p>
+          </div>
+
+          <div class="field">
+            <label for="root-overbar-row-height">Oberstrich-Zeile</label>
+            <div class="range-row">
+              <input id="root-overbar-row-height" type="range" min="8" max="32" step="1" />
+              <input id="root-overbar-row-height-number" type="number" min="8" max="32" step="1" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="root-deep-point-row-height">Tiefpunkt-Zeile</label>
+            <div class="range-row">
+              <input id="root-deep-point-row-height" type="range" min="8" max="36" step="1" />
+              <input id="root-deep-point-row-height-number" type="number" min="8" max="36" step="1" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="root-entry-stub-ratio">Einstiegsstummel</label>
+            <div class="range-row">
+              <input id="root-entry-stub-ratio" type="range" min="0.15" max="0.75" step="0.01" />
+              <input id="root-entry-stub-ratio-number" type="number" min="0.15" max="0.75" step="0.01" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="root-notch-ratio">Position des Tiefpunkts</label>
+            <div class="range-row">
+              <input id="root-notch-ratio" type="range" min="0.3" max="0.95" step="0.01" />
+              <input id="root-notch-ratio-number" type="number" min="0.3" max="0.95" step="0.01" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="stroke-width">Strichstaerke</label>
+            <div class="range-row">
+              <input id="stroke-width" type="range" min="0.8" max="4.2" step="0.1" />
+              <input id="stroke-width-number" type="number" min="0.8" max="4.2" step="0.1" />
+            </div>
+            <p class="hint">Linienstaerke der Wurzelgeometrie.</p>
+          </div>
+        </div>
+      </details>
+
+      <details open data-component-section="fraction">
+        <summary>Brueche</summary>
+        <div class="details-body">
+          <div class="field">
+            <label for="main-fraction-stroke-width">Hauptbruchstrich</label>
+            <div class="range-row">
+              <input id="main-fraction-stroke-width" type="range" min="0.8" max="4.2" step="0.1" />
+              <input id="main-fraction-stroke-width-number" type="number" min="0.8" max="4.2" step="0.1" />
+            </div>
+            <p class="hint">Linienstaerke des aeusseren Bruchstrichs.</p>
+          </div>
+
+          <div class="field">
+            <label for="secondary-fraction-stroke-width">Nebenbruchstrich</label>
+            <div class="range-row">
+              <input id="secondary-fraction-stroke-width" type="range" min="0.6" max="3.6" step="0.1" />
+              <input id="secondary-fraction-stroke-width-number" type="number" min="0.6" max="3.6" step="0.1" />
+            </div>
+            <p class="hint">Linienstaerke verschachtelter innerer Brueche.</p>
+          </div>
+
+          <div class="field">
+            <label for="main-fraction-overshoot">Hauptbruch-Ueberstand</label>
+            <div class="range-row">
+              <input id="main-fraction-overshoot" type="range" min="0" max="12" step="0.5" />
+              <input id="main-fraction-overshoot-number" type="number" min="0" max="12" step="0.5" />
+            </div>
+            <p class="hint">Zusaetzliche Breite links und rechts ueber die Mindestlaenge aus Zaehler und Nenner hinaus.</p>
+          </div>
+
+          <div class="field">
+            <label for="secondary-fraction-overshoot">Nebenbruch-Ueberstand</label>
+            <div class="range-row">
+              <input id="secondary-fraction-overshoot" type="range" min="0" max="12" step="0.5" />
+              <input id="secondary-fraction-overshoot-number" type="number" min="0" max="12" step="0.5" />
+            </div>
+            <p class="hint">Zusaetzliche Breite verschachtelter innerer Brueche.</p>
+          </div>
+        </div>
+      </details>
+
+      <details open data-component-section="power">
+        <summary>Potenz an Klammer</summary>
+        <div class="details-body">
+          <div class="field">
+            <label for="power-gap">Abstand zur Basis</label>
+            <div class="range-row">
+              <input id="power-gap" type="range" min="0" max="20" step="1" />
+              <input id="power-gap-number" type="number" min="0" max="20" step="1" />
+            </div>
+            <p class="hint">Gilt nur dann, wenn der Exponent auf einer Klammer sitzt. Normale Potenzen bleiben auf einem festen Standardprofil.</p>
+          </div>
+
+          <div class="field">
+            <label for="exponent-shift-x">Feinverschiebung X</label>
+            <div class="range-row">
+              <input id="exponent-shift-x" type="range" min="-12" max="12" step="1" />
+              <input id="exponent-shift-x-number" type="number" min="-12" max="12" step="1" />
+            </div>
+            <p class="hint">Optische Links/Rechts-Korrektur des Exponenten nach der normalen Platzierung.</p>
+          </div>
+
+          <div class="field">
+            <label for="exponent-lift">Hoehe</label>
+            <div class="range-row">
+              <input id="exponent-lift" type="range" min="8" max="42" step="1" />
+              <input id="exponent-lift-number" type="number" min="8" max="42" step="1" />
+            </div>
+            <p class="hint">Wie weit der Exponent ueber die Grundlinie gehoben wird.</p>
+          </div>
+
+          <div class="field">
+            <label for="exponent-scale">Groesse</label>
+            <div class="range-row">
+              <input id="exponent-scale" type="range" min="0.35" max="0.9" step="0.01" />
+              <input id="exponent-scale-number" type="number" min="0.35" max="0.9" step="0.01" />
+            </div>
+            <p class="hint">Verhaeltnis von Exponentenschrift zu normaler Schrift.</p>
+          </div>
+        </div>
+      </details>
+
+      <details open data-component-section="group">
+        <summary>Klammern</summary>
+        <div class="details-body">
+          <div class="field">
+            <label for="group-paren-width">Mindestbreite</label>
+            <div class="range-row">
+              <input id="group-paren-width" type="range" min="8" max="28" step="1" />
+              <input id="group-paren-width-number" type="number" min="8" max="28" step="1" />
+            </div>
+            <p class="hint">Die kleinste Breite einer Klammer, auch wenn der Inhalt niedrig ist.</p>
+          </div>
+
+          <div class="field">
+            <label for="group-side-pad">Innenabstand</label>
+            <div class="range-row">
+              <input id="group-side-pad" type="range" min="0" max="12" step="1" />
+              <input id="group-side-pad-number" type="number" min="0" max="12" step="1" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="paren-height-width-ratio">Breite nach Hoehe</label>
+            <div class="range-row">
+              <input id="paren-height-width-ratio" type="range" min="0.08" max="0.34" step="0.01" />
+              <input id="paren-height-width-ratio-number" type="number" min="0.08" max="0.34" step="0.01" />
+            </div>
+            <p class="hint">Wie stark die Klammer mit wachsender Hoehe in die Breite geht.</p>
+          </div>
+
+          <div class="field">
+            <label for="paren-vertical-pad">Oben/Unten-Reserve</label>
+            <div class="range-row">
+              <input id="paren-vertical-pad" type="range" min="0" max="16" step="1" />
+              <input id="paren-vertical-pad-number" type="number" min="0" max="16" step="1" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="paren-curve-factor">Kruemmung</label>
+            <div class="range-row">
+              <input id="paren-curve-factor" type="range" min="0.45" max="0.98" step="0.01" />
+              <input id="paren-curve-factor-number" type="number" min="0.45" max="0.98" step="0.01" />
+            </div>
+            <p class="hint">Wie weit die Klammer in der Mitte nach innen zieht.</p>
+          </div>
+
+          <div class="field">
+            <label for="paren-stroke-width">Strichstaerke</label>
+            <div class="range-row">
+              <input id="paren-stroke-width" type="range" min="1" max="5" step="0.1" />
+              <input id="paren-stroke-width-number" type="number" min="1" max="5" step="0.1" />
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <div class="button-row">
+        <button class="primary" id="reset-button" type="button">Zuruecksetzen</button>
+        <button id="debug-button" type="button">Debug</button>
+      </div>
+      <p class="debug-hint" id="debug-hint"></p>
+    </aside>
+
+    <main class="panel preview">
+      <div class="meta">
+        <div>
+          <span class="panel-eyebrow">Designer-Ansicht</span>
+          <h2>Globale Geometrie plus echter Testlauf</h2>
+          <p>Oben werden die Renderregeln isoliert an verschachtelten Demonstratoren sichtbar. Unten laeuft parallel das produktive Cockpit mit echter Gleichungseingabe.</p>
+        </div>
+        <div class="live-lab__actions">
+          <a class="designer-link" href="/">User-Cockpit</a>
+          <a class="designer-link" href="./fraction-layout-principles.html">Bruch-Layout</a>
+        </div>
+      </div>
+
+      <div class="summary-row" id="summary-row"></div>
+      <div class="preview-grid">
+        <section class="preview-card">
+          <div class="meta">
+            <div>
+              <h2 id="preview-title"></h2>
+              <p id="preview-subtitle"></p>
+            </div>
+            <p id="preview-size"></p>
+          </div>
+          <div class="canvas">
+            <div class="svg-wrap" id="svg-wrap"></div>
+          </div>
+        </section>
+
+        <section class="preview-card" id="showcase-card">
+          <div class="meta">
+            <div>
+              <h2 id="showcase-title"></h2>
+              <p id="showcase-subtitle"></p>
+            </div>
+            <p id="showcase-size"></p>
+          </div>
+          <div class="canvas">
+            <div class="svg-wrap" id="showcase-wrap"></div>
+          </div>
+        </section>
+      </div>
+      <div class="preview-bridge" id="preview-bridge-note"></div>
+      <p class="footnote" id="preview-footnote">Hier werden globale Stellschrauben absichtlich getrennt von der Aufgabenformatierung getestet.</p>
+
+      <section class="live-lab">
+        <div class="live-lab__header">
+          <div>
+            <h2>Echter Gleichungstest</h2>
+            <p class="live-lab__copy">Dieses Fenster zeigt das produktive User-Cockpit mit Zeilenschaltern und Schrittfärbung. Die Gleichung wird hier oben eingegeben und dann direkt in den echten Produktpfad geladen.</p>
+          </div>
+          <div class="live-lab__actions">
+            <a id="live-lab-link" class="designer-link" href="/" target="_blank" rel="noopener">Produktansicht separat oeffnen</a>
+          </div>
+        </div>
+        <form id="live-lab-form" class="live-lab__form">
+          <label class="live-lab__field">
+            <span>Gleichung</span>
+            <textarea
+              id="live-lab-equation"
+              class="live-lab__textarea"
+              placeholder="z. B. y=a*B^x"
+              spellcheck="false"
+            ></textarea>
+          </label>
+          <div class="live-lab__field">
+            <label for="live-lab-target">Zielvariable</label>
+            <input
+              id="live-lab-target"
+              class="live-lab__input"
+              type="text"
+              value="x"
+              spellcheck="false"
+            />
+            <button id="live-lab-submit" class="primary live-lab__submit" type="submit">Im echten Pfad laden</button>
+          </div>
+        </form>
+        <iframe
+          id="live-lab-frame"
+          class="live-lab__frame"
+          src="/"
+          title="Produktiver Gleichungstest"
+          loading="lazy"
+        ></iframe>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const EXAMPLES = [
+      {
+        id: "example_001",
+        title: "Verschachtelte Wurzeln",
+        subtitle: "\\sqrt{\\frac{1+b^2}{\\sqrt{\\frac{1}{2-a}}}}",
+        structure: {
+          type: "root",
+          content: {
+            type: "fraction",
+            numerator: {
+              type: "sequence",
+              items: [
+                { type: "text", text: "1" },
+                { type: "text", text: "+" },
+                {
+                  type: "power",
+                  base: { type: "text", text: "b" },
+                  exponent: { type: "text", text: "2" }
+                }
+              ]
+            },
+            denominator: {
+              type: "root",
+              content: {
+                type: "fraction",
+                numerator: { type: "text", text: "1" },
+                denominator: {
+                  type: "sequence",
+                  items: [
+                    { type: "text", text: "2" },
+                    { type: "text", text: "-" },
+                    { type: "text", text: "a" }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        id: "example_002",
+        title: "Verschachtelte Klammern",
+        subtitle: "\\left(\\left(\\frac{1}{2}\\right)^2\\right)^2",
+        structure: {
+          type: "power",
+          base: {
+            type: "group",
+            content: {
+              type: "power",
+              base: {
+                type: "group",
+                content: {
+                  type: "fraction",
+                  numerator: { type: "text", text: "1" },
+                  denominator: { type: "text", text: "2" }
+                }
+              },
+              exponent: { type: "text", text: "2" }
+            }
+          },
+          exponent: { type: "text", text: "2" }
+        }
+      }
+    ];
+
+    const SHOWCASE_EXAMPLE = {
+      id: "showcase_nested_all",
+      title: "Verschachtelter Kontrollfall",
+      subtitle: "\\left(\\sqrt{\\frac{1+\\left(\\sqrt{a+b^2}\\right)^2}{\\left(\\sqrt{\\frac{1+x^2}{2-a}}\\right)^2}}\\right)",
+      structure: {
+        type: "group",
+        content: {
+          type: "root",
+          content: {
+            type: "fraction",
+            numerator: {
+              type: "sequence",
+              items: [
+                { type: "text", text: "1" },
+                { type: "text", text: "+" },
+                {
+                  type: "power",
+                  base: {
+                    type: "group",
+                    content: {
+                      type: "root",
+                      content: {
+                        type: "sequence",
+                        items: [
+                          { type: "text", text: "a" },
+                          { type: "text", text: "+" },
+                          {
+                            type: "power",
+                            base: { type: "text", text: "b" },
+                            exponent: { type: "text", text: "2" }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  exponent: { type: "text", text: "2" }
+                }
+              ]
+            },
+            denominator: {
+              type: "power",
+              base: {
+                type: "group",
+                content: {
+                  type: "root",
+                  content: {
+                    type: "fraction",
+                    numerator: {
+                      type: "sequence",
+                      items: [
+                        { type: "text", text: "1" },
+                        { type: "text", text: "+" },
+                        {
+                          type: "power",
+                          base: { type: "text", text: "x" },
+                          exponent: { type: "text", text: "2" }
+                        }
+                      ]
+                    },
+                    denominator: {
+                      type: "sequence",
+                      items: [
+                        { type: "text", text: "2" },
+                        { type: "text", text: "-" },
+                        { type: "text", text: "a" }
+                      ]
+                    }
+                  }
+                }
+              },
+              exponent: { type: "text", text: "2" }
+            }
+          }
+        }
+      }
+    };
+
+    const DEFAULT_METRICS = {
+      fontSize: 30,
+      textAbove: 24,
+      textBelow: 10,
+      charWidth: 17,
+      operatorWidth: 14,
+      sequenceGap: 10,
+      fractionPad: 12,
+      fractionGap: 10,
+      mainFractionStrokeWidth: 1.6,
+      secondaryFractionStrokeWidth: 1.2,
+      mainFractionOvershoot: 3,
+      secondaryFractionOvershoot: 2,
+      rootColumnWidth: 34,
+      rootOverbarRowHeight: 18,
+      rootDeepPointRowHeight: 18,
+      rootEntryStubRatio: 0.42,
+      rootNotchRatio: 0.68,
+      rootOverbarRightPad: 2,
+      groupParenWidth: 14,
+      groupSidePad: 2,
+      parenHeightWidthRatio: 0.18,
+      parenVerticalPad: 4,
+      parenCurveFactor: 0.92,
+      parenStrokeWidth: 2.4,
+      powerGap: 4,
+      exponentShiftX: 0,
+      exponentScale: 0.62,
+      exponentLift: 24,
+      canvasMargin: 18,
+      strokeWidth: 1.6
+    };
+
+    const FIXED_INLINE_POWER_PROFILE = Object.freeze({
+      powerGap: DEFAULT_METRICS.powerGap,
+      exponentShiftX: DEFAULT_METRICS.exponentShiftX,
+      exponentScale: DEFAULT_METRICS.exponentScale,
+      exponentLift: DEFAULT_METRICS.exponentLift
+    });
+
+    const exampleSelect = document.getElementById("example-select");
+    const previewTitle = document.getElementById("preview-title");
+    const previewSubtitle = document.getElementById("preview-subtitle");
+    const previewSize = document.getElementById("preview-size");
+    const svgWrap = document.getElementById("svg-wrap");
+    const showcaseTitle = document.getElementById("showcase-title");
+    const showcaseSubtitle = document.getElementById("showcase-subtitle");
+    const showcaseSize = document.getElementById("showcase-size");
+    const showcaseWrap = document.getElementById("showcase-wrap");
+    const showcaseCard = document.getElementById("showcase-card");
+    const previewGrid = document.querySelector(".preview-grid");
+    const summaryRow = document.getElementById("summary-row");
+    const previewBridgeNote = document.getElementById("preview-bridge-note");
+    const previewFootnote = document.getElementById("preview-footnote");
+    const componentSelect = document.getElementById("component-select");
+    const componentNote = document.getElementById("component-note");
+    const debugButton = document.getElementById("debug-button");
+    const debugHint = document.getElementById("debug-hint");
+    const showcaseToggle = document.getElementById("showcase-toggle");
+    const resetButton = document.getElementById("reset-button");
+    const liveLabFrame = document.getElementById("live-lab-frame");
+    const liveLabForm = document.getElementById("live-lab-form");
+    const liveLabEquation = document.getElementById("live-lab-equation");
+    const liveLabTarget = document.getElementById("live-lab-target");
+    const liveLabLink = document.getElementById("live-lab-link");
+    const componentSections = [...document.querySelectorAll("[data-component-section]")];
+    const PRODUCT_COCKPIT_ORIGIN = window.location.protocol === "file:"
+      ? "http://127.0.0.1:4173"
+      : window.location.origin;
+
+    const FIELD_CONFIG = [
+      { key: "rootColumnWidth", rangeId: "root-column-width", numberId: "root-column-width-number" },
+      { key: "rootOverbarRowHeight", rangeId: "root-overbar-row-height", numberId: "root-overbar-row-height-number" },
+      { key: "rootDeepPointRowHeight", rangeId: "root-deep-point-row-height", numberId: "root-deep-point-row-height-number" },
+      { key: "rootEntryStubRatio", rangeId: "root-entry-stub-ratio", numberId: "root-entry-stub-ratio-number" },
+      { key: "rootNotchRatio", rangeId: "root-notch-ratio", numberId: "root-notch-ratio-number" },
+      { key: "strokeWidth", rangeId: "stroke-width", numberId: "stroke-width-number" },
+      { key: "mainFractionStrokeWidth", rangeId: "main-fraction-stroke-width", numberId: "main-fraction-stroke-width-number" },
+      { key: "secondaryFractionStrokeWidth", rangeId: "secondary-fraction-stroke-width", numberId: "secondary-fraction-stroke-width-number" },
+      { key: "mainFractionOvershoot", rangeId: "main-fraction-overshoot", numberId: "main-fraction-overshoot-number" },
+      { key: "secondaryFractionOvershoot", rangeId: "secondary-fraction-overshoot", numberId: "secondary-fraction-overshoot-number" },
+      { key: "powerGap", rangeId: "power-gap", numberId: "power-gap-number" },
+      { key: "exponentShiftX", rangeId: "exponent-shift-x", numberId: "exponent-shift-x-number" },
+      { key: "exponentLift", rangeId: "exponent-lift", numberId: "exponent-lift-number" },
+      { key: "exponentScale", rangeId: "exponent-scale", numberId: "exponent-scale-number" },
+      { key: "groupParenWidth", rangeId: "group-paren-width", numberId: "group-paren-width-number" },
+      { key: "groupSidePad", rangeId: "group-side-pad", numberId: "group-side-pad-number" },
+      { key: "parenHeightWidthRatio", rangeId: "paren-height-width-ratio", numberId: "paren-height-width-ratio-number" },
+      { key: "parenVerticalPad", rangeId: "paren-vertical-pad", numberId: "paren-vertical-pad-number" },
+      { key: "parenCurveFactor", rangeId: "paren-curve-factor", numberId: "paren-curve-factor-number" },
+      { key: "parenStrokeWidth", rangeId: "paren-stroke-width", numberId: "paren-stroke-width-number" }
+    ];
+
+    const COMPONENT_COPY = {
+      root: {
+        note: "Nur die Wurzelregeln sind sichtbar. Diese Stellschrauben betreffen Hoehe, Haken und Oberstrich global fuer alle Aufgaben.",
+        debug: null,
+        debugHint: "Die fruehere rekonstruktive Root-Debugansicht ist archiviert. Ein neuer Pfad beginnt mit einem atomaren Vertrag."
+      },
+      fraction: {
+        note: "Nur die Bruchregeln sind sichtbar. Hauptbruch und Nebenbruch koennen getrennt in Strichstaerke und Ueberstand formatiert werden, waehrend die Mindestlaenge weiterhin vom Inhalt bestimmt wird.",
+        debug: "./fraction-layout-principles.html",
+        debugHint: "Debug oeffnet das Bruch-Layout mit den normativen Prinzipien fuer Geburt, Band und Weitergabe."
+      },
+      group: {
+        note: "Nur die Klammerregeln sind sichtbar. Diese Stellschrauben betreffen Hoehe, Mittelachse, Breite und Kruemmung der Klammern global.",
+        debug: null,
+        debugHint: "Die fruehere rekonstruktive Group-Debugansicht ist archiviert. Ein neuer Pfad beginnt mit einem atomaren Vertrag."
+      },
+      power: {
+        note: "Diese Stellschrauben gelten nur fuer eine Potenz auf einer Klammer. Eine Potenz ueber einem normalen Term bleibt auf einem festen, latexnahen Standardprofil.",
+        debug: null,
+        debugHint: "Fuer Exponenten gibt es noch keine eigene getrennte Debug-Ansicht. Bis dahin dient dieser Configurator als Designoberflaeche."
+      }
+    };
+
+    function approxTextWidth(text = "", scale = 1, metrics = DEFAULT_METRICS) {
+      const content = String(text || "");
+      if (content === "+" || content === "-" || content === "=") {
+        return metrics.operatorWidth * scale;
+      }
+      return Math.max(metrics.operatorWidth, content.length * metrics.charWidth) * scale;
+    }
+
+    function resolveParenWidth(height = 0, scale = 1, metrics = DEFAULT_METRICS) {
+      return Math.max(metrics.groupParenWidth * scale, height * metrics.parenHeightWidthRatio);
+    }
+
+    function resolveExponentLift(node, scale = 1, metrics = DEFAULT_METRICS) {
+      const factor = Number(node?.exponentLiftFactor);
+      const normalizedFactor = Number.isFinite(factor) && factor > 0 ? factor : 1;
+      return metrics.exponentLift * scale * normalizedFactor;
+    }
+
+    function isAdjustableParenthesizedPower(node = null) {
+      return node?.type === "power" && node?.base?.type === "group";
+    }
+
+    function resolvePowerProfile(node, metrics, scale = 1) {
+      const sourceMetrics = isAdjustableParenthesizedPower(node)
+        ? metrics
+        : FIXED_INLINE_POWER_PROFILE;
+
+      return {
+        powerGap: sourceMetrics.powerGap * scale,
+        exponentShiftX: sourceMetrics.exponentShiftX * scale,
+        exponentScale: sourceMetrics.exponentScale,
+        exponentLift: resolveExponentLift(
+          node,
+          scale,
+          isAdjustableParenthesizedPower(node)
+            ? metrics
+            : { exponentLift: FIXED_INLINE_POWER_PROFILE.exponentLift }
+        )
+      };
+    }
+
+    function unionBounds(...boundsList) {
+      const valid = boundsList.flat().filter(Boolean);
+      if (valid.length === 0) {
+        return null;
+      }
+      return {
+        left: Math.min(...valid.map((item) => item.left)),
+        right: Math.max(...valid.map((item) => item.right)),
+        top: Math.min(...valid.map((item) => item.top)),
+        bottom: Math.max(...valid.map((item) => item.bottom))
+      };
+    }
+
+    function boxBounds(left, top, right, bottom) {
+      return { left, top, right, bottom };
+    }
+
+    function escapeXml(text = "") {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll("\"", "&quot;");
+    }
+
+    function fontStyleForText(text = "") {
+      if (/^[0-9]+$/.test(text) || /^[+\-=.]$/.test(text)) {
+        return "normal";
+      }
+      return "italic";
+    }
+
+    function buildParenthesisSegments(side, x, width, yTop, yBottom, strokeWidth, curveFactor) {
+      const segments = [];
+      const segmentCount = 18;
+      const height = yBottom - yTop;
+      let previousPoint = null;
+
+      for (let index = 0; index <= segmentCount; index += 1) {
+        const t = index / segmentCount;
+        const sinOffset = Math.sin(Math.PI * t);
+        const pointX = side === "left"
+          ? x + (width * (1 - (curveFactor * sinOffset)))
+          : x + (width * (curveFactor * sinOffset));
+        const pointY = yTop + (height * t);
+        const point = { x: pointX, y: pointY };
+
+        if (previousPoint) {
+          segments.push(`<line x1="${previousPoint.x.toFixed(2)}" y1="${previousPoint.y.toFixed(2)}" x2="${point.x.toFixed(2)}" y2="${point.y.toFixed(2)}" stroke="#111827" stroke-width="${strokeWidth.toFixed(2)}" stroke-linecap="round" />`);
+        }
+
+        previousPoint = point;
+      }
+
+      return segments;
+    }
+
+    function measureNode(node, metrics, scale = 1) {
+      if (!node) {
+        return { width: 0, above: 0, below: 0, scale };
+      }
+
+      switch (node.type) {
+        case "text":
+          return {
+            type: "text",
+            text: node.text || "",
+            width: approxTextWidth(node.text || "", scale, metrics),
+            above: metrics.textAbove * scale,
+            below: metrics.textBelow * scale,
+            scale
+          };
+        case "sequence": {
+          const children = (node.items || []).map((child) => measureNode(child, metrics, scale));
+          let width = 0;
+          let above = 0;
+          let below = 0;
+          children.forEach((child, index) => {
+            if (index > 0) {
+              width += metrics.sequenceGap * scale;
+            }
+            width += child.width;
+            above = Math.max(above, child.above);
+            below = Math.max(below, child.below);
+          });
+          return { type: "sequence", children, width, above, below, scale };
+        }
+        case "power": {
+          const base = measureNode(node.base, metrics, scale);
+          const powerProfile = resolvePowerProfile(node, metrics, scale);
+          const exponent = measureNode(node.exponent, metrics, scale * powerProfile.exponentScale);
+          return {
+            type: "power",
+            base,
+            exponent,
+            width: base.width + powerProfile.powerGap + powerProfile.exponentShiftX + exponent.width,
+            above: Math.max(base.above, powerProfile.exponentLift + exponent.above),
+            below: base.below,
+            scale,
+            powerProfile
+          };
+        }
+        case "fraction": {
+          const numerator = measureNode(node.numerator, metrics, scale);
+          const denominator = measureNode(node.denominator, metrics, scale);
+          const width = Math.max(numerator.width, denominator.width) + (2 * metrics.fractionPad * scale);
+          return {
+            type: "fraction",
+            numerator,
+            denominator,
+            width,
+            above: numerator.above + numerator.below + (metrics.fractionGap * scale),
+            below: denominator.above + denominator.below + (metrics.fractionGap * scale),
+            scale
+          };
+        }
+        case "root": {
+          const content = measureNode(node.content, metrics, scale);
+          return {
+            type: "root",
+            content,
+            width: (metrics.rootColumnWidth * scale) + content.width + (metrics.rootOverbarRightPad * scale),
+            above: content.above + (metrics.rootOverbarRowHeight * scale),
+            below: content.below + (metrics.rootDeepPointRowHeight * scale),
+            scale
+          };
+        }
+        case "group": {
+          const content = measureNode(node.content, metrics, scale);
+          const contentHeight = content.above + content.below;
+          const parenWidth = resolveParenWidth(contentHeight, scale, metrics);
+          return {
+            type: "group",
+            content,
+            parenWidth,
+            width: content.width + (2 * (parenWidth + (metrics.groupSidePad * scale))),
+            above: content.above + (metrics.parenVerticalPad * scale),
+            below: content.below + (metrics.parenVerticalPad * scale),
+            scale
+          };
+        }
+        default:
+          return measureNode({ type: "text", text: "?" }, metrics, scale);
+      }
+    }
+
+    function renderText(elements, text, x, baselineY, scale, metrics) {
+      const fontSize = metrics.fontSize * scale;
+      elements.push(`<text x="${x.toFixed(2)}" y="${baselineY.toFixed(2)}" font-size="${fontSize.toFixed(2)}" fill="#111827" font-family="Times New Roman, serif" font-style="${fontStyleForText(text)}">${escapeXml(text)}</text>`);
+    }
+
+    function placeNode(node, measured, x, baselineY, metrics, context = {}) {
+      switch (measured.type) {
+        case "text": {
+          const elements = [];
+          renderText(elements, measured.text, x, baselineY, measured.scale, metrics);
+          const bounds = boxBounds(x, baselineY - measured.above, x + measured.width, baselineY + measured.below);
+          return { elements, visibleBounds: bounds, contentBounds: bounds, axis: baselineY };
+        }
+        case "sequence": {
+          let cursor = x;
+          const elements = [];
+          const visibleList = [];
+          const contentList = [];
+          measured.children.forEach((child, index) => {
+            const result = placeNode((node.items || [])[index], child, cursor, baselineY, metrics);
+            elements.push(...result.elements);
+            visibleList.push(result.visibleBounds);
+            contentList.push(result.contentBounds);
+            cursor += child.width;
+            if (index < measured.children.length - 1) {
+              cursor += metrics.sequenceGap * measured.scale;
+            }
+          });
+          return {
+            elements,
+            visibleBounds: unionBounds(visibleList),
+            contentBounds: unionBounds(contentList),
+            axis: baselineY
+          };
+        }
+        case "power": {
+          const powerProfile = measured.powerProfile ?? resolvePowerProfile(node, metrics, measured.scale);
+          const exponentBaseline = baselineY - powerProfile.exponentLift;
+          const baseResult = placeNode(node.base, measured.base, x, baselineY, metrics, context);
+          const exponentResult = placeNode(
+            node.exponent,
+            measured.exponent,
+            x + measured.base.width + powerProfile.powerGap + powerProfile.exponentShiftX,
+            exponentBaseline,
+            metrics,
+            context
+          );
+          return {
+            elements: [...baseResult.elements, ...exponentResult.elements],
+            visibleBounds: unionBounds(baseResult.visibleBounds, exponentResult.visibleBounds),
+            contentBounds: unionBounds(baseResult.contentBounds, exponentResult.contentBounds),
+            axis: baseResult.axis
+          };
+        }
+        case "fraction": {
+          const fractionDepth = Number.isInteger(context?.fractionDepth) ? context.fractionDepth : 0;
+          const fractionStrokeWidth = fractionDepth === 0
+            ? metrics.mainFractionStrokeWidth
+            : metrics.secondaryFractionStrokeWidth;
+          const fractionOvershoot = fractionDepth === 0
+            ? metrics.mainFractionOvershoot
+            : metrics.secondaryFractionOvershoot;
+          const ruleY = baselineY;
+          const numX = x + ((measured.width - measured.numerator.width) / 2);
+          const denX = x + ((measured.width - measured.denominator.width) / 2);
+          const numBaseline = ruleY - (metrics.fractionGap * measured.scale) - measured.numerator.below;
+          const denBaseline = ruleY + (metrics.fractionGap * measured.scale) + measured.denominator.above;
+          const nextFractionContext = { ...context, fractionDepth: fractionDepth + 1 };
+          const numeratorResult = placeNode(node.numerator, measured.numerator, numX, numBaseline, metrics, nextFractionContext);
+          const denominatorResult = placeNode(node.denominator, measured.denominator, denX, denBaseline, metrics, nextFractionContext);
+          const ruleStartX = x - (fractionOvershoot * measured.scale);
+          const ruleEndX = x + measured.width + (fractionOvershoot * measured.scale);
+          const ruleBounds = boxBounds(ruleStartX, ruleY - (fractionStrokeWidth / 2), ruleEndX, ruleY + (fractionStrokeWidth / 2));
+          return {
+            elements: [
+              ...numeratorResult.elements,
+              ...denominatorResult.elements,
+              `<line x1="${ruleStartX.toFixed(2)}" y1="${ruleY.toFixed(2)}" x2="${ruleEndX.toFixed(2)}" y2="${ruleY.toFixed(2)}" stroke="#111827" stroke-width="${fractionStrokeWidth}" />`
+            ],
+            visibleBounds: unionBounds(numeratorResult.visibleBounds, denominatorResult.visibleBounds, ruleBounds),
+            contentBounds: unionBounds(numeratorResult.contentBounds, denominatorResult.contentBounds, ruleBounds),
+            axis: ruleY
+          };
+        }
+        case "root": {
+          const rootColumnWidth = metrics.rootColumnWidth * measured.scale;
+          const overbarRowHeight = metrics.rootOverbarRowHeight * measured.scale;
+          const deepPointRowHeight = metrics.rootDeepPointRowHeight * measured.scale;
+          const contentX = x + rootColumnWidth;
+          const contentResult = placeNode(node.content, measured.content, contentX, baselineY, metrics, context);
+          const contentVisibleBounds = contentResult.visibleBounds || boxBounds(contentX, baselineY - measured.content.above, contentX + measured.content.width, baselineY + measured.content.below);
+          const contentBounds = contentResult.contentBounds || contentVisibleBounds;
+          const barY = contentBounds.top - (overbarRowHeight / 2);
+          const deepY = contentBounds.bottom + (deepPointRowHeight / 2);
+          const hookMidY = barY + ((deepY - barY) / 2);
+          const stubStartX = x;
+          const stubEndX = x + (rootColumnWidth * metrics.rootEntryStubRatio);
+          const notchX = x + (rootColumnWidth * metrics.rootNotchRatio);
+          const riseX = x + rootColumnWidth;
+          const barRightX = contentVisibleBounds.right + (metrics.rootOverbarRightPad * measured.scale);
+          const shellBounds = boxBounds(stubStartX, barY - (metrics.strokeWidth + 0.4), barRightX, deepY);
+
+          return {
+            elements: [
+              ...contentResult.elements,
+              `<line x1="${stubStartX.toFixed(2)}" y1="${hookMidY.toFixed(2)}" x2="${stubEndX.toFixed(2)}" y2="${hookMidY.toFixed(2)}" stroke="#111827" stroke-width="${(metrics.strokeWidth + 0.4).toFixed(2)}" stroke-linecap="round" />`,
+              `<line x1="${stubEndX.toFixed(2)}" y1="${hookMidY.toFixed(2)}" x2="${notchX.toFixed(2)}" y2="${deepY.toFixed(2)}" stroke="#111827" stroke-width="${(metrics.strokeWidth + 0.4).toFixed(2)}" stroke-linecap="round" />`,
+              `<line x1="${notchX.toFixed(2)}" y1="${deepY.toFixed(2)}" x2="${riseX.toFixed(2)}" y2="${barY.toFixed(2)}" stroke="#111827" stroke-width="${(metrics.strokeWidth + 0.4).toFixed(2)}" stroke-linecap="round" />`,
+              `<line x1="${riseX.toFixed(2)}" y1="${barY.toFixed(2)}" x2="${barRightX.toFixed(2)}" y2="${barY.toFixed(2)}" stroke="#111827" stroke-width="${(metrics.strokeWidth + 0.4).toFixed(2)}" stroke-linecap="round" />`
+            ],
+            visibleBounds: unionBounds(contentVisibleBounds, shellBounds),
+            contentBounds: unionBounds(contentBounds, shellBounds),
+            axis: hookMidY
+          };
+        }
+        case "group": {
+          const parenWidth = measured.parenWidth ?? resolveParenWidth(measured.content.above + measured.content.below, measured.scale, metrics);
+          const sidePad = metrics.groupSidePad * measured.scale;
+          const contentX = x + parenWidth + sidePad;
+          const contentResult = placeNode(node.content, measured.content, contentX, baselineY, metrics, context);
+          const contentVisibleBounds = contentResult.visibleBounds || boxBounds(contentX, baselineY - measured.content.above, contentX + measured.content.width, baselineY + measured.content.below);
+          const parenTop = contentVisibleBounds.top - (metrics.parenVerticalPad * measured.scale);
+          const parenBottom = contentVisibleBounds.bottom + (metrics.parenVerticalPad * measured.scale);
+          const rightParenX = contentX + measured.content.width + sidePad;
+          const parenAxis = parenTop + ((parenBottom - parenTop) / 2);
+          const leftParenBounds = boxBounds(x, parenTop, x + parenWidth, parenBottom);
+          const rightParenBounds = boxBounds(rightParenX, parenTop, rightParenX + parenWidth, parenBottom);
+          return {
+            elements: [
+              ...contentResult.elements,
+              ...buildParenthesisSegments("left", x, parenWidth, parenTop, parenBottom, metrics.parenStrokeWidth * measured.scale, metrics.parenCurveFactor),
+              ...buildParenthesisSegments("right", rightParenX, parenWidth, parenTop, parenBottom, metrics.parenStrokeWidth * measured.scale, metrics.parenCurveFactor)
+            ],
+            visibleBounds: unionBounds(
+              contentVisibleBounds,
+              leftParenBounds,
+              rightParenBounds
+            ),
+            contentBounds: unionBounds(
+              contentResult.contentBounds ?? contentVisibleBounds,
+              leftParenBounds,
+              rightParenBounds
+            ),
+            axis: parenAxis
+          };
+        }
+        default:
+          return { elements: [], visibleBounds: null, contentBounds: null, axis: baselineY };
+      }
+    }
+
+    function buildSvg(example, metrics) {
+      const measured = measureNode(example.structure, metrics, 1);
+      const placement = placeNode(example.structure, measured, metrics.canvasMargin, metrics.canvasMargin + measured.above, metrics, { fractionDepth: 0 });
+      const visibleBounds = placement.visibleBounds || boxBounds(metrics.canvasMargin, metrics.canvasMargin, metrics.canvasMargin + measured.width, metrics.canvasMargin + measured.above + measured.below);
+      const width = visibleBounds.right + metrics.canvasMargin;
+      const height = visibleBounds.bottom + metrics.canvasMargin;
+      return {
+        width,
+        height,
+        markup: `<svg xmlns="http://www.w3.org/2000/svg" width="${width.toFixed(2)}" height="${height.toFixed(2)}" viewBox="0 0 ${width.toFixed(2)} ${height.toFixed(2)}"><rect width="100%" height="100%" fill="white" />${placement.elements.join("")}</svg>`
+      };
+    }
+
+    function currentDesignerSettings() {
+      return {
+        showcaseVisible: showcaseToggle.checked
+      };
+    }
+
+    function updateComponentVisibility() {
+      const selected = componentSelect.value;
+      componentSections.forEach((section) => {
+        section.hidden = section.dataset.componentSection !== selected;
+      });
+    }
+
+    function updateComponentMeta() {
+      const selected = componentSelect.value;
+      const config = COMPONENT_COPY[selected];
+      componentNote.textContent = config.note;
+      debugHint.textContent = config.debugHint;
+      debugButton.disabled = !config.debug;
+    }
+
+    function renderSummary(example, designerSettings) {
+      const selectedComponent = componentSelect.value;
+      const componentLabel = selectedComponent === "root"
+        ? "Wurzeln"
+        : selectedComponent === "fraction"
+          ? "Brueche"
+          : selectedComponent === "group"
+            ? "Klammern"
+            : "Potenz an Klammer";
+
+      summaryRow.innerHTML = "";
+      const chips = [
+        { text: `Designer: ${componentLabel}` },
+        { text: `Beispiel: ${example.title}` },
+        { text: `Kontrollfall: ${designerSettings.showcaseVisible ? "sichtbar" : "ausgeblendet"}` },
+        { text: "Live-Test: produktives Cockpit unten" }
+      ];
+
+      chips.forEach((chip) => {
+        const el = document.createElement("span");
+        el.className = "summary-chip";
+        const dot = document.createElement("span");
+        dot.className = "summary-dot";
+        dot.style.background = chip.color || "var(--accent)";
+        const text = document.createElement("span");
+        text.textContent = chip.text;
+        el.append(dot, text);
+        summaryRow.appendChild(el);
+      });
+    }
+
+    function syncFieldPair(range, number, value) {
+      range.value = value;
+      number.value = value;
+    }
+
+    function currentMetrics() {
+      const metrics = structuredClone(DEFAULT_METRICS);
+      FIELD_CONFIG.forEach((field) => {
+        const number = document.getElementById(field.numberId);
+        metrics[field.key] = Number(number.value);
+      });
+      return metrics;
+    }
+
+    function buildProductCockpitUrl(equation = "", targetVariable = "") {
+      const url = new URL("/", PRODUCT_COCKPIT_ORIGIN);
+      if (equation.trim()) {
+        url.searchParams.set("equation", equation.trim());
+      }
+      if (targetVariable.trim()) {
+        url.searchParams.set("targetVariable", targetVariable.trim());
+      }
+      return url.toString();
+    }
+
+    function updateLiveLabDestination() {
+      const nextUrl = buildProductCockpitUrl(liveLabEquation.value, liveLabTarget.value);
+      liveLabLink.href = nextUrl;
+      return nextUrl;
+    }
+
+    function loadLiveLab(event) {
+      event?.preventDefault?.();
+      const nextUrl = updateLiveLabDestination();
+      liveLabFrame.src = nextUrl;
+    }
+
+    function render() {
+      const example = EXAMPLES.find((item) => item.id === exampleSelect.value) || EXAMPLES[0];
+      const metrics = currentMetrics();
+      const designerSettings = currentDesignerSettings();
+      const svg = buildSvg(example, metrics);
+      const showcaseSvg = buildSvg(SHOWCASE_EXAMPLE, metrics);
+      previewTitle.textContent = example.title;
+      previewSubtitle.textContent = example.subtitle;
+      previewSize.textContent = `${Math.round(svg.width)} x ${Math.round(svg.height)}`;
+      svgWrap.innerHTML = svg.markup;
+      showcaseTitle.textContent = SHOWCASE_EXAMPLE.title;
+      showcaseSubtitle.textContent = SHOWCASE_EXAMPLE.subtitle;
+      showcaseSize.textContent = `${Math.round(showcaseSvg.width)} x ${Math.round(showcaseSvg.height)}`;
+      showcaseWrap.innerHTML = showcaseSvg.markup;
+      showcaseCard.hidden = !designerSettings.showcaseVisible;
+      previewGrid.classList.toggle("preview-grid--single", !designerSettings.showcaseVisible);
+      renderSummary(example, designerSettings);
+
+      const componentTitle = componentSelect.value === "root"
+        ? "Wurzeln"
+        : componentSelect.value === "fraction"
+          ? "Brueche"
+          : componentSelect.value === "group"
+            ? "Klammern"
+            : "Potenz an Klammer";
+      previewBridgeNote.textContent = `Aktiv ist gerade ${componentTitle}. Die Demonstratoren oben zeigen die globale Geometrie isoliert; der echte Gleichungstest unten bleibt absichtlich der produktive Pfad mit Gleichungseingabe, Zeilenschaltern und Schrittfärbung.`;
+      previewFootnote.textContent = "Die Designer-Ansicht trennt globale Renderregeln von der Aufgabenformatierung. So bleibt das User-Cockpit produktiv, waehrend die Geometrie links separat erforscht wird.";
+    }
+
+    function bindFieldPair(field) {
+      const range = document.getElementById(field.rangeId);
+      const number = document.getElementById(field.numberId);
+      const initialValue = DEFAULT_METRICS[field.key];
+      syncFieldPair(range, number, initialValue);
+      range.addEventListener("input", () => {
+        number.value = range.value;
+        render();
+      });
+      number.addEventListener("input", () => {
+        range.value = number.value;
+        render();
+      });
+    }
+
+    function resetMetrics() {
+      FIELD_CONFIG.forEach((field) => {
+        const range = document.getElementById(field.rangeId);
+        const number = document.getElementById(field.numberId);
+        syncFieldPair(range, number, DEFAULT_METRICS[field.key]);
+      });
+      render();
+    }
+
+    EXAMPLES.forEach((example) => {
+      const option = document.createElement("option");
+      option.value = example.id;
+      option.textContent = example.title;
+      exampleSelect.appendChild(option);
+    });
+
+    FIELD_CONFIG.forEach(bindFieldPair);
+    exampleSelect.addEventListener("change", render);
+    componentSelect.addEventListener("change", () => {
+      updateComponentVisibility();
+      updateComponentMeta();
+      render();
+    });
+    showcaseToggle.addEventListener("change", render);
+    debugButton.addEventListener("click", () => {
+      const debugUrl = COMPONENT_COPY[componentSelect.value]?.debug;
+      if (debugUrl) {
+        window.open(debugUrl, "_blank", "noopener");
+      }
+    });
+    resetButton.addEventListener("click", resetMetrics);
+    liveLabForm.addEventListener("submit", loadLiveLab);
+    liveLabEquation.addEventListener("input", updateLiveLabDestination);
+    liveLabTarget.addEventListener("input", updateLiveLabDestination);
+    exampleSelect.value = EXAMPLES[1].id;
+    componentSelect.value = "group";
+    liveLabEquation.value = "y=a*B^x";
+    updateComponentVisibility();
+    updateComponentMeta();
+    liveLabFrame.src = updateLiveLabDestination();
+    render();
+  </script>
+</body>
+</html>

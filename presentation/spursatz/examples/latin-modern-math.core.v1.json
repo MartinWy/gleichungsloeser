@@ -1,0 +1,296 @@
+{
+  "formatVersion": "1.0",
+  "font": {
+    "family": "Latin Modern Math",
+    "source": "latin-modern-math.core.v1.seed",
+    "unitsPerEm": 1000,
+    "style": "Regular",
+    "extractorVersion": "seed-v1"
+  },
+  "fontMetrics": {
+    "axisHeight": 0.25,
+    "fractionRuleThickness": 0.04,
+    "radicalRuleThickness": 0.04,
+    "superscriptShiftUp": 0.38,
+    "subscriptShiftDown": 0.18,
+    "delimiterMinHeight": 1,
+    "stackGapMin": 0.08
+  },
+  "glyphCatalog": {
+    "digit_0": {
+      "kind": "number",
+      "text": "0",
+      "glyphs": ["gid_digit_0"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.03, "xMax": 0.47, "yMin": -0.02, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "digit_1": {
+      "kind": "number",
+      "text": "1",
+      "glyphs": ["gid_digit_1"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.05, "xMax": 0.4, "yMin": 0, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "digit_2": {
+      "kind": "number",
+      "text": "2",
+      "glyphs": ["gid_digit_2"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.03, "xMax": 0.46, "yMin": 0, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "digit_3": {
+      "kind": "number",
+      "text": "3",
+      "glyphs": ["gid_digit_3"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.03, "xMax": 0.45, "yMin": -0.02, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "digit_4": {
+      "kind": "number",
+      "text": "4",
+      "glyphs": ["gid_digit_4"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.02, "xMax": 0.47, "yMin": 0, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "digit_5": {
+      "kind": "number",
+      "text": "5",
+      "glyphs": ["gid_digit_5"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.03, "xMax": 0.45, "yMin": -0.02, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "digit_6": {
+      "kind": "number",
+      "text": "6",
+      "glyphs": ["gid_digit_6"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.03, "xMax": 0.47, "yMin": -0.02, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "digit_7": {
+      "kind": "number",
+      "text": "7",
+      "glyphs": ["gid_digit_7"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.03, "xMax": 0.47, "yMin": 0, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "digit_8": {
+      "kind": "number",
+      "text": "8",
+      "glyphs": ["gid_digit_8"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.03, "xMax": 0.47, "yMin": -0.02, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "digit_9": {
+      "kind": "number",
+      "text": "9",
+      "glyphs": ["gid_digit_9"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.03, "xMax": 0.47, "yMin": -0.02, "yMax": 0.68 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "var_x": {
+      "kind": "variable",
+      "text": "x",
+      "glyphs": ["gid_var_x"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.01, "xMax": 0.49, "yMin": -0.01, "yMax": 0.46 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0.02
+    },
+    "var_a": {
+      "kind": "variable",
+      "text": "a",
+      "glyphs": ["gid_var_a"],
+      "advanceWidth": 0.5,
+      "bbox": { "xMin": 0.02, "xMax": 0.45, "yMin": -0.01, "yMax": 0.46 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0.01
+    },
+    "var_m": {
+      "kind": "variable",
+      "text": "m",
+      "glyphs": ["gid_var_m"],
+      "advanceWidth": 0.72,
+      "bbox": { "xMin": 0.02, "xMax": 0.7, "yMin": -0.01, "yMax": 0.46 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0.01
+    },
+    "anchor_equals": {
+      "kind": "anchor",
+      "text": "=",
+      "glyphs": ["gid_anchor_equals"],
+      "advanceWidth": 0.62,
+      "bbox": { "xMin": 0.05, "xMax": 0.57, "yMin": 0.08, "yMax": 0.42 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "op_plus": {
+      "kind": "operator",
+      "text": "+",
+      "glyphs": ["gid_op_plus"],
+      "advanceWidth": 0.58,
+      "bbox": { "xMin": 0.06, "xMax": 0.52, "yMin": 0.01, "yMax": 0.49 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "op_minus": {
+      "kind": "operator",
+      "text": "-",
+      "glyphs": ["gid_op_minus"],
+      "advanceWidth": 0.58,
+      "bbox": { "xMin": 0.08, "xMax": 0.5, "yMin": 0.22, "yMax": 0.3 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "fn_sin": {
+      "kind": "function_text",
+      "text": "sin",
+      "glyphs": ["gid_s", "gid_i", "gid_n"],
+      "advanceWidth": 0.92,
+      "bbox": { "xMin": 0.01, "xMax": 0.88, "yMin": -0.02, "yMax": 0.69 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "fn_asin": {
+      "kind": "function_text",
+      "text": "asin",
+      "glyphs": ["gid_a", "gid_s", "gid_i", "gid_n"],
+      "advanceWidth": 1.2,
+      "bbox": { "xMin": 0.01, "xMax": 1.15, "yMin": -0.02, "yMax": 0.69 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "fn_cos": {
+      "kind": "function_text",
+      "text": "cos",
+      "glyphs": ["gid_c", "gid_o", "gid_s"],
+      "advanceWidth": 0.96,
+      "bbox": { "xMin": 0.01, "xMax": 0.91, "yMin": -0.02, "yMax": 0.69 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "fn_tan": {
+      "kind": "function_text",
+      "text": "tan",
+      "glyphs": ["gid_t", "gid_a", "gid_n"],
+      "advanceWidth": 0.96,
+      "bbox": { "xMin": 0.01, "xMax": 0.91, "yMin": -0.02, "yMax": 0.69 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "fn_acos": {
+      "kind": "function_text",
+      "text": "acos",
+      "glyphs": ["gid_a", "gid_c", "gid_o", "gid_s"],
+      "advanceWidth": 1.24,
+      "bbox": { "xMin": 0.01, "xMax": 1.19, "yMin": -0.02, "yMax": 0.69 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "fn_atan": {
+      "kind": "function_text",
+      "text": "atan",
+      "glyphs": ["gid_a", "gid_t", "gid_a", "gid_n"],
+      "advanceWidth": 1.24,
+      "bbox": { "xMin": 0.01, "xMax": 1.19, "yMin": -0.02, "yMax": 0.69 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    },
+    "sup_2": {
+      "kind": "superscript_text",
+      "text": "2",
+      "glyphs": ["gid_sup_2"],
+      "advanceWidth": 0.34,
+      "bbox": { "xMin": 0.02, "xMax": 0.32, "yMin": 0, "yMax": 0.5 },
+      "baseline": 0,
+      "mathAxis": 0.18,
+      "italicCorrection": 0
+    },
+    "radical_hook_basic": {
+      "kind": "radical_part",
+      "text": "sqrt_hook",
+      "glyphs": ["gid_radical_hook_basic"],
+      "advanceWidth": 0.42,
+      "bbox": { "xMin": 0.01, "xMax": 0.4, "yMin": -0.24, "yMax": 0.74 },
+      "baseline": 0,
+      "mathAxis": 0.25,
+      "italicCorrection": 0
+    }
+  },
+  "delimiterCatalog": {
+    "paren_left": {
+      "text": "(",
+      "variants": [
+        { "glyphId": "paren_left_s", "height": 0.92, "advanceWidth": 0.24 },
+        { "glyphId": "paren_left_m", "height": 1.36, "advanceWidth": 0.28 }
+      ],
+      "parts": [],
+      "innerLeft": 0.07,
+      "innerRight": 0.21
+    },
+    "paren_right": {
+      "text": ")",
+      "variants": [
+        { "glyphId": "paren_right_s", "height": 0.92, "advanceWidth": 0.24 },
+        { "glyphId": "paren_right_m", "height": 1.36, "advanceWidth": 0.28 }
+      ],
+      "parts": [],
+      "innerLeft": 0.03,
+      "innerRight": 0.17
+    }
+  },
+  "layoutHints": {
+    "ruleThicknessDefault": 0.04,
+    "delimiterOvershootDefault": 0.06,
+    "radicalClearanceDefault": 0.08,
+    "superscriptScaleDefault": 0.72
+  },
+  "coverage": {
+    "coreSymbols": ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "x", "a", "m", "=", "+", "-"],
+    "functionNames": ["sin", "asin", "cos", "tan", "acos", "atan"],
+    "delimiters": ["(", ")"],
+    "radicalParts": ["radical_hook_basic"],
+    "superscripts": ["2"]
+  }
+}

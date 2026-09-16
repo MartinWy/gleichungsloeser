@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Fraction Visualizer - Topologie Check</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Fraction Visualizer: 2 * x = 10 &rarr; x = 10 / 2</h1>
+    <div id="grid-container"></div>
+    
+    <div class="legend">
+        <p><strong>Topologie:</strong></p>
+        <ul>
+            <li>Row 0: Zähler / Hauptzeile</li>
+            <li>Row 1: Bruchstrich</li>
+            <li>Row 2: Nenner</li>
+        </ul>
+    </div>
+
+    <script type="module">
+        import { solver } from '../../core/2_Umformung/Regelwerk.js';
+        import { projectToGrid } from '../../core/3_Projektion/Regelwerk.js';
+
+        // 1. Logik-Transformation
+        const row = { 
+            left: { type: 'multiplication', factor: '2', variable: 'x' }, 
+            right: { type: 'atom', value: '10' }, 
+            target: 'x' 
+        };
+        const result = solver.applyInverse(row);
+
+        // 2. Erzeuge Atome für die Projektion (vereinfacht für Visualisierung)
+        const atoms = [
+            { id: 'x', val: 'x', isVisible: true },
+            { id: 'eq', val: '=', isVisible: true },
+            { id: 'res', val: result.right.numerator, isVisible: true, id_ref: 'res' },
+            { id: 'fraction-line-res', val: '---', isVisible: true },
+            { id: 'denominator', val: result.right.denominator, isVisible: true, position: 'denominator' }
+        ];
+
+        // 3. Projektion berechnen
+        const positionedAtoms = projectToGrid(atoms);
+
+        // 4. Rendering
+        const container = document.getElementById('grid-container');
+        positionedAtoms.forEach(atom => {
+            if (atom.row === -1) return;
+            
+            const div = document.createElement('div');
+            div.className = 'atom ' + (atom.position || 'main');
+            div.style.gridRow = atom.row + 1;
+            div.style.gridColumn = atom.col + 1;
+            div.textContent = atom.val;
+            container.appendChild(div);
+        });
+    </script>
+</body>
+</html>

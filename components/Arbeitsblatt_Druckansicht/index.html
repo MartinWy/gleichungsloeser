@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesis Arbeitsblatt-Druckansicht</title>
+    <link rel="stylesheet" href="style.css?v=2026-07-12-component-audit">
+</head>
+<body>
+    <div class="page-shell">
+        <header class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">Genesis Peripherie</p>
+                <p class="eyebrow no-print">Build R-2026-07-12-component-audit</p>
+                <h1>Arbeitsblatt-Druckansicht</h1>
+                <p class="hero-text">
+                    Diese Ansicht ruft den aktuellen Solver-Kern direkt auf und rendert die
+                    Umbauhistorie zeilenweise aus den produktiven <code>projectionRows</code>.
+                </p>
+            </div>
+            <div class="hero-actions no-print">
+                <button id="printButton" type="button" class="secondary-button">Drucken</button>
+            </div>
+        </header>
+
+        <form id="solveForm" class="control-panel no-print" autocomplete="off">
+            <label class="field">
+                <span class="field-label">Gleichung</span>
+                <input id="equationInput" name="equation" type="text" value="2*x+3=5" spellcheck="false">
+                <span class="field-hint">
+                    Erlaubt sind normale Schreibweisen wie <code>2x+3=5</code>,
+                    tolerante Zeichen wie <code>2·x−3=5</code> und auch LaTeX-nahe Formen wie <code>\sqrt{x+3}=5</code>.
+                </span>
+            </label>
+
+            <label class="field field-target">
+                <span class="field-label">Zielvariable</span>
+                <input id="targetVariableInput" name="targetVariable" type="text" value="x" placeholder="leer = automatisch" spellcheck="false">
+                <span class="field-hint">
+                    Leer lassen fuer automatische Erkennung. Auch Namen wie <code>a</code>, <code>m</code> oder <code>\alpha</code> werden normalisiert.
+                </span>
+            </label>
+
+            <button type="submit" class="primary-button">Start</button>
+        </form>
+
+        <div id="status" class="status no-print" role="status" aria-live="polite"></div>
+
+        <section id="colorPanel" class="color-panel no-print" hidden>
+            <div class="color-panel__header">
+                <div class="color-panel__copy">
+                    <p class="eyebrow">Farben</p>
+                    <h2>Schalen und Funktionen</h2>
+                    <p class="color-panel__text">
+                        Klicke direkt auf eine sichtbare Schale im Arbeitsblatt oder waehle unten
+                        pro Schalenart und Funktion eine Farbe.
+                    </p>
+                </div>
+                <div class="color-panel__actions">
+                    <button id="clearColorsButton" type="button" class="secondary-button">Farben loeschen</button>
+                </div>
+            </div>
+            <div id="colorRulesList" class="color-rules"></div>
+        </section>
+
+        <section id="printSummary" class="print-summary" hidden></section>
+        <section id="results" class="results" aria-live="polite"></section>
+        <section id="diagnostics" class="diagnostics no-print" hidden aria-live="polite"></section>
+    </div>
+
+    <noscript>
+        <p>Diese Ansicht benoetigt JavaScript, weil sie den Solver-Kern direkt im Browser aufruft.</p>
+    </noscript>
+
+    <script src="../../browser/app.bundle.js?v=2026-08-30-bridge-native-projection"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "gleichungsloeser-core",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "build:browser-ui": "node scripts/build_browser_bundle.mjs",
+    "start": "node scripts/cockpit_server.mjs",
+    "cockpit": "node scripts/cockpit_server.mjs",
+    "inspect": "node scripts/inspect_equation.mjs",
+    "inspect:active": "node scripts/inspect_equation_active.mjs",
+    "test": "node tests/run_active_tests.js",
+    "test:active": "node tests/run_active_tests.js",
+    "test:legacy": "node tests/run_legacy_tests.js",
+    "ui": "node scripts/cockpit_server.mjs",
+    "export:pdf": "node scripts/export_projection_pdf.mjs",
+    "export:pdf:active": "node scripts/export_projection_pdf_active.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

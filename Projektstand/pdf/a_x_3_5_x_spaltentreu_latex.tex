@@ -1,0 +1,76 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[margin=18mm]{geometry}
+\usepackage{tikz}
+\usepackage{amsmath}
+\pagestyle{empty}
+\begin{document}
+\section*{Spaltentreue LaTeX-Ausgabe}
+\noindent Gleichung: \texttt{a*x+3=5} \hfill Zielvariable: \texttt{x}
+
+\vspace{8mm}
+\begin{center}
+\begin{tikzpicture}[x=2.7em,y=-1em]
+\node[anchor=base, inner sep=0pt] at (0,1) {$a$};
+\node[anchor=base, inner sep=0pt] at (1,1) {$\cdot$};
+\node[anchor=base, inner sep=0pt] at (2,1) {$x$};
+\node[anchor=base, inner sep=0pt] at (3,1) {$+$};
+\node[anchor=base, inner sep=0pt] at (4,1) {$3$};
+\node[anchor=base, inner sep=0pt] at (5,1) {$=$};
+\node[anchor=base, inner sep=0pt] at (6,1) {$5$};
+\node[anchor=base, inner sep=0pt] at (0,3.15) {$a$};
+\node[anchor=base, inner sep=0pt] at (1,3.15) {$\cdot$};
+\node[anchor=base, inner sep=0pt] at (2,3.15) {$x$};
+\node[anchor=base, inner sep=0pt] at (5,3.15) {$=$};
+\node[anchor=base, inner sep=0pt] at (6,3.15) {$5$};
+\node[anchor=base, inner sep=0pt] at (7,3.15) {$-$};
+\node[anchor=base, inner sep=0pt] at (8,3.15) {$3$};
+\node[anchor=base, inner sep=0pt] at (7,5.3) {$\displaystyle\frac{5 - 3}{a}$};
+\node[anchor=base, inner sep=0pt] at (2,5.3) {$x$};
+\node[anchor=base, inner sep=0pt] at (5,5.3) {$=$};
+\end{tikzpicture}
+\end{center}
+
+\newpage
+\section*{Spaltentreue LaTeX-Ausgabe mit Raster}
+\vspace{6mm}
+\begin{center}
+\begin{tikzpicture}[x=2.7em,y=-1em]
+\draw[gray!25, dotted] (0,0.35) -- (0,6.5);
+\node[font={\ttfamily\scriptsize}, text=gray!70, anchor=base] at (0,0) {0};
+\draw[gray!25, dotted] (1,0.35) -- (1,6.5);
+\node[font={\ttfamily\scriptsize}, text=gray!70, anchor=base] at (1,0) {1};
+\draw[gray!25, dotted] (2,0.35) -- (2,6.5);
+\node[font={\ttfamily\scriptsize}, text=gray!70, anchor=base] at (2,0) {2};
+\draw[gray!25, dotted] (3,0.35) -- (3,6.5);
+\node[font={\ttfamily\scriptsize}, text=gray!70, anchor=base] at (3,0) {3};
+\draw[gray!25, dotted] (4,0.35) -- (4,6.5);
+\node[font={\ttfamily\scriptsize}, text=gray!70, anchor=base] at (4,0) {4};
+\draw[gray!25, dotted] (5,0.35) -- (5,6.5);
+\node[font={\ttfamily\scriptsize}, text=gray!70, anchor=base] at (5,0) {5};
+\draw[gray!25, dotted] (6,0.35) -- (6,6.5);
+\node[font={\ttfamily\scriptsize}, text=gray!70, anchor=base] at (6,0) {6};
+\draw[gray!25, dotted] (7,0.35) -- (7,6.5);
+\node[font={\ttfamily\scriptsize}, text=gray!70, anchor=base] at (7,0) {7};
+\draw[gray!25, dotted] (8,0.35) -- (8,6.5);
+\node[font={\ttfamily\scriptsize}, text=gray!70, anchor=base] at (8,0) {8};
+\node[anchor=base, inner sep=0pt] at (0,1) {$a$};
+\node[anchor=base, inner sep=0pt] at (1,1) {$\cdot$};
+\node[anchor=base, inner sep=0pt] at (2,1) {$x$};
+\node[anchor=base, inner sep=0pt] at (3,1) {$+$};
+\node[anchor=base, inner sep=0pt] at (4,1) {$3$};
+\node[anchor=base, inner sep=0pt] at (5,1) {$=$};
+\node[anchor=base, inner sep=0pt] at (6,1) {$5$};
+\node[anchor=base, inner sep=0pt] at (0,3.15) {$a$};
+\node[anchor=base, inner sep=0pt] at (1,3.15) {$\cdot$};
+\node[anchor=base, inner sep=0pt] at (2,3.15) {$x$};
+\node[anchor=base, inner sep=0pt] at (5,3.15) {$=$};
+\node[anchor=base, inner sep=0pt] at (6,3.15) {$5$};
+\node[anchor=base, inner sep=0pt] at (7,3.15) {$-$};
+\node[anchor=base, inner sep=0pt] at (8,3.15) {$3$};
+\node[anchor=base, inner sep=0pt] at (7,5.3) {$\displaystyle\frac{5 - 3}{a}$};
+\draw[gray!35, dotted] (5.55,5.3) -- (8.45,5.3);
+\node[anchor=base, inner sep=0pt] at (2,5.3) {$x$};
+\node[anchor=base, inner sep=0pt] at (5,5.3) {$=$};
+\end{tikzpicture}
+\end{center}
+\end{document}

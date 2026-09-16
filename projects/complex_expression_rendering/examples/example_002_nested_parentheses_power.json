@@ -1,0 +1,43 @@
+{
+  "id": "example_002_nested_parentheses_power",
+  "title": "Verschachtelte Klammern mit Bruch und Potenzen",
+  "latex": "\\left(\\left(\\frac{1}{2}\\right)^2\\right)^2",
+  "principles": [
+    "Klammern sind Schalen und lesen die sichtbare Hoehe ihres Inhalts.",
+    "Normale Atome behalten ihre Groesse.",
+    "Es gibt nur zwei Schriftgroessen: normal und Exponent.",
+    "Potenzen vergroessern keine Klammer durch eigene Schalen, sondern nur ueber den sichtbaren Inhalt.",
+    "Das Beispiel isoliert die Klammerfrage ohne Wurzel."
+  ],
+  "structure": {
+    "type": "power",
+    "base": {
+      "type": "group",
+      "content": {
+        "type": "power",
+        "base": {
+          "type": "group",
+          "content": {
+            "type": "fraction",
+            "numerator": {
+              "type": "text",
+              "text": "1"
+            },
+            "denominator": {
+              "type": "text",
+              "text": "2"
+            }
+          }
+        },
+        "exponent": {
+          "type": "text",
+          "text": "2"
+        }
+      }
+    },
+    "exponent": {
+      "type": "text",
+      "text": "2"
+    }
+  }
+}

@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Paper Transition Demo</title>
+    <style>
+        :root {
+            --paper: #f7f2e8;
+            --ink: #1a1714;
+            --muted: #6b6258;
+            --blue: #2563eb;
+            --orange: #c26b16;
+            --teal: #0f766e;
+            --panel: rgba(255, 255, 255, 0.74);
+            --line: rgba(26, 23, 20, 0.11);
+            --shadow: 0 18px 40px rgba(30, 24, 16, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(194, 107, 22, 0.08), transparent 30%),
+                linear-gradient(180deg, #fbf8f3 0%, var(--paper) 100%);
+        }
+
+        .page {
+            width: min(1360px, calc(100vw - 36px));
+            margin: 28px auto 40px;
+        }
+
+        .hero {
+            display: grid;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .eyebrow {
+            margin: 0;
+            color: var(--teal);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-size: 12px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(34px, 5vw, 60px);
+            line-height: 0.94;
+            font-weight: 500;
+            max-width: 15ch;
+        }
+
+        .lead {
+            margin: 0;
+            max-width: 86ch;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 320px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .main,
+        .side {
+            background: var(--panel);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(26, 23, 20, 0.08);
+            box-shadow: var(--shadow);
+            border-radius: 28px;
+        }
+
+        .main {
+            padding: 18px;
+            display: grid;
+            gap: 16px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+            padding: 4px 2px 2px;
+        }
+
+        .toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.68);
+            border: 1px solid rgba(26,23,20,0.08);
+            color: var(--ink);
+            font-size: 14px;
+        }
+
+        .toggle input {
+            accent-color: var(--teal);
+        }
+
+        .cards {
+            display: grid;
+            gap: 16px;
+        }
+
+        .card {
+            border-radius: 24px;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.74));
+            border: 1px solid rgba(26,23,20,0.08);
+            overflow: hidden;
+        }
+
+        .card-head {
+            display: grid;
+            gap: 4px;
+            padding: 16px 18px 0;
+        }
+
+        .card-kicker {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 12px;
+        }
+
+        .card-title {
+            font-size: 24px;
+            line-height: 1.08;
+        }
+
+        .card-copy {
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.45;
+        }
+
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .side {
+            padding: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .side-title {
+            font-size: 22px;
+            line-height: 1.12;
+        }
+
+        .principle {
+            padding: 12px 14px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.64);
+            border: 1px solid rgba(26,23,20,0.08);
+        }
+
+        .principle strong {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .principle p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .legend {
+            display: grid;
+            gap: 8px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(26,23,20,0.08);
+        }
+
+        .legend-row {
+            display: grid;
+            grid-template-columns: 18px 1fr;
+            gap: 10px;
+            align-items: start;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .swatch {
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            margin-top: 1px;
+        }
+
+        .blue {
+            background: var(--blue);
+        }
+
+        .orange {
+            background: var(--orange);
+        }
+
+        .teal {
+            background: var(--teal);
+        }
+
+        @media (max-width: 1020px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .page {
+                width: min(1360px, calc(100vw - 20px));
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <p class="eyebrow">Papierform</p>
+            <h1>Was sich aendert und was gleich bleibt</h1>
+            <p class="lead">
+                Diese Version verzichtet ganz bewusst auf Zoom und Bewegung.
+                Auf dem Blatt bleiben nur gueltige Zeilen.
+                Der Uebergang wird stattdessen ueber Farbe,
+                einen neu markierten Termraum
+                und fest geplante Landepositionen lesbar gemacht.
+            </p>
+        </section>
+
+        <section class="layout">
+            <section class="main">
+                <div class="controls">
+                    <label class="toggle">
+                        <input id="toggleColors" type="checkbox" checked>
+                        Farben
+                    </label>
+                    <label class="toggle">
+                        <input id="toggleGuides" type="checkbox" checked>
+                        Zielraeume
+                    </label>
+                </div>
+
+                <div class="cards">
+                    <article class="card">
+                        <div class="card-head">
+                            <div class="card-kicker">Blatt A</div>
+                            <div class="card-title">Linksvariante: rechte Kante bleibt</div>
+                            <div class="card-copy">
+                                Blau zeigt <strong>B -> log_B</strong>.
+                                Orange zeigt denselben Inhalt <strong>2x - 1</strong>.
+                                Beim Aufweiten bleibt die rechte Kante des rechten Terms erhalten,
+                                der Ausdruck waechst also vor allem nach links.
+                            </div>
+                        </div>
+                        <svg id="sheetA" viewBox="0 0 980 320" aria-label="Papierblatt A"></svg>
+                    </article>
+
+                    <article class="card">
+                        <div class="card-head">
+                            <div class="card-kicker">Blatt B</div>
+                            <div class="card-title">Rechtsvariante: rechter Ausdruck bekommt Vorlauf</div>
+                            <div class="card-copy">
+                                Auch hier laufen beide Farbgeschichten gleichzeitig.
+                                Rechts wird der Platz fuer <strong>log_B(y/a)</strong> direkt in seiner Endlage vorbereitet,
+                                damit danach nichts ein zweites Mal springt.
+                            </div>
+                        </div>
+                        <svg id="sheetB" viewBox="0 0 980 320" aria-label="Papierblatt B"></svg>
+                    </article>
+
+                    <article class="card">
+                        <div class="card-head">
+                            <div class="card-kicker">Blatt C</div>
+                            <div class="card-title">Das neue System startet sofort in der Endlage</div>
+                            <div class="card-copy">
+                                Der normale Gleichungsloeser darf nach dem Systemwechsel nicht noch einmal umsetzen.
+                                Deshalb beginnt die erste Zeile des neuen Systems bereits genau dort,
+                                wo die Folgeschritte weiterlaufen.
+                            </div>
+                        </div>
+                        <svg id="sheetC" viewBox="0 0 980 360" aria-label="Papierblatt C"></svg>
+                    </article>
+                </div>
+            </section>
+
+            <aside class="side">
+                <div class="side-title">Papierstrategie</div>
+
+                <div class="principle">
+                    <strong>1. Nur gueltige Zeilen</strong>
+                    <p>Zwischenbilder duerfen erklaeren, aber nicht als neue Gleichungen auftreten. Das Blatt zeigt nur mathematisch gueltige Stationen.</p>
+                </div>
+
+                <div class="principle">
+                    <strong>2. Zwei Geschichten gleichzeitig</strong>
+                    <p>Der Operatorwechsel B -> log_B und der Wechsel von 2x - 1 in den neuen Termraum passieren im selben Schritt, werden aber farblich getrennt.</p>
+                </div>
+
+                <div class="principle">
+                    <strong>3. Das = bleibt stehen</strong>
+                    <p>Das Gleichheitszeichen dient als fester Anker. Links kommt log_B nach vorne, rechts wird fuer 2x - 1 oder fuer log_B(y/a) ein neuer Zielraum sofort an der richtigen Stelle berechnet.</p>
+                </div>
+
+                <div class="principle">
+                    <strong>4. Voraussicht statt zweitem Sprung</strong>
+                    <p>Der neue Umformer muss die Startgeometrie des Folgesystems schon kennen. Die erste Zeile nach dem Wechsel wird deshalb direkt in ihrer spaeteren Solver-Lage gesetzt.</p>
+                </div>
+
+                <div class="principle">
+                    <strong>5. Nachbauen ja, ueberschreiben nein</strong>
+                    <p>Ein neuer Loeser darf die Prinzipien des alten Loesers vollstaendig nachbauen. Der alte zentrale Loeser selbst bleibt dabei aber unberuehrt.</p>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-row">
+                        <div class="swatch blue"></div>
+                        <div>Blau markiert dieselbe Operatorgeschichte: B auf der rechten Seite und log_B auf der linken.</div>
+                    </div>
+                    <div class="legend-row">
+                        <div class="swatch orange"></div>
+                        <div>Orange markiert denselben Inhalt 2x - 1 beim Wechsel in den rechts neu berechneten Termraum.</div>
+                    </div>
+                    <div class="legend-row">
+                        <div class="swatch teal"></div>
+                        <div>Gruen kennzeichnet den festen Anker oder den Punkt, ab dem wieder nur noch Standardregeln gelten.</div>
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script>
+        const ns = "http://www.w3.org/2000/svg";
+        const colors = {
+            ink: "#1a1714",
+            muted: "#6b6258",
+            blue: "#2563eb",
+            blueSoft: "rgba(37,99,235,0.10)",
+            orange: "#c26b16",
+            orangeSoft: "rgba(194,107,22,0.11)",
+            teal: "#0f766e",
+            tealSoft: "rgba(15,118,110,0.09)",
+            line: "rgba(26,23,20,0.14)",
+            guide: "rgba(194,107,22,0.20)"
+        };
+
+        const leftLayout = {
+            fractionX: 154,
+            equalX: 330,
+            baseX: 430,
+            exponentX: 508,
+            logLeftX: 40,
+            termZoneX: 436,
+            termX: 466,
+            termGapA: 48,
+            termGapB: 104,
+            termGapC: 150
+        };
+
+        const rightLayout = {
+            baseX: 96,
+            exponentX: 174,
+            equalX: 408,
+            fractionX: 556,
+            termX: 88,
+            termGapA: 48,
+            termGapB: 104,
+            termGapC: 150,
+            logRightX: 492,
+            rightZoneX: 474,
+            rightZoneWidth: 328
+        };
+
+        const toggles = {
+            colors: document.getElementById("toggleColors"),
+            guides: document.getElementById("toggleGuides")
+        };
+
+        const sheets = {
+            A: document.getElementById("sheetA"),
+            B: document.getElementById("sheetB"),
+            C: document.getElementById("sheetC")
+        };
+
+        function node(tag, attrs = {}, text = "") {
+            const el = document.createElementNS(ns, tag);
+            Object.entries(attrs).forEach(([key, value]) => {
+                el.setAttribute(key, String(value));
+            });
+            if (text) {
+                el.textContent = text;
+            }
+            return el;
+        }
+
+        function text(svg, x, y, value, size, opts = {}) {
+            svg.appendChild(node("text", {
+                x,
+                y,
+                "font-size": size,
+                "font-family": '"Iowan Old Style", "Palatino Linotype", Georgia, serif',
+                fill: opts.fill || colors.ink,
+                "font-style": opts.fontStyle || "italic",
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            }, value));
+        }
+
+        function line(svg, x1, y1, x2, y2, opts = {}) {
+            svg.appendChild(node("line", {
+                x1,
+                y1,
+                x2,
+                y2,
+                stroke: opts.stroke || colors.line,
+                "stroke-width": opts.width || 3,
+                opacity: opts.opacity == null ? 1 : opts.opacity,
+                "stroke-linecap": opts.cap || "round"
+            }));
+        }
+
+        function rect(svg, x, y, width, height, opts = {}) {
+            svg.appendChild(node("rect", {
+                x,
+                y,
+                width,
+                height,
+                rx: opts.rx || 16,
+                fill: opts.fill || "none",
+                stroke: opts.stroke || "none",
+                "stroke-width": opts.width || 1.2,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            }));
+        }
+
+        function path(svg, d, opts = {}) {
+            svg.appendChild(node("path", {
+                d,
+                fill: opts.fill || "none",
+                stroke: opts.stroke || colors.line,
+                "stroke-width": opts.width || 3,
+                opacity: opts.opacity == null ? 1 : opts.opacity,
+                "stroke-linecap": "round",
+                "stroke-linejoin": "round",
+                "marker-end": opts.marker ? `url(#arrow-${opts.marker})` : ""
+            }));
+        }
+
+        function setup(svg) {
+            svg.replaceChildren();
+            const defs = node("defs");
+            [
+                ["ink", colors.ink],
+                ["blue", colors.blue],
+                ["orange", colors.orange]
+            ].forEach(([name, fill]) => {
+                const marker = node("marker", {
+                    id: `arrow-${name}`,
+                    viewBox: "0 0 10 10",
+                    refX: "9",
+                    refY: "5",
+                    markerWidth: "8",
+                    markerHeight: "8",
+                    orient: "auto-start-reverse"
+                });
+                marker.appendChild(node("path", {
+                    d: "M 0 0 L 10 5 L 0 10 z",
+                    fill
+                }));
+                defs.appendChild(marker);
+            });
+            svg.appendChild(defs);
+            rect(svg, 14, 14, 952, svg.viewBox.baseVal.height - 28, {
+                rx: 26,
+                fill: "rgba(255,255,255,0.62)",
+                stroke: "rgba(26,23,20,0.08)"
+            });
+        }
+
+        function showColor(name) {
+            return toggles.colors.checked ? colors[name] : colors.ink;
+        }
+
+        function showSoft(name) {
+            return toggles.colors.checked ? colors[name] : "rgba(26,23,20,0.04)";
+        }
+
+        function drawFraction(svg, x, y, top, bottom, opts = {}) {
+            line(svg, x, y, x + 94, y, {
+                stroke: opts.fill || colors.ink,
+                width: 3,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, x + 30, y - 28, top, 38, {
+                fill: opts.fill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, x + 34, y + 38, bottom, 38, {
+                fill: opts.fill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+        }
+
+        function drawExponentShell(svg, x, y, opts = {}) {
+            rect(svg, x - 16, y - 44, 164, 62, {
+                rx: 18,
+                fill: opts.shellFill || "none",
+                stroke: opts.shellStroke || "none",
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, x, y, "2", 26, {
+                fill: opts.fill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, x + 34, y, "x", 26, {
+                fill: opts.fill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, x + 74, y, "-", 24, {
+                fill: opts.fill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity,
+                fontStyle: "normal"
+            });
+            text(svg, x + 108, y, "1", 26, {
+                fill: opts.fill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+        }
+
+        function drawLogLeft(svg, x, y, opts = {}) {
+            text(svg, x, y, "log", 42, {
+                fill: opts.logFill || colors.ink,
+                fontStyle: "normal",
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, x + 50, y + 24, "B", 20, {
+                fill: opts.baseFill || opts.logFill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, x + 82, y, "(", 46, {
+                fill: opts.logFill || colors.ink,
+                fontStyle: "normal",
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            drawFraction(svg, x + 122, y, "y", "a", {
+                fill: opts.argFill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, x + 226, y, ")", 46, {
+                fill: opts.logFill || colors.ink,
+                fontStyle: "normal",
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+        }
+
+        function drawStartRow(svg, baseline, layout, opts = {}) {
+            drawFraction(svg, layout.fractionX, baseline, "y", "a", {
+                fill: opts.leftFill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, layout.equalX, baseline, "=", 36, {
+                fill: opts.eqFill || colors.ink,
+                fontStyle: "normal",
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, layout.baseX, baseline, "B", 50, {
+                fill: opts.baseFill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            drawExponentShell(svg, layout.exponentX, baseline - 62, {
+                fill: opts.expFill || colors.ink,
+                shellFill: opts.expShellFill || "none",
+                shellStroke: opts.expShellStroke || "none",
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+        }
+
+        function drawLogRow(svg, baseline, layout, opts = {}) {
+            drawLogLeft(svg, layout.logLeftX, baseline, {
+                logFill: opts.logFill || colors.ink,
+                baseFill: opts.baseFill || opts.logFill || colors.ink,
+                argFill: opts.argFill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, layout.equalX, baseline, "=", 36, {
+                fill: opts.eqFill || colors.ink,
+                fontStyle: "normal",
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            if (opts.termZone) {
+                rect(svg, layout.termZoneX, baseline - 58, 220, 82, {
+                    rx: 20,
+                    fill: opts.termZone.fill,
+                    stroke: opts.termZone.stroke,
+                    opacity: opts.termZone.opacity
+                });
+            }
+            if (opts.guides) {
+                [
+                    layout.termX - 6,
+                    layout.termX + layout.termGapA - 6,
+                    layout.termX + layout.termGapB - 6,
+                    layout.termX + layout.termGapC - 6
+                ].forEach((x) => {
+                    line(svg, x, baseline - 46, x, baseline + 16, {
+                        stroke: colors.guide,
+                        width: 1.4,
+                        opacity: 0.92
+                    });
+                });
+            }
+            text(svg, layout.termX, baseline, "2", 42, {
+                fill: opts.termFill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, layout.termX + layout.termGapA, baseline, "x", 42, {
+                fill: opts.termFill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+            text(svg, layout.termX + layout.termGapB, baseline, "-", 34, {
+                fill: opts.termFill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity,
+                fontStyle: "normal"
+            });
+            text(svg, layout.termX + layout.termGapC, baseline, "1", 42, {
+                fill: opts.termFill || colors.ink,
+                opacity: opts.opacity == null ? 1 : opts.opacity
+            });
+        }
+
+        function drawRightStartRow(svg, baseline, opts = {}) {
+            text(svg, rightLayout.baseX, baseline, "B", 50, {
+                fill: opts.baseFill || colors.ink
+            });
+            drawExponentShell(svg, rightLayout.exponentX, baseline - 62, {
+                fill: opts.expFill || colors.ink,
+                shellFill: opts.expShellFill || "none",
+                shellStroke: opts.expShellStroke || "none"
+            });
+            text(svg, rightLayout.equalX, baseline, "=", 36, {
+                fill: opts.eqFill || colors.ink,
+                fontStyle: "normal"
+            });
+            drawFraction(svg, rightLayout.fractionX, baseline, "y", "a", {
+                fill: opts.rightFill || colors.ink
+            });
+        }
+
+        function drawRightFinalRow(svg, baseline, opts = {}) {
+            text(svg, rightLayout.termX, baseline, "2", 42, {
+                fill: opts.termFill || colors.ink
+            });
+            text(svg, rightLayout.termX + rightLayout.termGapA, baseline, "x", 42, {
+                fill: opts.termFill || colors.ink
+            });
+            text(svg, rightLayout.termX + rightLayout.termGapB, baseline, "-", 34, {
+                fill: opts.termFill || colors.ink,
+                fontStyle: "normal"
+            });
+            text(svg, rightLayout.termX + rightLayout.termGapC, baseline, "1", 42, {
+                fill: opts.termFill || colors.ink
+            });
+            text(svg, rightLayout.equalX, baseline, "=", 36, {
+                fill: opts.eqFill || colors.ink,
+                fontStyle: "normal"
+            });
+            if (opts.rightZone) {
+                rect(svg, rightLayout.rightZoneX, baseline - 58, rightLayout.rightZoneWidth, 82, {
+                    rx: 20,
+                    fill: opts.rightZone.fill,
+                    stroke: opts.rightZone.stroke,
+                    opacity: opts.rightZone.opacity
+                });
+            }
+            drawLogLeft(svg, rightLayout.logRightX, baseline, {
+                logFill: opts.logFill || colors.ink,
+                baseFill: opts.baseFill || opts.logFill || colors.ink,
+                argFill: opts.argFill || colors.ink
+            });
+        }
+
+        function drawFollowRows(svg) {
+            drawLogRow(svg, 96, leftLayout, {
+                logFill: colors.ink,
+                baseFill: colors.ink,
+                argFill: colors.ink,
+                termFill: colors.ink
+            });
+
+            drawLogLeft(svg, leftLayout.logLeftX, 210, {
+                logFill: colors.ink,
+                baseFill: colors.ink,
+                argFill: colors.ink
+            });
+            text(svg, 278, 210, "+", 30, {
+                fill: colors.ink,
+                fontStyle: "normal"
+            });
+            text(svg, 316, 210, "1", 38, {
+                fill: colors.ink
+            });
+            text(svg, leftLayout.equalX, 210, "=", 36, {
+                fill: colors.ink,
+                fontStyle: "normal"
+            });
+            text(svg, leftLayout.termX, 210, "2", 42, {
+                fill: colors.ink
+            });
+            text(svg, leftLayout.termX + leftLayout.termGapA, 210, "x", 42, {
+                fill: colors.ink
+            });
+
+            text(svg, 82, 314, "x", 46, {
+                fill: colors.ink
+            });
+            text(svg, 246, 314, "=", 36, {
+                fill: colors.ink,
+                fontStyle: "normal"
+            });
+            line(svg, 324, 314, 664, 314, {
+                stroke: colors.ink,
+                width: 3
+            });
+            drawLogLeft(svg, 344, 286, {
+                logFill: colors.ink,
+                baseFill: colors.ink,
+                argFill: colors.ink
+            });
+            text(svg, 582, 286, "+", 30, {
+                fill: colors.ink,
+                fontStyle: "normal"
+            });
+            text(svg, 620, 286, "1", 38, {
+                fill: colors.ink
+            });
+            text(svg, 492, 354, "2", 34, {
+                fill: colors.ink
+            });
+
+            rect(svg, 694, 48, 220, 270, {
+                rx: 22,
+                fill: toggles.colors.checked ? "rgba(15,118,110,0.12)" : "rgba(26,23,20,0.04)",
+                stroke: toggles.colors.checked ? "rgba(15,118,110,0.24)" : "rgba(26,23,20,0.08)"
+            });
+            text(svg, 724, 90, "Ab hier wieder", 22, {
+                fill: toggles.colors.checked ? colors.teal : colors.ink,
+                fontStyle: "normal"
+            });
+            text(svg, 724, 124, "Standardregeln", 28, {
+                fill: toggles.colors.checked ? colors.teal : colors.ink,
+                fontStyle: "normal"
+            });
+            text(svg, 724, 174, "1. +1 nach rechts", 20, {
+                fill: colors.muted,
+                fontStyle: "normal"
+            });
+            text(svg, 724, 208, "2. durch 2 teilen", 20, {
+                fill: colors.muted,
+                fontStyle: "normal"
+            });
+            text(svg, 724, 258, "Keine neue", 20, {
+                fill: colors.muted,
+                fontStyle: "normal"
+            });
+            text(svg, 724, 288, "Uebergangslogik mehr", 20, {
+                fill: colors.muted,
+                fontStyle: "normal"
+            });
+        }
+
+        function renderSheetA() {
+            const svg = sheets.A;
+            setup(svg);
+
+            drawStartRow(svg, 110, leftLayout, {
+                baseFill: showColor("blue"),
+                expFill: showColor("orange"),
+                expShellFill: toggles.colors.checked ? "rgba(194,107,22,0.15)" : showSoft("orangeSoft"),
+                expShellStroke: showColor("orange")
+            });
+
+            drawLogRow(svg, 250, leftLayout, {
+                logFill: showColor("blue"),
+                baseFill: showColor("blue"),
+                argFill: colors.ink,
+                termFill: showColor("orange"),
+                termZone: toggles.guides.checked ? {
+                    fill: toggles.colors.checked ? "rgba(194,107,22,0.16)" : "rgba(26,23,20,0.03)",
+                    stroke: toggles.colors.checked ? showColor("orange") : "rgba(26,23,20,0.06)",
+                    opacity: 1
+                } : null
+            });
+
+            rect(svg, leftLayout.equalX - 18, 48, 54, 226, {
+                rx: 18,
+                fill: toggles.colors.checked ? "rgba(15,118,110,0.10)" : "rgba(26,23,20,0.04)",
+                stroke: toggles.colors.checked ? "rgba(15,118,110,0.18)" : "rgba(26,23,20,0.08)"
+            });
+        }
+
+        function renderSheetB() {
+            const svg = sheets.B;
+            setup(svg);
+
+            drawRightStartRow(svg, 110, {
+                baseFill: showColor("blue"),
+                expFill: showColor("orange"),
+                expShellFill: toggles.colors.checked ? "rgba(194,107,22,0.15)" : showSoft("orangeSoft"),
+                expShellStroke: showColor("orange"),
+                rightFill: colors.ink
+            });
+
+            drawRightFinalRow(svg, 250, {
+                termFill: showColor("orange"),
+                eqFill: colors.ink,
+                logFill: showColor("blue"),
+                baseFill: showColor("blue"),
+                argFill: colors.ink,
+                rightZone: toggles.guides.checked ? {
+                    fill: toggles.colors.checked ? "rgba(37,99,235,0.10)" : "rgba(26,23,20,0.03)",
+                    stroke: toggles.colors.checked ? showColor("blue") : "rgba(26,23,20,0.06)",
+                    opacity: 1
+                } : null
+            });
+
+            rect(svg, rightLayout.equalX - 18, 48, 54, 226, {
+                rx: 18,
+                fill: toggles.colors.checked ? "rgba(15,118,110,0.10)" : "rgba(26,23,20,0.04)",
+                stroke: toggles.colors.checked ? "rgba(15,118,110,0.18)" : "rgba(26,23,20,0.08)"
+            });
+        }
+
+        function renderSheetC() {
+            const svg = sheets.C;
+            setup(svg);
+            drawFollowRows(svg);
+
+            if (toggles.guides.checked) {
+                rect(svg, leftLayout.termZoneX, 38, 220, 82, {
+                    rx: 20,
+                    fill: toggles.colors.checked ? "rgba(15,118,110,0.08)" : "rgba(26,23,20,0.03)",
+                    stroke: toggles.colors.checked ? "rgba(15,118,110,0.18)" : "rgba(26,23,20,0.06)",
+                    opacity: 1
+                });
+            }
+        }
+
+        function renderAll() {
+            renderSheetA();
+            renderSheetB();
+            renderSheetC();
+        }
+
+        Object.values(toggles).forEach((toggle) => {
+            toggle.addEventListener("input", renderAll);
+        });
+
+        renderAll();
+    </script>
+</body>
+</html>

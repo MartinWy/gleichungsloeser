@@ -1,0 +1,50 @@
+# Legacy-Status der historischen Testspur
+
+Stand: 10. September 2026
+
+## Zweck
+Diese Datei entscheidet explizit, wie die historischen Tests zur heutigen `P1`-bis-`P4`-Architektur stehen.
+Die Dateien bleiben unter `alt/2026-09-10_pre_genesis_tests/tests/` als
+historische Referenz erhalten, aber ihr Status ist nicht mehr implizit.
+
+## Entscheidungen
+| Testpfad | Status | Grund | Heutiger Nachfolger |
+| :--- | :--- | :--- | :--- |
+| `alt/2026-09-10_pre_genesis_tests/tests/bruch_mechanik.test.js` | archiviert | haengt an der vorkanonischen `0-3`-Umformungsarchitektur und einer alten Solver-API | `tests/active/core_solve_flow.test.js`, `core/P2_Strategie_Analyse/Validierung.test.js`, `core/P3_Umformung/Validierung.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/topologie_check.test.js` | archiviert | benutzt den alten Pfad `core/3_Projektion/Regelwerk.js` und eine flache Topologie-API | `tests/active/p4_positionstreue.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/core/fraction_transformation.test.js` | archiviert | importiert die alte `transformation/fraction_logic`-Schicht statt der heutigen Familienkette | `tests/active/core_solve_flow.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/core/integration_full_flow.test.js` | archiviert | haengt an alten `transformation/`- und `topology/`-Pfaden | `tests/active/p4_positionstreue.test.js`, `tests/active/p4_mehrschritt_positionstreue.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/core/monster_scaling.test.js` | archiviert | setzt eine veraltete Nennerdarstellung voraus, in der alle Nennerteile auf exakt derselben Spalte liegen | `tests/active/p4_positionstreue.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/core/topology_final.test.js` | archiviert | prueft lokale Spaltenannahmen wie `x == col0` statt die heutige globale PreFlight-Ankerlogik | `tests/active/p4_positionstreue.test.js`, `tests/active/p4_mehrschritt_positionstreue.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/core_solve_flow_pre_genesis.test.js` | archiviert | verlangt Reservespalten, `flowDirection` und gebuendelte Schalen aus dem vorkanonischen Standardlauf | `tests/active/core_solve_flow.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/target_variable_selection_pre_genesis.test.js` | archiviert | bindet Zielwahl und Geometrie an den alten Standardlauf | `tests/active/target_variable_selection.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/cosine_law_gamma_pre_genesis.test.js` | archiviert | erwartet `cos(gamma)` als gebuendelte Zelle statt atomarer Funktionsschale | `tests/active/cosine_law_gamma.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/cockpit_color_targets_pre_genesis.test.js` | archiviert | erwartet aus alten Zeilentexten geratene Cockpit-Farbziele | `tests/active/cockpit_color_targets.test.js`, `tests/active/cockpit_theory_labels.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/worksheet_display_model_pre_atomic.test.js` | archiviert | verlangt gebuendelte Root-Zellen und einen vom DisplayModel erfundenen Root-Vorslot | `tests/active/worksheet_display_model.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/law_of_sines_display_slot_fidelity_pre_atomic.test.js` | archiviert | sucht synthetische `closed_visible_shell`-Zaehler ueber fest verdrahtete alte IDs | `tests/active/law_of_sines_display_slot_fidelity.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/law_of_sines_birth_fraction_band_shells_pre_atomic.test.js` | archiviert | verlangt synthetische bandbreite Zaehler-COLLECTIONs statt der atomaren Zaehlerzellen plus P4-Bruchspanne | `tests/active/law_of_sines_start_shell_primitives.test.js`, `tests/active/law_of_sines_display_slot_fidelity.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/root_chrome_overlay_contract_pre_atomic.test.js` | archiviert | verlangt eine im ViewModel gebuendelte Root-Chrome-Zelle und gebuendelte Potenztexte | `tests/active/genesis_runtime_p4_projection.test.js`, `tests/active/genesis_runtime_view_model_columns.test.js`, `tests/active/worksheet_display_model.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/bridge_worksheet_final_render_pre_atomic.test.js` | archiviert | importiert die entfernte Aggregationshilfe `stepLayout.js` und erwartet LaTeX-Makrofragmente statt Worksheet-Zellen | `tests/active/bridge_worksheet_final_render.test.js`, `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/latex_closed_shell_cells_regression_pre_atomic.test.js` | archiviert | liest ausschliesslich Knoten des alten `pFourCell`-Sammelrenderers aus | `tests/active/latex_atomic_projection_rendering.test.js`, `tests/active/latex_export_display_slot_fidelity.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/latex_fraction_child_visual_centering_regression_pre_atomic.test.js` | archiviert | fordert eine nachtraegliche optische Zentrierung von Zaehlerzellen durch den Renderer und widerspricht damit der gelieferten funktionalen Position | `tests/active/law_of_sines_display_slot_fidelity.test.js`, `tests/active/latex_export_display_slot_fidelity.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/latex_fraction_consumption_regression_pre_atomic.test.js` | archiviert | fordert ausdruecklich das Konsumieren atomarer Bruchkinder in eine gemeinsame `pFourFraction`-Zelle | `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/latex_fraction_edge_alignment_regression_pre_atomic.test.js` | archiviert | prueft alte `pFourCell`-, `pFourBottomAlign`- und gebuendelte `log_B`-Makros statt der gelieferten Einzelzellen | `tests/active/active_runtime_export_wrappers.test.js`, `tests/active/latex_export_display_slot_fidelity.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/latex_nested_fraction_centering_regression_pre_atomic.test.js` | archiviert | bindet verschachtelte Brueche und Funktionen an alte `pFourCell`- und `hrule`-Knotenformen | `tests/active/bridge_worksheet_final_render.test.js`, `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/latex_p4_column_layout_pre_atomic.test.js` | archiviert | vermischt Column Layout, Solverfamilien und Sammelrenderer und verlangt synthetische Root-, Power- und Fraction-Zellen | `tests/active/latex_p4_column_layout.test.js`, `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/latex_p4_export_pre_atomic.test.js` | archiviert | ist ein breiter Systemtest fuer die entfernte Makrofamilie `pFourCell`, `pFourFraction` und `pFourRoot` | `tests/active/active_runtime_export_wrappers.test.js`, `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/latex_power_inverse_rendering_regression_pre_atomic.test.js` | archiviert | verlangt zusammengesetzte `B^{x}`- und inverse Potenzmakros aus mehreren P4-Zellen | `tests/active/genesis_runtime_p4_projection.test.js`, `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/logarithm_notation_regression_pre_atomic.test.js` | archiviert | vermischt Core, Cockpit, Delimitergeometrie und alte LaTeX-Aggregate in einem Test | `tests/active/logarithm_notation_regression.test.js`, `tests/active/active_runtime_export_wrappers.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/root_shell_projection_export_pre_atomic.test.js` | archiviert | fordert eine synthetische `pFourRoot`-Gesamtzelle statt getrennter Hook-, Overbar- und Inhaltszellen | `tests/active/genesis_runtime_view_model_columns.test.js`, `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/renderer_kernel_target_entrypoint_pre_atomic.test.js` | archiviert | erklaert die rekonstruktiven Scene-Plan-, Root- und Group-APIs zum oeffentlichen Pflichtumfang | `tests/active/renderer_kernel_target_entrypoint.test.js`, `tests/active/renderer_kernel_render_scene_ingest.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/renderer_kernel_scene_plan_pre_atomic.test.js` | archiviert | gruppiert atomare Szenenknoten erneut zu Shell-Tracks und erwartet daraus abgeleitete Sammelspuren | `tests/active/renderer_kernel_render_scene_ingest.test.js`, `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/renderer_kernel_root_geometry_plan_pre_atomic.test.js` | archiviert | fordert aus geometrischem Einschluss rekonstruierte Wurzelkinder und Inhaltsbounds | `tests/active/genesis_runtime_p4_projection.test.js`, `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/renderer_kernel_root_projection_pre_atomic.test.js` | archiviert | baut eine gemeinsame Wurzelprojektion aus rekonstruierten Root-Tracks statt Hook und Overbar atomar abzubilden | `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/renderer_kernel_group_geometry_plan_pre_atomic.test.js` | archiviert | entdeckt Gruppeninhalt und Kindschalen durch geometrischen Einschluss | `tests/active/genesis_runtime_p4_projection.test.js`, `tests/active/latex_atomic_projection_rendering.test.js` |
+| `alt/2026-09-10_pre_genesis_tests/tests/legacy/renderer_kernel_group_projection_pre_atomic.test.js` | archiviert | baut Klammerpaare aus rekonstruierten Group-Tracks statt die gelieferten Klammerzellen einzeln zu setzen | `tests/active/latex_atomic_projection_rendering.test.js` |
+
+## Lesart
+- `archiviert` bedeutet hier: historische Referenz ja, produktive Ausfuehrung nein.
+- Die fachliche Idee ist entweder bereits migriert oder im heutigen Kernmodell absichtlich anders formuliert.
+- Neue aktive Tests sollen immer an `core/index.js`, `P4_Projektion` oder die aktuelle Komponentenstruktur andocken, nie an alte `0-3`, `transformation/` oder `topology/`-Pfade.
+- Das Archiv ist wiederherstellbar und wird nicht ausgefuehrt; Verschieben ist
+  keine Loeschung.

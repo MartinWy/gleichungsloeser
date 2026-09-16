@@ -1,0 +1,682 @@
+:root {
+    --paper: #f7f1e3;
+    --paper-edge: #e7dcc5;
+    --ink: #231c15;
+    --muted: #746758;
+    --accent: #9c5b2d;
+    --accent-soft: #e7c79f;
+    --line: #d6c7ae;
+    --card: rgba(255, 252, 245, 0.92);
+    --shadow: 0 20px 40px rgba(55, 39, 22, 0.12);
+    --radius: 22px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    background:
+        radial-gradient(circle at top left, rgba(156, 91, 45, 0.14), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(95, 123, 96, 0.12), transparent 32%),
+        linear-gradient(180deg, #f8f2e8 0%, #efe5d2 100%);
+    color: var(--ink);
+    font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+}
+
+code,
+.field input,
+.worksheet-grid {
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.page-shell {
+    width: min(1200px, calc(100vw - 32px));
+    margin: 32px auto 56px;
+}
+
+.hero,
+.control-panel,
+.color-panel,
+.print-summary,
+.worksheet-sheet {
+    background: var(--card);
+    border: 1px solid rgba(117, 102, 83, 0.18);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 28px 30px;
+}
+
+.eyebrow {
+    margin: 0 0 10px;
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: clamp(2rem, 4vw, 3.4rem);
+    line-height: 0.95;
+}
+
+.hero-text {
+    margin: 14px 0 0;
+    max-width: 60ch;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: var(--muted);
+}
+
+.hero-actions {
+    display: flex;
+    align-items: center;
+}
+
+.control-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(220px, 0.8fr) auto;
+    gap: 18px;
+    align-items: end;
+    padding: 22px 24px;
+    margin-top: 20px;
+}
+
+.color-panel {
+    margin-top: 18px;
+    padding: 20px 24px 22px;
+}
+
+.color-panel__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.color-panel__copy h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.05;
+}
+
+.color-panel__text {
+    margin: 10px 0 0;
+    max-width: 62ch;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.color-panel__actions {
+    display: flex;
+    align-items: center;
+}
+
+.color-rules {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.color-rule {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(117, 102, 83, 0.18);
+    background: rgba(255, 255, 255, 0.62);
+    transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.color-rule.is-selected {
+    border-color: rgba(156, 91, 45, 0.42);
+    box-shadow: 0 12px 24px rgba(156, 91, 45, 0.12);
+    transform: translateY(-1px);
+}
+
+.color-rule__input {
+    width: 2.8rem;
+    height: 2.8rem;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.color-rule__input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-rule__input::-webkit-color-swatch,
+.color-rule__input::-moz-color-swatch {
+    border: 1px solid rgba(117, 102, 83, 0.22);
+    border-radius: 999px;
+}
+
+.color-rule__label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.color-rule__title {
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.color-rule__meta {
+    font-size: 0.82rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.color-rule__reset {
+    padding: 10px 14px;
+    font-size: 0.84rem;
+}
+
+.math-shell-chrome[data-shell-type],
+.worksheet-fraction-line[data-shell-type] {
+    cursor: pointer;
+}
+
+.math-shell-chrome[data-shell-type]:hover,
+.worksheet-fraction-line[data-shell-type]:hover {
+    filter: saturate(1.08);
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.field-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.field-hint {
+    font-size: 0.84rem;
+    line-height: 1.45;
+    color: var(--muted);
+}
+
+.field-hint code {
+    font-size: 0.82rem;
+    color: var(--ink);
+}
+
+.field input {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fffdfa;
+    padding: 14px 16px;
+    font-size: 1rem;
+    color: var(--ink);
+}
+
+.field input:focus {
+    outline: 2px solid rgba(156, 91, 45, 0.24);
+    border-color: var(--accent);
+}
+
+.primary-button,
+.secondary-button {
+    border: none;
+    border-radius: 999px;
+    padding: 14px 20px;
+    font-size: 0.98rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.primary-button {
+    background: var(--accent);
+    color: #fff8ef;
+    box-shadow: 0 10px 24px rgba(156, 91, 45, 0.28);
+}
+
+.secondary-button {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid rgba(156, 91, 45, 0.28);
+}
+
+.primary-button:hover,
+.secondary-button:hover {
+    transform: translateY(-1px);
+}
+
+.status {
+    min-height: 1.4rem;
+    margin: 14px 6px 0;
+    font-size: 0.95rem;
+    color: var(--muted);
+}
+
+.status.is-error {
+    color: #8c2f21;
+}
+
+.print-summary {
+    margin-top: 22px;
+    padding: 20px 24px;
+}
+
+.summary-line {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.55;
+}
+
+.summary-line strong {
+    color: var(--ink);
+}
+
+.results {
+    margin-top: 22px;
+}
+
+.diagnostics {
+    margin-top: 18px;
+    padding: 18px 22px;
+    background: rgba(255, 252, 245, 0.82);
+    border: 1px solid rgba(117, 102, 83, 0.18);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+}
+
+.diagnostics-panel {
+    display: grid;
+    gap: 14px;
+}
+
+.diagnostics-intro,
+.diagnostics-subtitle {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.45;
+}
+
+.diagnostics-step {
+    border: 1px solid rgba(117, 102, 83, 0.16);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.55);
+    padding: 10px 12px;
+}
+
+.diagnostics-step summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.diagnostics-list {
+    margin: 10px 0 0;
+    padding-left: 18px;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+.worksheet-sheet {
+    overflow-x: auto;
+    padding: 24px 28px 28px;
+}
+
+.worksheet-grid {
+    display: grid;
+    gap: 0.16rem 0;
+    align-items: end;
+    width: max-content;
+    min-width: 100%;
+}
+
+.worksheet-atom,
+.worksheet-fraction-line {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    color: var(--ink);
+    transform: translateY(calc(var(--row-axis-shift, 0em) + var(--cell-shift-y, 0em)));
+}
+
+.worksheet-atom {
+    min-height: var(--cell-axis-min-height, 1.1em);
+    padding: 0;
+    font-size: clamp(1.55rem, 2.6vw, 2.35rem);
+    line-height: 1;
+    white-space: nowrap;
+    font-weight: 500;
+    --render-box-scale: 1;
+    --render-row-gap: 0.02em;
+    --render-margin-inline: 0;
+    --render-bar-thickness: 0.08em;
+    --render-exponent-lift: 0.34em;
+    --render-exponent-gap: 0em;
+    --render-root-pad-top: 0.08em;
+    --render-root-pad-left: 0.12em;
+    --render-root-sign-scale: 1.15;
+    --render-root-min-height: 1.08em;
+    --render-root-content-height: 1.08em;
+    --render-root-target-height: 1.08em;
+    --render-root-stretch-y: 1;
+    --render-root-origin-offset: 0.04em;
+    --render-root-extra-width: 0em;
+    --render-delimiter-content-height: 1.02em;
+    --render-delimiter-target-height: 1.02em;
+    --render-delimiter-scale-y: 1;
+    --render-delimiter-origin-offset: 0.08em;
+    --render-separator-opacity: 1;
+}
+
+.worksheet-atom.is-axis {
+    padding-top: calc(var(--row-axis-top-reserve, 0em) * 0.02);
+    padding-bottom: calc(var(--row-axis-bottom-reserve, 0em) * 0.04);
+}
+
+.worksheet-atom.role-power_left,
+.worksheet-atom.role-power_right {
+    align-self: stretch;
+    align-items: stretch;
+    min-height: 100%;
+}
+
+.math-atomic-power-delimiter {
+    display: block;
+    width: 0.55em;
+    height: 100%;
+    min-height: 1em;
+    overflow: visible;
+}
+
+.math-sequence,
+.math-group,
+.math-group__content,
+.math-function,
+.math-function__argument,
+.math-function__argument__content,
+.math-root,
+.math-root__content,
+.math-power,
+.math-power__base,
+.math-power__base-group,
+.math-power__base-group__content,
+.math-multiplication,
+.math-negation,
+.math-negation__content,
+.math-negation__group,
+.math-negation__group__content {
+    display: inline-flex;
+}
+
+.math-sequence,
+.math-group,
+.math-function,
+.math-root,
+.math-power,
+.math-multiplication,
+.math-negation {
+    align-items: flex-end;
+}
+
+.math-group,
+.math-function,
+.math-root,
+.math-power,
+.math-multiplication,
+.math-negation {
+    margin-inline: var(--render-margin-inline, 0);
+}
+
+.math-text--operator,
+.math-delimiter {
+    padding-inline: 0.08em;
+}
+
+.math-delimiter {
+    display: inline-flex;
+    align-items: flex-end;
+    justify-content: center;
+    line-height: 1;
+    transform-origin: center calc(100% - var(--render-delimiter-origin-offset, 0.08em));
+    transform: scaleY(var(--render-delimiter-scale-y, 1));
+}
+
+.math-shell-chrome {
+    color: var(--shell-color, currentColor);
+}
+
+.math-function__name {
+    display: inline-flex;
+    align-items: flex-end;
+    margin-right: 0.02em;
+}
+
+.math-function__base {
+    display: inline-flex;
+    align-items: flex-end;
+    margin-left: 0.04em;
+    font-size: 0.72em;
+    line-height: 1;
+    transform: translateY(0.22em);
+}
+
+.math-multiplication__separator {
+    padding-inline: 0.08em;
+    opacity: var(--render-separator-opacity, 1);
+}
+
+.math-root {
+    align-items: flex-start;
+}
+
+.math-root[data-chrome-only="true"] {
+    width: 100%;
+    min-width: 100%;
+}
+
+.math-root__sign {
+    flex: 0 0 auto;
+    position: relative;
+    width: calc(var(--render-root-sign-scale, 1.15) * (0.64em + var(--render-root-extra-width, 0em)));
+    min-width: calc(var(--render-root-sign-scale, 1.15) * (0.64em + var(--render-root-extra-width, 0em)));
+    min-height: var(--render-root-target-height, 1.08em);
+    margin-right: 0.04em;
+    overflow: visible;
+}
+
+.math-root__degree {
+    position: absolute;
+    left: -0.22em;
+    top: -0.28em;
+    font-size: 0.48em;
+    line-height: 1;
+    color: var(--shell-color, currentColor);
+}
+
+.math-root__sign::before {
+    content: "\221A";
+    position: absolute;
+    left: 0;
+    bottom: -0.02em;
+    font-size: calc(var(--render-root-sign-scale, 1.15) * 1em);
+    line-height: 1;
+    color: var(--shell-color, currentColor);
+    transform-origin: left calc(100% - var(--render-root-origin-offset, 0.04em));
+    transform: scaleY(var(--render-root-stretch-y, 1));
+}
+
+.math-root__content {
+    display: inline-flex;
+    border-top: 0.08em solid var(--shell-color, currentColor);
+    padding:
+        calc(var(--render-root-pad-top, 0.08em) + (var(--render-axis-top-reserve, 0em) * 0.06))
+        0
+        calc(var(--render-axis-bottom-reserve, 0em) * 0.03)
+        var(--render-root-pad-left, 0.12em);
+    min-height: max(var(--render-root-min-height, 1.08em), var(--render-root-content-height, 1.08em));
+}
+
+.math-root[data-chrome-only="true"] .math-root__content {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.math-power {
+    align-items: flex-start;
+}
+
+.math-power__exponent {
+    font-size: 0.58em;
+    line-height: 1;
+    transform: translateY(calc(-1 * (var(--render-exponent-lift, 0.34em) + (var(--render-axis-balance, 0em) * 0.08))));
+    margin-left: var(--render-exponent-gap, 0);
+}
+
+.math-fraction {
+    display: inline-grid;
+    grid-template-rows: auto auto auto;
+    justify-items: center;
+    align-items: center;
+    min-width: 1.5ch;
+    line-height: 1;
+    font-size: calc(var(--render-box-scale, 1) * 1em);
+    row-gap: var(--render-row-gap, 0.02em);
+    margin: 0 var(--render-margin-inline, 0.06em);
+}
+
+.math-fraction__numerator,
+.math-fraction__denominator {
+    display: inline-flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-inline: 0.08em;
+}
+
+.math-fraction__numerator {
+    padding-bottom: calc(var(--render-axis-top-reserve, 0em) * 0.09);
+}
+
+.math-fraction__denominator {
+    padding-top: calc(var(--render-axis-bottom-reserve, 0em) * 0.12);
+}
+
+.math-fraction__bar {
+    width: 100%;
+    min-width: 1.4ch;
+    border-bottom: var(--render-bar-thickness, 0.08em) solid var(--shell-color, currentColor);
+    transform: translateY(calc(-0.02em - (var(--render-axis-balance, 0em) * 0.04)));
+}
+
+/* Eine geschlossene Bruch-Schale muss ihre komplette zugewiesene
+   Shell-Breite sichtbar benutzen. So bleibt sie beim Transport als
+   Block stabil und aeussere Klammern koennen sich an der echten
+   sichtbaren Bruchbox orientieren. */
+.worksheet-atom.role-closed_visible_shell > .math-fraction {
+    width: 100%;
+    margin-inline: 0;
+}
+
+.worksheet-fraction-line {
+    align-self: end;
+    width: 100%;
+    min-width: 2.3ch;
+    height: var(--fraction-line-height, 0.32em);
+    border-bottom: var(--fraction-line-thickness, 0.09em) solid currentColor;
+    color: var(--ink);
+}
+
+.empty-state {
+    padding: 28px 30px;
+    border-radius: var(--radius);
+    border: 1px dashed rgba(117, 102, 83, 0.3);
+    color: var(--muted);
+    background: rgba(255, 252, 245, 0.6);
+}
+
+@media (max-width: 900px) {
+    .page-shell {
+        width: min(100vw, calc(100vw - 18px));
+        margin: 12px auto 32px;
+    }
+
+    .hero,
+    .control-panel {
+        padding: 18px;
+    }
+
+    .hero {
+        flex-direction: column;
+    }
+
+    .control-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-actions,
+    .primary-button,
+    .secondary-button {
+        width: 100%;
+    }
+}
+
+@media print {
+    body {
+        background: #ffffff;
+        color: #000000;
+    }
+
+    .page-shell {
+        width: 100%;
+        margin: 0;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .results {
+        margin-top: 0;
+    }
+
+    .hero,
+    .print-summary {
+        display: none !important;
+    }
+
+    .worksheet-sheet {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        background: #ffffff;
+        padding: 0;
+    }
+
+    .worksheet-atom {
+        font-size: 20pt;
+    }
+}

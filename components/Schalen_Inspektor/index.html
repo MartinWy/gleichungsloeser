@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Genesis Schalen-Inspektor v1.7</title>
+    <style>
+        body { font-family: 'Courier New', monospace; background: #000; color: #fff; padding: 40px; }
+        .container { display: flex; flex-direction: column; gap: 20px; }
+        input { 
+            background: #222; color: #00ff00; border: 1px solid #00ff00; 
+            padding: 15px; font-size: 1.5rem; width: 100%; max-width: 600px; 
+            outline: none; margin-bottom: 20px;
+        }
+        .step-container {
+            border-left: 4px solid #333;
+            margin-bottom: 30px;
+            padding-left: 20px;
+        }
+        .equation-row { 
+            display: flex; gap: 15px; align-items: center; 
+            padding: 20px; border: 1px solid #222; min-height: 80px; 
+            background: #050505;
+        }
+        .shell-root, .shell-power { padding: 15px; border-radius: 10px; position: relative; display: flex; gap: 8px; border: 2px solid; }
+        .shell-root { border-color: #00d4ff; background: rgba(0, 212, 255, 0.05); }
+        .shell-power { border-color: #ff00ff; background: rgba(255, 0, 255, 0.05); }
+        .shell-root::before, .shell-power::before { 
+            position: absolute; top: -12px; left: 10px; color: #000; 
+            font-weight: bold; font-size: 0.6rem; padding: 1px 6px; border-radius: 3px; 
+        }
+        .shell-root::before { content: 'ROOT'; background: #00d4ff; }
+        .shell-power::before { content: 'POWER'; background: #ff00ff; }
+        
+        .atom { background: #111; padding: 8px 12px; border-radius: 4px; border: 1px solid #333; text-align: center; min-width: 30px; }
+        .atom-variable { color: #ff00ff; border-color: #ff00ff; }
+        .atom-number { color: #00ff00; border-color: #00ff00; }
+        .atom-operator { color: #ffa500; border-color: #ffa500; }
+        .is-hidden { opacity: 0.1; border-style: dashed; filter: grayscale(1); }
+        .is-befreit { border-color: #00ff00; box-shadow: 0 0 10px rgba(0,255,0,0.2); }
+
+        .id-label { font-size: 0.5rem; color: #444; display: block; }
+        h3 { color: #00ff00; margin: 0 0 10px 0; font-size: 0.8rem; text-transform: uppercase; }
+        .strategy-label { color: #666; font-size: 0.7rem; margin-bottom: 5px; font-style: italic; }
+        pre { background: #0a0a0a; color: #444; padding: 15px; font-size: 0.7rem; overflow: auto; max-height: 200px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Genesis Schalen-Inspektor <small style="color:#444">v1.7 (Iterative Steps)</small></h1>
+        <div id="status" style="color: #666; font-size: 0.8rem;">Initialisiere...</div>
+        <input type="text" id="inputField" value="sqrt(x^2)=5">
+        
+        <div id="steps-canvas"></div>
+
+        <h3>Rohdaten (JSON)</h3>
+        <pre id="debug"></pre>
+    </div>
+
+    <script type="module">
+        import GenesisCore from '../../core/index.js';
+
+        const input = document.getElementById('inputField');
+        const stepsCanvas = document.getElementById('steps-canvas');
+        const debug = document.getElementById('debug');
+        const status = document.getElementById('status');
+
+        function render(data, parent) {
+            if (!data) return;
+            if (Array.isArray(data)) { data.forEach(item => render(item, parent)); return; }
+
+            const div = document.createElement('div');
+            if (data.isVisible === false) div.className = 'is-hidden';
+            if (data.isBefreit) div.classList.add('is-befreit');
+
+            if (data.type === 'ROOT' || data.type === 'POWER') {
+                div.classList.add(`shell-${data.type.toLowerCase()}`);
+                render(data.content, div);
+                if (data.type === 'POWER') {
+                    const e = document.createElement('span');
+                    e.style.cssText = "position:absolute; top:-10px; right:5px; background:#ff00ff; color:#000; font-size:0.5rem; padding:1px 3px; border-radius:2px; font-weight:bold;";
+                    e.innerText = '^' + (data.exponent || 2);
+                    div.appendChild(e);
+                }
+            } else {
+                div.classList.add('atom', `atom-${data.type ? data.type.toLowerCase() : 'unknown'}`);
+                div.innerHTML = `<span class="id-label">${data.id ? data.id.split('-').pop() : ''}</span><strong>${data.value || ''}</strong>`;
+            }
+            parent.appendChild(div);
+        }
+
+        function createStepUI(title, strategyLabel) {
+            const container = document.createElement('div');
+            container.className = 'step-container';
+            if (strategyLabel) {
+                const label = document.createElement('div');
+                label.className = 'strategy-label';
+                label.innerText = '↳ ' + strategyLabel;
+                container.appendChild(label);
+            }
+            const h3 = document.createElement('h3');
+            h3.innerText = title;
+            container.appendChild(h3);
+            const row = document.createElement('div');
+            row.className = 'equation-row';
+            container.appendChild(row);
+            return { container, row };
+        }
+
+        async function update() {
+            if (!GenesisCore) return;
+            stepsCanvas.innerHTML = '';
+            status.innerText = 'Verarbeite...';
+            
+            try {
+                const result = await GenesisCore.solve(input.value);
+                debug.innerText = JSON.stringify(result, null, 2);
+
+                // 1. Start-Zustand (P1)
+                // Hier tricksen wir kurz, um die Struktur vor dem ersten Schritt zu zeigen
+                const initialStep = createStepUI('START-STRUKTUR');
+                // Wir nehmen die Struktur aus dem ersten Schritt oder die finale, falls keine Schritte
+                const initialStruktur = result.schritte.length > 0 ? result.schritte[0].struktur : result.finaleStruktur;
+                render(initialStruktur, initialStep.row);
+                stepsCanvas.appendChild(initialStep.container);
+
+                // 2. Alle Iterations-Schritte rendern
+                result.schritte.forEach((step, index) => {
+                    const stepUI = createStepUI(`SCHRITT ${index + 1}`, step.strategie.label);
+                    render(step.struktur, stepUI.row);
+                    stepsCanvas.appendChild(stepUI.container);
+                });
+
+                status.innerText = 'Bereit.';
+            } catch (e) { 
+                status.innerText = 'Fehler!';
+                console.error(e); 
+            }
+        }
+
+        input.addEventListener('input', update);
+        
+        // Initialer Start
+        (async () => {
+            status.innerText = 'Lade GenesisCore...';
+            update();
+            status.innerText = 'GenesisCore bereit.';
+        })();
+    </script>
+</body>
+</html>

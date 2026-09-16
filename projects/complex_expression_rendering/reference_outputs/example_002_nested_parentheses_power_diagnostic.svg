@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="988.84" height="332" viewBox="0 0 988.84 332">
+  <rect width="100%" height="100%" fill="white" />
+  <text x="48" y="48.00" font-size="22" font-weight="700" font-family="Georgia, serif" fill="#111827">Verschachtelte Klammern mit Bruch und Potenzen</text>
+  <text x="48" y="74.00" font-size="12" font-family="Menlo, monospace" fill="#374151">Lokale Spalten und Spannbreiten; Schalen liegen ausserhalb der Content-Spannen.</text>
+  <text x="48" y="94.00" font-size="11" font-family="Menlo, monospace" fill="#6b7280">Blau/Rot/Gruen/... = lokale Spanngrenzen je Hierarchieebene, grau gestrichelt = lokale Spaltenlinien.</text>
+  <line x1="471.38" y1="184.00" x2="471.38" y2="218.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="488.38" y1="184.00" x2="488.38" y2="218.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="471.38" y1="238.00" x2="471.38" y2="272.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="488.38" y1="238.00" x2="488.38" y2="272.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="459.38" y1="180.00" x2="459.38" y2="276.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="500.38" y1="180.00" x2="500.38" y2="276.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="459.38" y1="180.00" x2="459.38" y2="276.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="500.38" y1="180.00" x2="500.38" y2="276.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="520.38" y1="189.12" x2="520.38" y2="210.20" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="530.92" y1="189.12" x2="530.92" y2="210.20" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="443.38" y1="176.00" x2="443.38" y2="280.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="516.38" y1="176.00" x2="516.38" y2="280.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="530.92" y1="176.00" x2="530.92" y2="280.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="443.38" y1="176.00" x2="443.38" y2="280.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="530.92" y1="176.00" x2="530.92" y2="280.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="550.92" y1="189.12" x2="550.92" y2="210.20" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="561.46" y1="189.12" x2="561.46" y2="210.20" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="427.38" y1="172.00" x2="427.38" y2="284.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="546.92" y1="172.00" x2="546.92" y2="284.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <line x1="561.46" y1="172.00" x2="561.46" y2="284.00" stroke="#cbd5e1" stroke-width="0.7" stroke-dasharray="3 3" />
+  <text x="427.38" y="228.00" font-size="93.60" fill="#6b7280" font-family="Times New Roman, serif">(</text>
+  <text x="532.92" y="228.00" font-size="93.60" fill="#6b7280" font-family="Times New Roman, serif">)</text>
+  <text x="443.38" y="228.00" font-size="86.40" fill="#6b7280" font-family="Times New Roman, serif">(</text>
+  <text x="502.38" y="228.00" font-size="86.40" fill="#6b7280" font-family="Times New Roman, serif">)</text>
+  <text x="471.38" y="208.00" font-size="30.00" fill="#111827" font-family="Times New Roman, serif" font-style="italic">1</text>
+  <rect x="471.38" y="184.00" width="17.00" height="34.00" fill="none" stroke="#2563eb" stroke-width="1.1" rx="2" ry="2" />
+  <text x="475.38" y="180.00" font-size="10" fill="#2563eb" font-family="Menlo, monospace">text</text>
+  <text x="471.38" y="262.00" font-size="30.00" fill="#111827" font-family="Times New Roman, serif" font-style="italic">2</text>
+  <rect x="471.38" y="238.00" width="17.00" height="34.00" fill="none" stroke="#2563eb" stroke-width="1.1" rx="2" ry="2" />
+  <text x="475.38" y="234.00" font-size="10" fill="#2563eb" font-family="Menlo, monospace">text</text>
+  <line x1="459.38" y1="228.00" x2="500.38" y2="228.00" stroke="#d97706" stroke-width="1.4" />
+  <rect x="459.38" y="180.00" width="41.00" height="96.00" fill="none" stroke="#d97706" stroke-width="1.1" rx="2" ry="2" />
+  <text x="463.38" y="176.00" font-size="10" fill="#d97706" font-family="Menlo, monospace">fraction</text>
+  <rect x="459.38" y="180.00" width="41.00" height="96.00" fill="none" stroke="#7c3aed" stroke-width="1.1" rx="2" ry="2" />
+  <text x="463.38" y="176.00" font-size="10" fill="#7c3aed" font-family="Menlo, monospace">group-content</text>
+  <text x="520.38" y="204.00" font-size="18.60" fill="#111827" font-family="Times New Roman, serif" font-style="italic">2</text>
+  <rect x="520.38" y="189.12" width="10.54" height="21.08" fill="none" stroke="#7c3aed" stroke-width="1.1" rx="2" ry="2" />
+  <text x="524.38" y="185.12" font-size="10" fill="#7c3aed" font-family="Menlo, monospace">text</text>
+  <rect x="443.38" y="176.00" width="73.00" height="104.00" fill="none" stroke="#059669" stroke-width="1.1" rx="2" ry="2" />
+  <text x="447.38" y="172.00" font-size="10" fill="#059669" font-family="Menlo, monospace">base</text>
+  <rect x="520.38" y="189.12" width="10.54" height="21.08" fill="none" stroke="#059669" stroke-width="1.1" rx="2" ry="2" />
+  <text x="524.38" y="185.12" font-size="10" fill="#059669" font-family="Menlo, monospace">exp</text>
+  <rect x="443.38" y="176.00" width="87.54" height="104.00" fill="none" stroke="#dc2626" stroke-width="1.1" rx="2" ry="2" />
+  <text x="447.38" y="172.00" font-size="10" fill="#dc2626" font-family="Menlo, monospace">group-content</text>
+  <text x="550.92" y="204.00" font-size="18.60" fill="#111827" font-family="Times New Roman, serif" font-style="italic">2</text>
+  <rect x="550.92" y="189.12" width="10.54" height="21.08" fill="none" stroke="#dc2626" stroke-width="1.1" rx="2" ry="2" />
+  <text x="554.92" y="185.12" font-size="10" fill="#dc2626" font-family="Menlo, monospace">text</text>
+  <rect x="427.38" y="172.00" width="119.54" height="112.00" fill="none" stroke="#2563eb" stroke-width="1.1" rx="2" ry="2" />
+  <text x="431.38" y="168.00" font-size="10" fill="#2563eb" font-family="Menlo, monospace">base</text>
+  <rect x="550.92" y="189.12" width="10.54" height="21.08" fill="none" stroke="#2563eb" stroke-width="1.1" rx="2" ry="2" />
+  <text x="554.92" y="185.12" font-size="10" fill="#2563eb" font-family="Menlo, monospace">exp</text>
+</svg>

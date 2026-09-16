@@ -1,0 +1,55 @@
+{
+  "id": "example_001_nested_root_fraction",
+  "title": "Verschachtelte Wurzel ueber Bruch mit innerer Wurzel",
+  "latex": "\\sqrt{\\frac{1+b^2}{\\left(\\sqrt{\\left(\\frac{1}{2-a}\\right)}\\right)}}",
+  "principles": [
+    "Wurzeln sind Schalen, keine Spalten.",
+    "Klammern sind Schalen, keine Spalten.",
+    "Die aeussere Wurzel erzeugt keinen linearen Rasterraum fuer ihren Inhalt.",
+    "Der Hauptbruch erzeugt einen lokalen Stapel aus Zaehler und Nenner.",
+    "Die innere Wurzel im Nenner ist wieder eine lokale Schale ueber lokalem Inhalt.",
+    "Nur ueberlagerte Vertikalbeziehungen teilen sich dieselbe lokale Spanne."
+  ],
+  "structure": {
+    "type": "root",
+    "content": {
+      "type": "fraction",
+      "numerator": {
+        "type": "sequence",
+        "items": [
+          { "type": "text", "text": "1" },
+          { "type": "text", "text": "+" },
+          {
+            "type": "power",
+            "base": { "type": "text", "text": "b" },
+            "exponent": { "type": "text", "text": "2" }
+          }
+        ]
+      },
+      "denominator": {
+        "type": "group",
+        "content": {
+          "type": "root",
+          "content": {
+            "type": "group",
+            "content": {
+              "type": "fraction",
+              "numerator": {
+                "type": "text",
+                "text": "1"
+              },
+              "denominator": {
+                "type": "sequence",
+                "items": [
+                  { "type": "text", "text": "2" },
+                  { "type": "text", "text": "-" },
+                  { "type": "text", "text": "a" }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

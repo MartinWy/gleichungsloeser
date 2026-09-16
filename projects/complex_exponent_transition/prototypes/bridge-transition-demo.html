@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bridge Transition Demo</title>
+    <style>
+        :root {
+            --paper: #f7f2e8;
+            --ink: #1a1714;
+            --muted: #6b6258;
+            --accent: #0f766e;
+            --accent-strong: #0b5d57;
+            --amber: #b45309;
+            --panel: rgba(255, 255, 255, 0.74);
+            --line: rgba(26, 23, 20, 0.12);
+            --grid: rgba(26, 23, 20, 0.07);
+            --shadow: 0 18px 40px rgba(30, 24, 16, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(15, 118, 110, 0.10), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(180, 83, 9, 0.08), transparent 30%),
+                linear-gradient(180deg, #fbf8f3 0%, var(--paper) 100%);
+        }
+
+        .page {
+            width: min(1320px, calc(100vw - 40px));
+            margin: 28px auto 40px;
+        }
+
+        .hero {
+            display: grid;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .eyebrow {
+            margin: 0;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-size: 12px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(34px, 5vw, 60px);
+            line-height: 0.94;
+            font-weight: 500;
+            max-width: 14ch;
+        }
+
+        .lead {
+            margin: 0;
+            max-width: 84ch;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 340px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .stage-card,
+        .panel {
+            background: var(--panel);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(26, 23, 20, 0.08);
+            box-shadow: var(--shadow);
+            border-radius: 28px;
+        }
+
+        .stage-card {
+            padding: 18px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 11.2;
+            border-radius: 24px;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.72));
+        }
+
+        .stage::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.12));
+            pointer-events: none;
+        }
+
+        svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .station-strip {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .station {
+            appearance: none;
+            border: 1px solid rgba(26, 23, 20, 0.10);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.66);
+            color: var(--ink);
+            text-align: left;
+            padding: 12px 14px;
+            font: inherit;
+            cursor: pointer;
+            transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+        }
+
+        .station:hover {
+            transform: translateY(-1px);
+            border-color: rgba(15, 118, 110, 0.32);
+        }
+
+        .station.active {
+            background: rgba(15, 118, 110, 0.12);
+            border-color: rgba(15, 118, 110, 0.40);
+        }
+
+        .station-kicker {
+            display: block;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+
+        .station-label {
+            display: block;
+            font-size: 17px;
+            margin-bottom: 4px;
+        }
+
+        .station-eq {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.35;
+        }
+
+        .panel {
+            padding: 18px 18px 16px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .panel-head {
+            display: grid;
+            gap: 6px;
+        }
+
+        .snapshot-title {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 12px;
+        }
+
+        .phase-label {
+            font-size: 22px;
+            line-height: 1.18;
+        }
+
+        .controls {
+            display: grid;
+            gap: 12px;
+        }
+
+        .transport {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button.transport-button {
+            appearance: none;
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font: inherit;
+            font-size: 15px;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+        }
+
+        button.transport-button.secondary {
+            background: rgba(26, 23, 20, 0.08);
+            color: var(--ink);
+        }
+
+        .slider-wrap {
+            display: grid;
+            gap: 6px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent);
+        }
+
+        .story-track {
+            display: grid;
+            gap: 8px;
+        }
+
+        .story-row {
+            display: grid;
+            grid-template-columns: 92px 1fr;
+            gap: 10px;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .story-bar {
+            position: relative;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(26, 23, 20, 0.08);
+            overflow: hidden;
+        }
+
+        .story-bar > span {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(15,118,110,0.88), rgba(13,148,136,0.44));
+        }
+
+        .meta {
+            display: grid;
+            gap: 10px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(26, 23, 20, 0.08);
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .meta strong {
+            color: var(--ink);
+            font-weight: 500;
+        }
+
+        @media (max-width: 1020px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .station-strip {
+                grid-template-columns: 1fr;
+            }
+
+            .page {
+                width: min(1320px, calc(100vw - 24px));
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <p class="eyebrow">Separates Uebergangsprojekt</p>
+            <h1>Bruecke zwischen zwei Umformungsgeschichten</h1>
+            <p class="lead">
+                Diese Visualisierung zeigt den komplexen Exponenten nicht mehr isoliert,
+                sondern als Teil einer groesseren Kette:
+                normale Algebra davor,
+                Eintritt in den Exponenten-Uebergang,
+                eigentlicher Raumwechsel
+                und normales Weiterrechnen danach.
+            </p>
+        </section>
+
+        <section class="layout">
+            <article class="stage-card">
+                <div class="stage" id="stage">
+                    <svg viewBox="0 0 1400 980" aria-label="Bridge between normal solving and exponent transition">
+                        <defs>
+                            <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="rgba(20,16,10,0.22)"/>
+                            </filter>
+                        </defs>
+                        <g id="world"></g>
+                    </svg>
+                </div>
+
+                <div class="station-strip" id="stationStrip">
+                    <button class="station" data-target="0.08" type="button">
+                        <span class="station-kicker">Akt 1</span>
+                        <span class="station-label">Vorher</span>
+                        <span class="station-eq">y = a B^(2x - 1)</span>
+                    </button>
+                    <button class="station" data-target="0.30" type="button">
+                        <span class="station-kicker">Akt 2</span>
+                        <span class="station-label">Eintritt</span>
+                        <span class="station-eq">y/a = B^(2x - 1)</span>
+                    </button>
+                    <button class="station" data-target="0.56" type="button">
+                        <span class="station-kicker">Akt 3</span>
+                        <span class="station-label">Uebergang</span>
+                        <span class="station-eq">Exponent kippt in den Termraum</span>
+                    </button>
+                    <button class="station" data-target="0.78" type="button">
+                        <span class="station-kicker">Akt 4</span>
+                        <span class="station-label">Austritt</span>
+                        <span class="station-eq">log_B(y/a) = 2x - 1</span>
+                    </button>
+                    <button class="station" data-target="0.94" type="button">
+                        <span class="station-kicker">Akt 5</span>
+                        <span class="station-label">Danach</span>
+                        <span class="station-eq">x = (log_B(y/a) + 1) / 2</span>
+                    </button>
+                </div>
+            </article>
+
+            <aside class="panel">
+                <div class="panel-head">
+                    <div class="snapshot-title">Prozessansicht</div>
+                    <div class="phase-label" id="phaseLabel">Lade Visualisierung...</div>
+                </div>
+
+                <div class="controls">
+                    <div class="transport">
+                        <button class="transport-button" id="playButton" type="button">Play</button>
+                        <button class="transport-button secondary" id="resetButton" type="button">Reset</button>
+                    </div>
+                    <div class="slider-wrap">
+                        <label for="timeline">Zeitachse</label>
+                        <input id="timeline" type="range" min="0" max="1000" value="0">
+                    </div>
+                </div>
+
+                <div class="story-track">
+                    <div class="story-row">
+                        <div>Vorher</div>
+                        <div class="story-bar"><span style="left:0%; width:18%;"></span></div>
+                    </div>
+                    <div class="story-row">
+                        <div>Eintritt</div>
+                        <div class="story-bar"><span style="left:18%; width:18%;"></span></div>
+                    </div>
+                    <div class="story-row">
+                        <div>Uebergang</div>
+                        <div class="story-bar"><span style="left:36%; width:28%;"></span></div>
+                    </div>
+                    <div class="story-row">
+                        <div>Austritt</div>
+                        <div class="story-bar"><span style="left:64%; width:16%;"></span></div>
+                    </div>
+                    <div class="story-row">
+                        <div>Danach</div>
+                        <div class="story-bar"><span style="left:80%; width:20%;"></span></div>
+                    </div>
+                </div>
+
+                <div class="meta">
+                    <div id="statusText">Diese Ansicht ordnet den Spezialfall in die ganze Umformungskette ein.</div>
+                    <div><strong>Eintrittszustand:</strong> <span>y/a = B^(2x - 1)</span></div>
+                    <div><strong>Austrittszustand:</strong> <span>log_B(y/a) = 2x - 1</span></div>
+                    <div><strong>Leitregel:</strong> <span>Normale Algebra davor und danach bleibt normale Algebra. Nur der Raumwechsel in der Mitte ist speziell.</span></div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script type="module">
+        const svgNamespace = "http://www.w3.org/2000/svg";
+        const world = document.getElementById("world");
+        const phaseLabel = document.getElementById("phaseLabel");
+        const statusText = document.getElementById("statusText");
+        const timeline = document.getElementById("timeline");
+        const playButton = document.getElementById("playButton");
+        const resetButton = document.getElementById("resetButton");
+        const stations = Array.from(document.querySelectorAll(".station"));
+
+        let progress = 0;
+        let playing = false;
+        let lastTimestamp = null;
+
+        const rowY = {
+            r1: 150,
+            r2: 315,
+            r3: 540,
+            r4: 700,
+            r5: 845
+        };
+
+        const transitionAtoms = [
+            { id: "two", text: "2", from: { x: 780, y: 240, size: 28 }, to: { x: 760, y: 540, size: 48 } },
+            { id: "x", text: "x", from: { x: 818, y: 240, size: 28 }, to: { x: 812, y: 540, size: 48 } },
+            { id: "minus", text: "-", from: { x: 860, y: 240, size: 26 }, to: { x: 874, y: 540, size: 38 } },
+            { id: "one", text: "1", from: { x: 895, y: 240, size: 28 }, to: { x: 926, y: 540, size: 48 } }
+        ];
+
+        function clamp(value, min, max) {
+            return Math.min(max, Math.max(min, value));
+        }
+
+        function lerp(a, b, t) {
+            return a + ((b - a) * t);
+        }
+
+        function easeInOut(t) {
+            return 0.5 - (Math.cos(Math.PI * clamp(t, 0, 1)) / 2);
+        }
+
+        function segment(t, start, end) {
+            if (t <= start) {
+                return 0;
+            }
+            if (t >= end) {
+                return 1;
+            }
+            return easeInOut((t - start) / (end - start));
+        }
+
+        function fadeWindow(t, startIn, endIn, startOut, endOut) {
+            const fadeIn = segment(t, startIn, endIn);
+            const fadeOut = segment(t, startOut, endOut);
+            return clamp(fadeIn * (1 - fadeOut), 0, 1);
+        }
+
+        function createSvgNode(tag, attributes = {}, textContent = "") {
+            const node = document.createElementNS(svgNamespace, tag);
+            Object.entries(attributes).forEach(([key, value]) => {
+                node.setAttribute(key, String(value));
+            });
+            if (textContent) {
+                node.textContent = textContent;
+            }
+            return node;
+        }
+
+        function drawText(text, x, y, size, options = {}) {
+            return createSvgNode("text", {
+                x,
+                y,
+                "font-size": size,
+                "font-family": '"Iowan Old Style", "Palatino Linotype", Georgia, serif',
+                fill: options.fill || "#1a1714",
+                opacity: options.opacity ?? 1,
+                "font-style": options.fontStyle || "italic",
+                "text-anchor": options.anchor || "start",
+                filter: options.filter || "none"
+            }, text);
+        }
+
+        function drawLine(x1, y1, x2, y2, options = {}) {
+            return createSvgNode("line", {
+                x1,
+                y1,
+                x2,
+                y2,
+                stroke: options.stroke || "rgba(26,23,20,0.82)",
+                "stroke-width": options.width || 3,
+                opacity: options.opacity ?? 1,
+                "stroke-linecap": options.cap || "round"
+            });
+        }
+
+        function drawHighlight(x, y, width, height, opacity, color = "rgba(15,118,110,0.10)") {
+            world.appendChild(createSvgNode("rect", {
+                x,
+                y,
+                width,
+                height,
+                rx: 26,
+                fill: color,
+                stroke: "rgba(15,118,110,0.18)",
+                "stroke-width": 1.2,
+                opacity
+            }));
+        }
+
+        function drawPaperFrame() {
+            world.appendChild(createSvgNode("rect", {
+                x: 28,
+                y: 28,
+                width: 1344,
+                height: 924,
+                rx: 32,
+                fill: "rgba(255,255,255,0.68)",
+                stroke: "rgba(26,23,20,0.10)",
+                "stroke-width": 1.4
+            }));
+        }
+
+        function drawStageGuides() {
+            const labels = [
+                { y: rowY.r1, text: "Vorher", fill: "#6b6258" },
+                { y: rowY.r2, text: "Eintritt", fill: "#0f766e" },
+                { y: rowY.r3, text: "Austritt", fill: "#0f766e" },
+                { y: rowY.r4, text: "Danach", fill: "#6b6258" }
+            ];
+
+            labels.forEach((label) => {
+                world.appendChild(drawText(label.text, 70, label.y, 18, {
+                    fill: label.fill,
+                    fontStyle: "normal",
+                    opacity: 0.9
+                }));
+            });
+
+            world.appendChild(drawLine(130, 385, 1270, 385, {
+                stroke: "rgba(26,23,20,0.08)",
+                width: 2
+            }));
+
+            world.appendChild(drawText("Uebergangsraum", 595, 402, 18, {
+                fill: "#b45309",
+                fontStyle: "normal",
+                opacity: 0.92
+            }));
+        }
+
+        function drawRow1(opacity) {
+            if (opacity <= 0.01) {
+                return;
+            }
+            const y = rowY.r1;
+            world.appendChild(drawText("y", 170, y, 50, { opacity }));
+            world.appendChild(drawText("=", 410, y, 40, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawText("a", 550, y, 50, { opacity }));
+            world.appendChild(drawText("B", 695, y, 56, { opacity }));
+            world.appendChild(drawText("2", 790, y - 78, 28, { opacity }));
+            world.appendChild(drawText("x", 828, y - 78, 28, { opacity }));
+            world.appendChild(drawText("-", 870, y - 78, 26, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawText("1", 905, y - 78, 28, { opacity }));
+        }
+
+        function drawRow2(opacity, exponentOpacity) {
+            if (opacity <= 0.01) {
+                return;
+            }
+            const y = rowY.r2;
+            world.appendChild(drawLine(155, y, 265, y, {
+                opacity,
+                width: 3.2
+            }));
+            world.appendChild(drawText("y", 188, y - 34, 42, { opacity }));
+            world.appendChild(drawText("a", 192, y + 42, 42, { opacity }));
+            world.appendChild(drawText("=", 410, y, 40, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawText("B", 695, y, 56, { opacity }));
+
+            const shellOpacity = clamp(exponentOpacity * 0.36, 0, 1);
+            if (shellOpacity > 0.01) {
+                world.appendChild(createSvgNode("rect", {
+                    x: 760,
+                    y: y - 108,
+                    width: 188,
+                    height: 72,
+                    rx: 20,
+                    fill: "rgba(15,118,110,0.08)",
+                    stroke: "rgba(15,118,110,0.26)",
+                    "stroke-width": 1.1,
+                    opacity: shellOpacity
+                }));
+            }
+
+            world.appendChild(drawText("2", 780, y - 78, 28, { opacity: exponentOpacity }));
+            world.appendChild(drawText("x", 818, y - 78, 28, { opacity: exponentOpacity }));
+            world.appendChild(drawText("-", 860, y - 78, 26, { opacity: exponentOpacity, fontStyle: "normal" }));
+            world.appendChild(drawText("1", 895, y - 78, 28, { opacity: exponentOpacity }));
+        }
+
+        function drawLogLeft(x, y, opacity) {
+            world.appendChild(drawText("log", x, y, 50, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawText("B", x + 56, y + 32, 24, { opacity }));
+            world.appendChild(drawText("(", x + 96, y, 56, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawLine(x + 150, y, x + 238, y, {
+                opacity,
+                width: 3
+            }));
+            world.appendChild(drawText("y", x + 177, y - 34, 40, { opacity }));
+            world.appendChild(drawText("a", x + 181, y + 42, 40, { opacity }));
+            world.appendChild(drawText(")", x + 252, y, 56, { opacity, fontStyle: "normal" }));
+        }
+
+        function drawRow3(opacity, rhsOpacity) {
+            if (opacity <= 0.01) {
+                return;
+            }
+            const y = rowY.r3;
+            drawLogLeft(150, y, opacity);
+            world.appendChild(drawText("=", 610, y, 40, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawText("2", 760, y, 48, { opacity: rhsOpacity }));
+            world.appendChild(drawText("x", 812, y, 48, { opacity: rhsOpacity }));
+            world.appendChild(drawText("-", 874, y, 38, { opacity: rhsOpacity, fontStyle: "normal" }));
+            world.appendChild(drawText("1", 926, y, 48, { opacity: rhsOpacity }));
+        }
+
+        function drawRow4(opacity) {
+            if (opacity <= 0.01) {
+                return;
+            }
+            const y = rowY.r4;
+            drawLogLeft(150, y, opacity);
+            world.appendChild(drawText("+", 425, y, 36, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawText("1", 468, y, 44, { opacity }));
+            world.appendChild(drawText("=", 610, y, 40, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawText("2", 760, y, 48, { opacity }));
+            world.appendChild(drawText("x", 812, y, 48, { opacity }));
+        }
+
+        function drawRow5(opacity) {
+            if (opacity <= 0.01) {
+                return;
+            }
+            const y = rowY.r5;
+            world.appendChild(drawText("x", 170, y, 50, { opacity }));
+            world.appendChild(drawText("=", 410, y, 40, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawLine(540, y, 910, y, {
+                opacity,
+                width: 3.2
+            }));
+            drawLogLeft(560, y - 28, opacity);
+            world.appendChild(drawText("+", 835, y - 28, 34, { opacity, fontStyle: "normal" }));
+            world.appendChild(drawText("1", 875, y - 28, 42, { opacity }));
+            world.appendChild(drawText("2", 718, y + 56, 36, { opacity }));
+        }
+
+        function drawTransitionBridge(t) {
+            const focus = segment(t, 0.36, 0.56);
+            const hold = segment(t, 0.56, 0.64);
+            const release = segment(t, 0.64, 0.82);
+            const vanish = segment(t, 0.82, 0.90);
+            const visible = clamp(focus + hold + release - vanish, 0, 1);
+
+            if (visible <= 0.01) {
+                return;
+            }
+
+            const frameScale = lerp(1, 3.35, focus) * lerp(1, 1.04, hold) * lerp(1, 0.98, vanish);
+            const frameRotation = lerp(-11, 0, release);
+            const frameX = lerp(850, 850, focus) + lerp(0, -24, release);
+            const frameY = lerp(240, 240, focus) + lerp(0, 198, release);
+            const frameWidth = lerp(178, 286, focus) + lerp(0, 20, hold);
+            const frameHeight = lerp(72, 88, focus);
+            const frameOpacity = clamp(1 - (vanish * 0.48), 0.48, 1);
+
+            world.appendChild(createSvgNode("rect", {
+                x: 580,
+                y: 430,
+                width: 430,
+                height: 150,
+                rx: 26,
+                fill: "rgba(180, 83, 9, 0.05)",
+                stroke: "rgba(180, 83, 9, 0.18)",
+                "stroke-width": 1.2,
+                opacity: clamp((focus * 0.55) + (hold * 0.25) + (release * 0.4), 0, 0.9)
+            }));
+
+            world.appendChild(createSvgNode("path", {
+                d: "M 718 296 C 760 332, 790 362, 796 424",
+                fill: "none",
+                stroke: "rgba(180, 83, 9, 0.26)",
+                "stroke-width": 2.2,
+                "stroke-dasharray": "8 10",
+                opacity: clamp(focus + hold + release, 0, 1)
+            }));
+
+            world.appendChild(createSvgNode("g", {
+                transform: `translate(${frameX} ${frameY}) scale(${frameScale}) rotate(${frameRotation})`,
+                opacity: frameOpacity,
+                filter: "url(#soft-shadow)"
+            }));
+
+            world.appendChild(createSvgNode("rect", {
+                x: frameX - 18,
+                y: frameY - 42,
+                width: frameWidth,
+                height: frameHeight,
+                rx: 18,
+                fill: "rgba(15,118,110,0.10)",
+                stroke: "rgba(15,118,110,0.56)",
+                "stroke-width": 1.3,
+                opacity: frameOpacity,
+                filter: "url(#soft-shadow)"
+            }));
+
+            transitionAtoms.forEach((atom, index) => {
+                const localX = atom.from.x - 850;
+                const localY = atom.from.y - 240;
+                const zoomX = frameX + (localX * frameScale);
+                const zoomY = frameY + (localY * frameScale);
+                const x = lerp(zoomX, atom.to.x, release);
+                const y = lerp(zoomY, atom.to.y, release);
+                const size = lerp(atom.from.size * frameScale, atom.to.size, release);
+                world.appendChild(drawText(atom.text, x, y, size, {
+                    opacity: clamp(frameOpacity * (1 - (vanish * 0.6)), 0, 1),
+                    fill: release > 0.08 ? "#0f766e" : "#1a1714",
+                    fontStyle: atom.id === "minus" ? "normal" : "italic",
+                    filter: index === 0 ? "url(#soft-shadow)" : "none"
+                }));
+            });
+        }
+
+        function currentAct(t) {
+            if (t < 0.18) {
+                return 0;
+            }
+            if (t < 0.36) {
+                return 1;
+            }
+            if (t < 0.64) {
+                return 2;
+            }
+            if (t < 0.80) {
+                return 3;
+            }
+            return 4;
+        }
+
+        function phaseText(t) {
+            const texts = [
+                "Akt 1 · Normale Geschichte davor",
+                "Akt 2 · Eintrittszustand vor dem Spezialschritt",
+                "Akt 3 · Der Exponentenraum klappt in den Termraum",
+                "Akt 4 · Erster normaler Zustand nach dem Austritt",
+                "Akt 5 · Normale Geschichte danach"
+            ];
+            return texts[currentAct(t)];
+        }
+
+        function statusLine(t) {
+            if (t < 0.18) {
+                return "Hier passiert noch nichts Besonderes: Die Gleichung steht ganz normal vor dem Uebergang.";
+            }
+            if (t < 0.36) {
+                return "Jetzt ist der Eintrittszustand erreicht: Der Faktor a ist normal entfernt, der komplexe Exponent bleibt noch kompakt.";
+            }
+            if (t < 0.64) {
+                return "Der Spezialteil sitzt nur in der Mitte: Derselbe Inhalt 2x - 1 wechselt seinen Raum, nicht seine Identitaet.";
+            }
+            if (t < 0.80) {
+                return "Austritt: Der Inhalt liegt jetzt als normaler Term vor und kann wieder mit Standardregeln weiterlaufen.";
+            }
+            return "Danach ist wieder alles normale Algebra. Der Spezialschritt ist abgeschlossen und bleibt lokal begrenzt.";
+        }
+
+        function updateStations() {
+            const activeIndex = currentAct(progress);
+            stations.forEach((station, index) => {
+                station.classList.toggle("active", index === activeIndex);
+            });
+        }
+
+        function render() {
+            world.replaceChildren();
+            drawPaperFrame();
+            drawStageGuides();
+
+            const row1Opacity = clamp(1 - (segment(progress, 0.18, 0.36) * 0.58), 0.34, 1);
+            const row2Opacity = clamp(segment(progress, 0.10, 0.24) + (1 - segment(progress, 0.64, 0.84)) * 0.62, 0.28, 1);
+            const row2ExponentOpacity = clamp(1 - segment(progress, 0.42, 0.58), 0.08, 1);
+            const row3Opacity = fadeWindow(progress, 0.52, 0.70, 0.86, 1.00) + segment(progress, 0.68, 0.80) * 0.25;
+            const row3RhsOpacity = segment(progress, 0.70, 0.86);
+            const row4Opacity = segment(progress, 0.72, 0.88);
+            const row5Opacity = segment(progress, 0.84, 1.00);
+
+            drawHighlight(118, rowY.r2 - 118, 920, 146, segment(progress, 0.18, 0.34) * 0.72, "rgba(15,118,110,0.08)");
+            drawHighlight(118, rowY.r3 - 112, 920, 140, segment(progress, 0.68, 0.82) * 0.62, "rgba(15,118,110,0.07)");
+            drawHighlight(118, rowY.r5 - 98, 980, 132, segment(progress, 0.86, 1.00) * 0.52, "rgba(180,83,9,0.06)");
+
+            drawRow1(row1Opacity);
+            drawRow2(row2Opacity, row2ExponentOpacity);
+            drawRow3(row3Opacity, row3RhsOpacity);
+            drawRow4(row4Opacity);
+            drawRow5(row5Opacity);
+            drawTransitionBridge(progress);
+
+            phaseLabel.textContent = phaseText(progress);
+            statusText.textContent = statusLine(progress);
+            timeline.value = String(Math.round(progress * 1000));
+            updateStations();
+        }
+
+        function tick(timestamp) {
+            if (!playing) {
+                return;
+            }
+
+            if (lastTimestamp == null) {
+                lastTimestamp = timestamp;
+            }
+
+            const delta = timestamp - lastTimestamp;
+            lastTimestamp = timestamp;
+            progress = clamp(progress + (delta / 9000), 0, 1);
+            render();
+
+            if (progress >= 1) {
+                playing = false;
+                playButton.textContent = "Play";
+                lastTimestamp = null;
+                return;
+            }
+
+            requestAnimationFrame(tick);
+        }
+
+        playButton.addEventListener("click", () => {
+            playing = !playing;
+            playButton.textContent = playing ? "Pause" : "Play";
+            if (playing) {
+                lastTimestamp = null;
+                requestAnimationFrame(tick);
+            }
+        });
+
+        resetButton.addEventListener("click", () => {
+            playing = false;
+            playButton.textContent = "Play";
+            progress = 0;
+            lastTimestamp = null;
+            render();
+        });
+
+        timeline.addEventListener("input", (event) => {
+            playing = false;
+            playButton.textContent = "Play";
+            progress = clamp(Number(event.target.value) / 1000, 0, 1);
+            lastTimestamp = null;
+            render();
+        });
+
+        stations.forEach((station) => {
+            station.addEventListener("click", () => {
+                playing = false;
+                playButton.textContent = "Play";
+                progress = clamp(Number(station.dataset.target), 0, 1);
+                lastTimestamp = null;
+                render();
+            });
+        });
+
+        render();
+    </script>
+</body>
+</html>

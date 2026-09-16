@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesis Cockpit</title>
+    <link rel="stylesheet" href="./cockpit.css?v=2026-08-05-cockpit-target-row-controls">
+</head>
+<body class="cockpit-root">
+    <main class="cockpit-shell">
+        <section class="cockpit-preview" aria-live="polite">
+            <header class="cockpit-preview__header">
+                <div>
+                    <p class="cockpit-preview__eyebrow">Genesis Ausgabe</p>
+                    <h1 class="cockpit-preview__title">Produktansicht</h1>
+                </div>
+                <div class="cockpit-preview__actions">
+                    <p class="cockpit-preview__meta">Echter Renderpfad statt Simulation</p>
+                    <a class="cockpit-designer-link" href="./projects/complex_expression_rendering/prototypes/renderer-settings-demo.html">Designer-Ansicht</a>
+                </div>
+            </header>
+
+            <div id="previewSurface" class="cockpit-preview__surface">
+                <img id="previewImage" class="cockpit-preview__image" alt="Gerenderte Loesung" hidden>
+                <div id="previewPlaceholder" class="cockpit-preview__placeholder">
+                    Rechts eine Gleichung eingeben und <code>Start / Go</code> druecken.
+                </div>
+            </div>
+        </section>
+
+        <aside class="cockpit-sidebar">
+            <form id="cockpitForm" class="cockpit-form" autocomplete="off" novalidate>
+                <label class="cockpit-field">
+                    <span class="cockpit-label">Gleichung</span>
+                    <textarea
+                        id="equationInput"
+                        name="equation"
+                        class="cockpit-input cockpit-input--equation"
+                        placeholder="z. B. sin(sqrt((x+3)/(2+1)))=5"
+                        spellcheck="false"
+                    ></textarea>
+                </label>
+
+                <label class="cockpit-field">
+                    <span class="cockpit-label">Zielvariable</span>
+                    <input
+                        id="targetVariableInput"
+                        name="targetVariable"
+                        type="text"
+                        class="cockpit-input"
+                        placeholder="leer = automatisch"
+                        spellcheck="false"
+                    >
+                </label>
+
+                <label class="cockpit-field">
+                    <span class="cockpit-label">Potenz-Umkehr</span>
+                    <select id="powerInverseStyleInput" name="powerInverseStyle" class="cockpit-input">
+                        <option value="root">Wurzel</option>
+                        <option value="fractional-exponent">1/x im Exponenten</option>
+                    </select>
+                </label>
+
+                <button id="startButton" type="submit" class="cockpit-submit">Start / Go</button>
+
+                <div id="status" class="cockpit-status" role="status" aria-live="polite" hidden></div>
+
+                <a id="pdfLink" class="cockpit-pdf-link" href="#" target="_blank" rel="noopener" hidden>PDF oeffnen</a>
+
+                <section id="rowControls" class="cockpit-row-controls" hidden>
+                    <div class="cockpit-section-header">
+                        <p class="cockpit-section-title">Lueckentext</p>
+                    </div>
+                    <div id="rowControlsList" class="cockpit-row-controls__list"></div>
+                </section>
+
+                <section id="colorControls" class="cockpit-color-controls" hidden>
+                    <div class="cockpit-section-header">
+                        <p class="cockpit-section-title">Farben</p>
+                    </div>
+                    <p class="cockpit-section-copy">Ziel und einzelne Umbauschritte lassen sich getrennt einfärben.</p>
+                    <div id="colorControlsList" class="cockpit-color-controls__list"></div>
+                </section>
+            </form>
+        </aside>
+    </main>
+
+    <noscript>
+        <p>Dieses Cockpit benoetigt JavaScript, um den produktiven Renderpfad anzusteuern.</p>
+    </noscript>
+
+    <script type="module" src="./cockpit.js?v=2026-08-05-cockpit-target-row-controls"></script>
+</body>
+</html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Complex Exponent Transition Demo</title>
+    <style>
+        :root {
+            --paper: #f7f2e8;
+            --ink: #1a1714;
+            --muted: #6b6258;
+            --accent: #0f766e;
+            --accent-soft: rgba(15, 118, 110, 0.14);
+            --grid: rgba(26, 23, 20, 0.08);
+            --panel: rgba(255, 255, 255, 0.72);
+            --shadow: 0 18px 40px rgba(30, 24, 16, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(15, 118, 110, 0.09), transparent 26%),
+                radial-gradient(circle at bottom right, rgba(180, 83, 9, 0.08), transparent 28%),
+                linear-gradient(180deg, #fbf8f3 0%, var(--paper) 100%);
+        }
+
+        .page {
+            width: min(1240px, calc(100vw - 40px));
+            margin: 28px auto 40px;
+        }
+
+        .hero {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 18px;
+        }
+
+        .eyebrow {
+            margin: 0;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-size: 12px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(34px, 5vw, 58px);
+            line-height: 0.96;
+            font-weight: 500;
+            max-width: 13ch;
+        }
+
+        .lead {
+            margin: 0;
+            max-width: 78ch;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.5;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 320px;
+            gap: 18px;
+            align-items: start;
+        }
+
+        .stage-card,
+        .panel {
+            background: var(--panel);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(26, 23, 20, 0.08);
+            box-shadow: var(--shadow);
+            border-radius: 28px;
+        }
+
+        .stage-card {
+            padding: 18px;
+            overflow: hidden;
+        }
+
+        .panel {
+            padding: 18px 18px 16px;
+            display: grid;
+            gap: 14px;
+        }
+
+        .stage {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border-radius: 24px;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.86), rgba(255,255,255,0.72)),
+                linear-gradient(90deg, transparent 0%, transparent 49.9%, rgba(15,118,110,0.06) 50%, transparent 50.1%, transparent 100%);
+        }
+
+        .stage::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0.15));
+            pointer-events: none;
+        }
+
+        svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls {
+            display: grid;
+            gap: 12px;
+        }
+
+        .transport {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button {
+            appearance: none;
+            border: 0;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font: inherit;
+            font-size: 15px;
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+        }
+
+        button.secondary {
+            background: rgba(26, 23, 20, 0.08);
+            color: var(--ink);
+        }
+
+        .slider-wrap {
+            display: grid;
+            gap: 6px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent);
+        }
+
+        .phase-track {
+            display: grid;
+            gap: 8px;
+        }
+
+        .phase-row {
+            display: grid;
+            grid-template-columns: 88px 1fr;
+            gap: 10px;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .phase-bar {
+            position: relative;
+            height: 10px;
+            border-radius: 999px;
+            background: rgba(26, 23, 20, 0.08);
+            overflow: hidden;
+        }
+
+        .phase-bar > span {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(15,118,110,0.85), rgba(13,148,136,0.45));
+        }
+
+        .meta {
+            display: grid;
+            gap: 8px;
+            padding-top: 4px;
+            border-top: 1px solid rgba(26, 23, 20, 0.08);
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        .caption {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .snapshot-title {
+            font-size: 14px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .equation {
+            font-size: 20px;
+            color: var(--ink);
+        }
+
+        @media (max-width: 980px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .panel {
+                order: -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <section class="hero">
+            <p class="eyebrow">Separates Uebergangsprojekt</p>
+            <h1>Echter Uebergang eines komplexen Exponenten</h1>
+            <p class="lead">
+                Dies ist kein Storyboard und kein Patch des bestehenden Renderers.
+                Die Demo liest ein echtes Hand-off-Paket aus <strong>A1 → B → A2</strong>:
+                Boundary-Zustand, Landing-Profil und Landing-Zeile stammen aus dem realen Kernpfad,
+                erst dann folgt die visuelle Zoom- und Kippbewegung.
+            </p>
+        </section>
+
+        <section class="layout">
+            <article class="stage-card">
+                <div class="stage" id="stage">
+                    <svg viewBox="0 0 1200 675" aria-label="Complex exponent transition stage">
+                        <defs>
+                            <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="rgba(20,16,10,0.22)"/>
+                            </filter>
+                        </defs>
+                        <g id="world"></g>
+                    </svg>
+                </div>
+                <p class="caption">
+                    Der Inhalt <strong>2x − 1</strong> bleibt semantisch derselbe.
+                    Die Demo zeigt nur seinen Wechsel vom Exponentenraum in den normalen Termraum.
+                </p>
+            </article>
+
+            <aside class="panel">
+                <div>
+                    <div class="snapshot-title">Realer Hand-off</div>
+                    <div class="equation" id="phaseLabel">Lade Zustände…</div>
+                </div>
+
+                <div class="controls">
+                    <div class="transport">
+                        <button id="playButton" type="button">Play</button>
+                        <button id="resetButton" class="secondary" type="button">Reset</button>
+                    </div>
+                    <div class="slider-wrap">
+                        <label for="timeline">Zeitachse</label>
+                        <input id="timeline" type="range" min="0" max="1000" value="0">
+                    </div>
+                </div>
+
+                <div class="phase-track">
+                    <div class="phase-row">
+                        <div>1. Kompakt</div>
+                        <div class="phase-bar"><span style="left:0%; width:20%;"></span></div>
+                    </div>
+                    <div class="phase-row">
+                        <div>2. Zoom</div>
+                        <div class="phase-bar"><span style="left:20%; width:25%;"></span></div>
+                    </div>
+                    <div class="phase-row">
+                        <div>3. Halt</div>
+                        <div class="phase-bar"><span style="left:45%; width:10%;"></span></div>
+                    </div>
+                    <div class="phase-row">
+                        <div>4. Kippung</div>
+                        <div class="phase-bar"><span style="left:55%; width:25%;"></span></div>
+                    </div>
+                    <div class="phase-row">
+                        <div>5. Stabil</div>
+                        <div class="phase-bar"><span style="left:80%; width:20%;"></span></div>
+                    </div>
+                </div>
+
+                <div class="meta">
+                    <div><strong>Boundary:</strong> <span id="beforeEquation">—</span></div>
+                    <div><strong>Landing:</strong> <span id="afterEquation">—</span></div>
+                    <div id="statusText">Lade reale Hand-off-Daten…</div>
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <script type="module">
+        const query = new URLSearchParams(window.location.search);
+        const payloadUrl = query.get("payload") || "../snapshots/real_bridge_handoff_left.json";
+
+        const svgNamespace = "http://www.w3.org/2000/svg";
+        const world = document.getElementById("world");
+        const timeline = document.getElementById("timeline");
+        const playButton = document.getElementById("playButton");
+        const resetButton = document.getElementById("resetButton");
+        const phaseLabel = document.getElementById("phaseLabel");
+        const statusText = document.getElementById("statusText");
+        const beforeEquation = document.getElementById("beforeEquation");
+        const afterEquation = document.getElementById("afterEquation");
+
+        let beforeState = null;
+        let afterState = null;
+        let handoffPayload = null;
+        let playing = false;
+        let progress = 0;
+        let lastTimestamp = null;
+
+        function clamp(value, min, max) {
+            return Math.min(max, Math.max(min, value));
+        }
+
+        function lerp(a, b, t) {
+            return a + ((b - a) * t);
+        }
+
+        function easeInOut(t) {
+            return 0.5 - (Math.cos(Math.PI * clamp(t, 0, 1)) / 2);
+        }
+
+        function segment(t, start, end) {
+            if (t <= start) {
+                return 0;
+            }
+            if (t >= end) {
+                return 1;
+            }
+            return easeInOut((t - start) / (end - start));
+        }
+
+        function createSvgNode(tag, attributes = {}, textContent = "") {
+            const node = document.createElementNS(svgNamespace, tag);
+            Object.entries(attributes).forEach(([key, value]) => {
+                node.setAttribute(key, String(value));
+            });
+            if (textContent) {
+                node.textContent = textContent;
+            }
+            return node;
+        }
+
+        function drawPaperFrame() {
+            world.appendChild(createSvgNode("rect", {
+                x: 28,
+                y: 28,
+                width: 1144,
+                height: 619,
+                rx: 30,
+                fill: "rgba(255,255,255,0.66)",
+                stroke: "rgba(26,23,20,0.10)",
+                "stroke-width": 1.4
+            }));
+
+            world.appendChild(createSvgNode("line", {
+                x1: 70,
+                y1: 360,
+                x2: 1130,
+                y2: 360,
+                stroke: "rgba(26,23,20,0.08)",
+                "stroke-width": 2
+            }));
+        }
+
+        function drawTextAtom(atom, opacity = 1, extra = {}) {
+            const text = createSvgNode("text", {
+                x: atom.x,
+                y: atom.y,
+                "font-size": atom.size,
+                "font-family": '"Iowan Old Style", "Palatino Linotype", Georgia, serif',
+                fill: extra.fill || "#1a1714",
+                opacity,
+                "font-style": extra.fontStyle || atom.fontStyle || "italic",
+                "text-anchor": extra.anchor || "start",
+                filter: extra.filter || "none"
+            }, atom.text);
+            return text;
+        }
+
+        function drawSnapshotBackground(snapshot, opacity = 0.18) {
+            (snapshot.shells || []).forEach((shell) => {
+                world.appendChild(createSvgNode("rect", {
+                    x: shell.x,
+                    y: shell.y,
+                    width: shell.width,
+                    height: shell.height,
+                    rx: 16,
+                    fill: "rgba(15,118,110,0.08)",
+                    stroke: "rgba(15,118,110,0.26)",
+                    "stroke-width": 1,
+                    opacity
+                }));
+            });
+        }
+
+        function drawAfterStatic(opacity) {
+            drawSnapshotBackground(afterState, opacity * 0.32);
+            (afterState.atoms || []).forEach((atom) => {
+                const isExponentTerm = atom.zone === "focus_term";
+                const resolvedOpacity = isExponentTerm ? opacity * 0.22 : opacity;
+                world.appendChild(drawTextAtom(atom, resolvedOpacity));
+            });
+        }
+
+        function drawBeforeStatic(opacity) {
+            drawSnapshotBackground(beforeState, opacity * 0.28);
+            (beforeState.atoms || []).forEach((atom) => {
+                const isExponentTerm = atom.zone === "exponent";
+                const resolvedOpacity = isExponentTerm ? opacity * 0.18 : opacity;
+                world.appendChild(drawTextAtom(atom, resolvedOpacity));
+            });
+        }
+
+        function drawExponentTransition(t) {
+            const exponentAtoms = beforeState.atoms.filter((atom) => atom.zone === "exponent");
+            const focusLift = segment(t, 0.18, 0.46);
+            const holdPhase = segment(t, 0.46, 0.56);
+            const dropPhase = segment(t, 0.56, 0.84);
+            const finalPhase = segment(t, 0.84, 1);
+
+            const frameScale = lerp(1, 3.35, focusLift) * lerp(1, 1.04, holdPhase) * lerp(1, 0.98, finalPhase);
+            const frameRotation = lerp(-10, 0, dropPhase);
+            const frameX = lerp(700, 700, focusLift) + lerp(0, -22, dropPhase);
+            const frameY = lerp(266, 266, focusLift) + lerp(0, 92, dropPhase);
+            const frameWidth = lerp(162, 268, focusLift) + lerp(0, 20, holdPhase);
+            const frameHeight = lerp(66, 82, focusLift);
+
+            const shell = createSvgNode("g", {
+                transform: `translate(${frameX} ${frameY}) scale(${frameScale}) rotate(${frameRotation})`,
+                opacity: clamp(1 - (finalPhase * 0.28), 0.72, 1)
+            });
+            shell.appendChild(createSvgNode("rect", {
+                x: -12,
+                y: -34,
+                width: frameWidth,
+                height: frameHeight,
+                rx: 16,
+                fill: "rgba(15,118,110,0.10)",
+                stroke: "rgba(15,118,110,0.56)",
+                "stroke-width": 1.3,
+                filter: "url(#soft-shadow)"
+            }));
+            world.appendChild(shell);
+
+            exponentAtoms.forEach((atom, index) => {
+                const afterAtom = afterState.atoms.find((candidate) => candidate.storyKey && candidate.storyKey === atom.storyKey);
+                const localX = atom.x - 700;
+                const localY = atom.y - 266;
+                const intermediateX = frameX + (localX * frameScale);
+                const intermediateY = frameY + (localY * frameScale);
+                const targetX = afterAtom ? afterAtom.x : intermediateX;
+                const targetY = afterAtom ? afterAtom.y : intermediateY;
+                const x = lerp(intermediateX, targetX, dropPhase);
+                const y = lerp(intermediateY, targetY, dropPhase);
+                const size = lerp(atom.size * frameScale, afterAtom ? afterAtom.size : atom.size * frameScale, dropPhase);
+                const opacity = lerp(1, 1, dropPhase) * lerp(1, 0.98, finalPhase);
+                const color = dropPhase > 0.1 ? "#0f766e" : "#1a1714";
+
+                world.appendChild(drawTextAtom({
+                    ...atom,
+                    x,
+                    y,
+                    size
+                }, opacity, {
+                    fill: color,
+                    fontStyle: atom.id === "exp_minus" ? "normal" : "italic",
+                    filter: index === 0 ? "url(#soft-shadow)" : "none"
+                }));
+            });
+        }
+
+        function drawBaseEquationMorph(t) {
+            const leftFade = 1 - segment(t, 0.46, 0.66);
+            const rightFade = segment(t, 0.58, 0.82);
+
+            drawBeforeStatic(leftFade);
+            drawAfterStatic(rightFade);
+
+            const zoomPulse = segment(t, 0.18, 0.46);
+            if (zoomPulse > 0.01) {
+                world.appendChild(createSvgNode("circle", {
+                    cx: 756,
+                    cy: 268,
+                    r: lerp(34, 128, zoomPulse),
+                    fill: "rgba(15,118,110,0.06)",
+                    stroke: "rgba(15,118,110,0.18)",
+                    "stroke-width": 2.4,
+                    opacity: 1 - zoomPulse * 0.58
+                }));
+            }
+        }
+
+        function phaseText(t) {
+            if (t < 0.2) {
+                return "Phase 1 · Exponent bleibt kompakt";
+            }
+            if (t < 0.45) {
+                return "Phase 2 · Zoom in den Exponentenraum";
+            }
+            if (t < 0.56) {
+                return "Phase 3 · Halt: Inhalt wird lesbar";
+            }
+            if (t < 0.84) {
+                return "Phase 4 · Kippung auf normale Ebene";
+            }
+            return "Phase 5 · Stabilisierung im Termraum";
+        }
+
+        function statusLine(t) {
+            if (t < 0.45) {
+                return "Die Exponentenstruktur wird erst als eigener Raum ernst genommen.";
+            }
+            if (t < 0.56) {
+                return "Der Zuschauer liest jetzt den inneren Term, noch bevor er den Raum wechselt.";
+            }
+                if (t < 0.84) {
+                return "Jetzt kippt derselbe Inhalt aus dem Boundary-Zustand in die echte Startlage von A2.";
+            }
+            return "Der Inhalt liegt nun stabil in der realen Landing-Zeile und braucht keinen zweiten Sprung.";
+        }
+
+        function render() {
+            world.replaceChildren();
+            drawPaperFrame();
+            drawBaseEquationMorph(progress);
+            drawExponentTransition(progress);
+            phaseLabel.textContent = phaseText(progress);
+            statusText.textContent = statusLine(progress);
+            timeline.value = String(Math.round(progress * 1000));
+        }
+
+        function tick(timestamp) {
+            if (!playing) {
+                return;
+            }
+
+            if (lastTimestamp == null) {
+                lastTimestamp = timestamp;
+            }
+
+            const delta = timestamp - lastTimestamp;
+            lastTimestamp = timestamp;
+            progress = clamp(progress + (delta / 6800), 0, 1);
+            render();
+
+            if (progress >= 1) {
+                playing = false;
+                playButton.textContent = "Play";
+                lastTimestamp = null;
+                return;
+            }
+
+            requestAnimationFrame(tick);
+        }
+
+        playButton.addEventListener("click", () => {
+            playing = !playing;
+            playButton.textContent = playing ? "Pause" : "Play";
+            if (playing) {
+                lastTimestamp = null;
+                requestAnimationFrame(tick);
+            }
+        });
+
+        resetButton.addEventListener("click", () => {
+            playing = false;
+            playButton.textContent = "Play";
+            progress = 0;
+            lastTimestamp = null;
+            render();
+        });
+
+        timeline.addEventListener("input", (event) => {
+            playing = false;
+            playButton.textContent = "Play";
+            progress = clamp(Number(event.target.value) / 1000, 0, 1);
+            lastTimestamp = null;
+            render();
+        });
+
+        fetch(payloadUrl).then((response) => response.json()).then((payload) => {
+            handoffPayload = payload;
+            beforeState = payload.before_state;
+            afterState = payload.after_state;
+            beforeEquation.textContent = payload.boundary_state?.equation_text || beforeState.equation;
+            afterEquation.textContent = payload.landing_state?.equation_text || afterState.equation;
+            statusText.textContent = `Geladen: ${payload.equation} · Trigger ${payload.trigger_family} · Variante ${payload.boundary_state?.variant}`;
+            render();
+        }).catch((error) => {
+            phaseLabel.textContent = "Fehler";
+            statusText.textContent = `Die realen Hand-off-Daten konnten nicht geladen werden: ${error}`;
+        });
+    </script>
+</body>
+</html>

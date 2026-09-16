@@ -1,0 +1,33 @@
+{
+  "sceneId": "after_state",
+  "sourceProject": "6_Gleichungsloeser",
+  "sourceCommit": "88057a3",
+  "coordinateSpace": "transition_local",
+  "equation": "log_B(y/a) = 2x - 1",
+  "focusIds": ["rhs_2", "rhs_x", "rhs_minus", "rhs_1"],
+  "notes": "Derselbe Inhalt liegt nun auf normaler Ebene rechts vom Gleichheitszeichen.",
+  "atoms": [
+    { "id": "log_head", "text": "log", "x": 160, "y": 360, "size": 46, "zone": "main" },
+    { "id": "log_base", "text": "B", "x": 214, "y": 392, "size": 24, "zone": "base" },
+    { "id": "paren_l", "text": "(", "x": 250, "y": 360, "size": 48, "zone": "main" },
+    { "id": "arg_y", "text": "y", "x": 288, "y": 338, "size": 38, "zone": "fraction_num" },
+    { "id": "frac_bar", "text": "―", "x": 290, "y": 360, "size": 40, "zone": "fraction_bar" },
+    { "id": "arg_a", "text": "a", "x": 288, "y": 392, "size": 38, "zone": "fraction_den" },
+    { "id": "paren_r", "text": ")", "x": 340, "y": 360, "size": 48, "zone": "main" },
+    { "id": "eq", "text": "=", "x": 490, "y": 360, "size": 40, "zone": "main" },
+    { "id": "rhs_2", "text": "2", "x": 620, "y": 360, "size": 46, "zone": "rhs" },
+    { "id": "rhs_x", "text": "x", "x": 668, "y": 360, "size": 46, "zone": "rhs" },
+    { "id": "rhs_minus", "text": "−", "x": 728, "y": 360, "size": 34, "zone": "rhs" },
+    { "id": "rhs_1", "text": "1", "x": 782, "y": 360, "size": 46, "zone": "rhs" }
+  ],
+  "shells": [
+    {
+      "id": "rhs_group",
+      "kind": "term_group",
+      "x": 602,
+      "y": 326,
+      "width": 224,
+      "height": 56
+    }
+  ]
+}

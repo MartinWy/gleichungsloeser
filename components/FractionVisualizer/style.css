@@ -1,0 +1,46 @@
+body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background-color: #f4f4f4;
+    padding: 2rem;
+    color: #161616;
+}
+
+h1 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 2rem;
+}
+
+#grid-container {
+    display: grid;
+    grid-template-columns: repeat(10, 40px);
+    grid-template-rows: repeat(3, 40px);
+    gap: 5px;
+    background: #ffffff;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.atom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.denominator {
+    color: #0043ce;
+}
+
+.legend {
+    margin-top: 2rem;
+    font-size: 0.875rem;
+    color: #525252;
+}
+
+ul {
+    padding-left: 1.5rem;
+}

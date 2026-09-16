@@ -1,0 +1,30 @@
+{
+  "sceneId": "before_state",
+  "sourceProject": "6_Gleichungsloeser",
+  "sourceCommit": "88057a3",
+  "coordinateSpace": "transition_local",
+  "equation": "y = a · B^(2x - 1)",
+  "focusIds": ["exp_group", "exp_2", "exp_x", "exp_minus", "exp_1"],
+  "notes": "Komplexer Exponent bleibt als kompakte Einheit im Exponentenraum.",
+  "atoms": [
+    { "id": "lhs_y", "text": "y", "x": 160, "y": 360, "size": 46, "zone": "main" },
+    { "id": "eq", "text": "=", "x": 300, "y": 360, "size": 40, "zone": "main" },
+    { "id": "factor_a", "text": "a", "x": 410, "y": 360, "size": 46, "zone": "main" },
+    { "id": "dot", "text": "·", "x": 500, "y": 360, "size": 36, "zone": "main" },
+    { "id": "base_B", "text": "B", "x": 590, "y": 360, "size": 52, "zone": "main" },
+    { "id": "exp_2", "text": "2", "x": 690, "y": 270, "size": 28, "zone": "exponent" },
+    { "id": "exp_x", "text": "x", "x": 726, "y": 270, "size": 28, "zone": "exponent" },
+    { "id": "exp_minus", "text": "−", "x": 765, "y": 270, "size": 24, "zone": "exponent" },
+    { "id": "exp_1", "text": "1", "x": 800, "y": 270, "size": 28, "zone": "exponent" }
+  ],
+  "shells": [
+    {
+      "id": "exp_group",
+      "kind": "exponent_group",
+      "x": 680,
+      "y": 238,
+      "width": 152,
+      "height": 56
+    }
+  ]
+}

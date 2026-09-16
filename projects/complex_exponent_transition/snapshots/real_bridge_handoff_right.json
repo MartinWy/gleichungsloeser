@@ -1,0 +1,573 @@
+{
+  "equation": "B^(2x-1)=y/a",
+  "target_variable": "x",
+  "trigger_family": "power_exponent_release",
+  "trigger_step_index": 0,
+  "boundary_state": {
+    "equation_text": "B^(2x-1) = y/a",
+    "variant": "right",
+    "target_symbol": "x",
+    "anchors": {
+      "equals": {
+        "x": 23
+      }
+    },
+    "power_shell": {
+      "shell_id": "shell-power-c-n1ei00-0001",
+      "side": "left",
+      "base": {
+        "id": "atom-variable-c-n1ei00-0001",
+        "text": "B",
+        "role": "operator_source"
+      },
+      "content": {
+        "id": "bridge-power-content-shell-power-c-n1ei00-0001",
+        "text": "2x-1",
+        "contains_target": true,
+        "functional_track_count": 1,
+        "ordered_cells": [
+          {
+            "id": "r0::content::power_exponent::atom-number-c-n1ei00-0001::1",
+            "source_atom_id": "atom-number-c-n1ei00-0001",
+            "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+            "text": "2",
+            "role": "content",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 4
+          },
+          {
+            "id": "r0::content::multiplication_operator::atom-operator-c-n1ei00-0002::2",
+            "source_atom_id": "atom-operator-c-n1ei00-0002",
+            "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+            "text": "*",
+            "role": "content",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 8
+          },
+          {
+            "id": "r0::content::power_exponent::atom-variable-c-n1ei00-0002::3",
+            "source_atom_id": "atom-variable-c-n1ei00-0002",
+            "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+            "text": "x",
+            "role": "target",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 12
+          },
+          {
+            "id": "r0::content::subtraction_operator::atom-operator-c-n1ei00-0001::4",
+            "source_atom_id": "atom-operator-c-n1ei00-0001",
+            "source_shell_id": "shell-subtraction-c-n1ei00-0001",
+            "text": "-",
+            "role": "content",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 16
+          },
+          {
+            "id": "r0::content::power_exponent::atom-number-c-n1ei00-0002::5",
+            "source_atom_id": "atom-number-c-n1ei00-0002",
+            "source_shell_id": "shell-subtraction-c-n1ei00-0001",
+            "text": "1",
+            "role": "content",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 20
+          }
+        ]
+      }
+    },
+    "carry_through": {
+      "side": "right",
+      "text": "y/a",
+      "group_id": "shell-division-c-n1ei00-0001"
+    },
+    "identity_map": {
+      "operator_story": [
+        "atom-variable-c-n1ei00-0001",
+        "bridge-log-base-shell-power-c-n1ei00-0001"
+      ],
+      "content_story": [
+        "bridge-power-content-shell-power-c-n1ei00-0001",
+        "bridge-flat-content-shell-power-c-n1ei00-0001"
+      ]
+    },
+    "source_trace": {
+      "boundary_row_id": "r0",
+      "projection_row_id": "projection-0",
+      "trigger_step_index": 0,
+      "trigger_family": "power_exponent_release",
+      "boundary_strategy_family": null
+    }
+  },
+  "landing_profile": {
+    "system_id": "A2",
+    "variant": "right",
+    "preview_equation": "2x-1 = log_B(y/a)",
+    "equals_anchor_x": 23,
+    "term_side": "left",
+    "carry_through_side": "right",
+    "carry_through_zone": {
+      "x": 25,
+      "width": 8
+    },
+    "term_zone": {
+      "x": 17,
+      "width": 5
+    },
+    "term_slots": [
+      {
+        "role": "content_cell_1",
+        "x": 17,
+        "source_cell_id": "r0::content::content::atom-number-c-n1ei00-0001::0",
+        "source_atom_id": "atom-number-c-n1ei00-0001",
+        "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+        "source_text": "2",
+        "source_local_row": 1
+      },
+      {
+        "role": "content_cell_2",
+        "x": 18,
+        "source_cell_id": "r0::content::multiplication_operator::atom-operator-c-n1ei00-0002::1",
+        "source_atom_id": "atom-operator-c-n1ei00-0002",
+        "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+        "source_text": "*",
+        "source_local_row": 1
+      },
+      {
+        "role": "content_cell_3",
+        "x": 19,
+        "source_cell_id": "r0::content::content::atom-variable-c-n1ei00-0002::2",
+        "source_atom_id": "atom-variable-c-n1ei00-0002",
+        "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+        "source_text": "x",
+        "source_local_row": 1
+      },
+      {
+        "role": "content_cell_4",
+        "x": 20,
+        "source_cell_id": "r0::content::subtraction_operator::atom-operator-c-n1ei00-0001::3",
+        "source_atom_id": "atom-operator-c-n1ei00-0001",
+        "source_shell_id": "shell-subtraction-c-n1ei00-0001",
+        "source_text": "-",
+        "source_local_row": 1
+      },
+      {
+        "role": "content_cell_5",
+        "x": 21,
+        "source_cell_id": "r0::content::content::atom-number-c-n1ei00-0002::4",
+        "source_atom_id": "atom-number-c-n1ei00-0002",
+        "source_shell_id": "shell-subtraction-c-n1ei00-0001",
+        "source_text": "1",
+        "source_local_row": 1
+      }
+    ],
+    "source_exponent_track_count": 1,
+    "stories": {
+      "operator_target": {
+        "text": "log_B",
+        "side": "right"
+      },
+      "content_target": {
+        "text": "2x-1",
+        "side": "left"
+      }
+    },
+    "no_second_jump": true,
+    "source_trace": {
+      "landing_row_id": "r1",
+      "probe_row_id": "r1",
+      "projection_row_id": "projection-0",
+      "probe_anchor_x": 19,
+      "boundary_anchor_x": 23,
+      "trigger_step_index": 0,
+      "trigger_family": "power_exponent_release",
+      "derivation_mode": "isolated_a2_probe",
+      "term_slot_policy": "compact_normal_axis"
+    }
+  },
+  "landing_state": {
+    "equation_text": "2x-1 = log_B(y/a)",
+    "variant": "right",
+    "target_symbol": "x",
+    "anchors": {
+      "equals": {
+        "x": 23
+      }
+    },
+    "stories": {
+      "operator": {
+        "source": "B",
+        "target": "log_B",
+        "color_role": "blue",
+        "source_id": "atom-variable-c-n1ei00-0001",
+        "target_ids": [
+          "atom-variable-c-n1ei00-0001",
+          "bridge-log-base-shell-power-c-n1ei00-0001"
+        ]
+      },
+      "content": {
+        "source": "2x-1",
+        "target": "2x-1",
+        "color_role": "orange",
+        "source_id": "bridge-power-content-shell-power-c-n1ei00-0001",
+        "target_ids": [
+          "bridge-power-content-shell-power-c-n1ei00-0001",
+          "bridge-flat-content-shell-power-c-n1ei00-0001"
+        ],
+        "ordered_cells": [
+          {
+            "id": "r0::content::power_exponent::atom-number-c-n1ei00-0001::1",
+            "source_atom_id": "atom-number-c-n1ei00-0001",
+            "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+            "text": "2",
+            "role": "content",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 4
+          },
+          {
+            "id": "r0::content::multiplication_operator::atom-operator-c-n1ei00-0002::2",
+            "source_atom_id": "atom-operator-c-n1ei00-0002",
+            "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+            "text": "*",
+            "role": "content",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 8
+          },
+          {
+            "id": "r0::content::power_exponent::atom-variable-c-n1ei00-0002::3",
+            "source_atom_id": "atom-variable-c-n1ei00-0002",
+            "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+            "text": "x",
+            "role": "target",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 12
+          },
+          {
+            "id": "r0::content::subtraction_operator::atom-operator-c-n1ei00-0001::4",
+            "source_atom_id": "atom-operator-c-n1ei00-0001",
+            "source_shell_id": "shell-subtraction-c-n1ei00-0001",
+            "text": "-",
+            "role": "content",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 16
+          },
+          {
+            "id": "r0::content::power_exponent::atom-number-c-n1ei00-0002::5",
+            "source_atom_id": "atom-number-c-n1ei00-0002",
+            "source_shell_id": "shell-subtraction-c-n1ei00-0001",
+            "text": "1",
+            "role": "content",
+            "projection_role": "power_exponent",
+            "boundary_local_row": 0,
+            "boundary_col": 20
+          }
+        ]
+      },
+      "carry_through": {
+        "source": "y/a",
+        "side": "right",
+        "group_id": "shell-division-c-n1ei00-0001"
+      }
+    },
+    "layout": {
+      "equals_anchor_x": 23,
+      "carry_through_zone_x": 25,
+      "carry_through_zone_width": 8,
+      "term_zone_x": 17,
+      "term_zone_width": 5,
+      "term_slots": [
+        17,
+        18,
+        19,
+        20,
+        21
+      ],
+      "term_slot_roles": [
+        "content_cell_1",
+        "content_cell_2",
+        "content_cell_3",
+        "content_cell_4",
+        "content_cell_5"
+      ],
+      "term_cell_bindings": [
+        {
+          "role": "content_cell_1",
+          "x": 17,
+          "source_cell_id": "r0::content::content::atom-number-c-n1ei00-0001::0",
+          "source_atom_id": "atom-number-c-n1ei00-0001",
+          "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+          "source_text": "2",
+          "source_local_row": 1
+        },
+        {
+          "role": "content_cell_2",
+          "x": 18,
+          "source_cell_id": "r0::content::multiplication_operator::atom-operator-c-n1ei00-0002::1",
+          "source_atom_id": "atom-operator-c-n1ei00-0002",
+          "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+          "source_text": "*",
+          "source_local_row": 1
+        },
+        {
+          "role": "content_cell_3",
+          "x": 19,
+          "source_cell_id": "r0::content::content::atom-variable-c-n1ei00-0002::2",
+          "source_atom_id": "atom-variable-c-n1ei00-0002",
+          "source_shell_id": "shell-multiplication-c-n1ei00-0001",
+          "source_text": "x",
+          "source_local_row": 1
+        },
+        {
+          "role": "content_cell_4",
+          "x": 20,
+          "source_cell_id": "r0::content::subtraction_operator::atom-operator-c-n1ei00-0001::3",
+          "source_atom_id": "atom-operator-c-n1ei00-0001",
+          "source_shell_id": "shell-subtraction-c-n1ei00-0001",
+          "source_text": "-",
+          "source_local_row": 1
+        },
+        {
+          "role": "content_cell_5",
+          "x": 21,
+          "source_cell_id": "r0::content::content::atom-number-c-n1ei00-0002::4",
+          "source_atom_id": "atom-number-c-n1ei00-0002",
+          "source_shell_id": "shell-subtraction-c-n1ei00-0001",
+          "source_text": "1",
+          "source_local_row": 1
+        }
+      ],
+      "source_exponent_track_count": 1,
+      "target_term_track_count": 5
+    },
+    "step_meta": {
+      "operation_type": "power_shell_break",
+      "display_text": "log_B",
+      "no_second_jump": true
+    }
+  },
+  "before_state": {
+    "sceneId": "before_state",
+    "sourceProject": "6_Gleichungsloeser",
+    "coordinateSpace": "transition_local",
+    "equation": "B^(2x-1) = y/a",
+    "notes": "Realer Grenzzustand direkt vor dem Shell-Breaker B.",
+    "atoms": [
+      {
+        "id": "carry_bar",
+        "text": "―",
+        "x": 808,
+        "y": 362,
+        "size": 40,
+        "zone": "carry",
+        "fontStyle": "normal",
+        "storyKey": null
+      },
+      {
+        "id": "eq",
+        "text": "=",
+        "x": 600,
+        "y": 360,
+        "size": 40,
+        "zone": "main",
+        "fontStyle": "normal",
+        "storyKey": null
+      },
+      {
+        "id": "base_B",
+        "text": "B",
+        "x": 2,
+        "y": 360,
+        "size": 52,
+        "zone": "main",
+        "fontStyle": "italic",
+        "storyKey": null
+      },
+      {
+        "id": "exp_0",
+        "text": "2",
+        "x": 118,
+        "y": 300,
+        "size": 28,
+        "zone": "exponent",
+        "fontStyle": "italic",
+        "storyKey": "content_1"
+      },
+      {
+        "id": "exp_1",
+        "text": "*",
+        "x": 152,
+        "y": 300,
+        "size": 28,
+        "zone": "exponent",
+        "fontStyle": "italic",
+        "storyKey": "content_2"
+      },
+      {
+        "id": "exp_2",
+        "text": "x",
+        "x": 186,
+        "y": 300,
+        "size": 28,
+        "zone": "exponent",
+        "fontStyle": "italic",
+        "storyKey": "content_3"
+      },
+      {
+        "id": "exp_3",
+        "text": "-",
+        "x": 220,
+        "y": 300,
+        "size": 24,
+        "zone": "exponent",
+        "fontStyle": "normal",
+        "storyKey": "content_4"
+      },
+      {
+        "id": "exp_4",
+        "text": "1",
+        "x": 254,
+        "y": 300,
+        "size": 28,
+        "zone": "exponent",
+        "fontStyle": "italic",
+        "storyKey": "content_5"
+      }
+    ],
+    "shells": [
+      {
+        "id": "exp_group",
+        "kind": "exponent_group",
+        "x": 104,
+        "y": 266,
+        "width": 178,
+        "height": 56
+      }
+    ]
+  },
+  "after_state": {
+    "sceneId": "after_state",
+    "sourceProject": "6_Gleichungsloeser",
+    "coordinateSpace": "transition_local",
+    "equation": "2x-1 = log_B(y/a)",
+    "notes": "Reale Startlage von A2 mit echten Zielslots 17, 18, 19, 20, 21.",
+    "atoms": [
+      {
+        "id": "log_head",
+        "text": "log",
+        "x": 652,
+        "y": 360,
+        "size": 46,
+        "zone": "main",
+        "fontStyle": "normal",
+        "storyKey": null
+      },
+      {
+        "id": "log_base",
+        "text": "B",
+        "x": 706,
+        "y": 392,
+        "size": 24,
+        "zone": "base",
+        "fontStyle": "italic",
+        "storyKey": null
+      },
+      {
+        "id": "paren_l",
+        "text": "(",
+        "x": 678,
+        "y": 360,
+        "size": 48,
+        "zone": "main",
+        "fontStyle": "normal",
+        "storyKey": null
+      },
+      {
+        "id": "paren_r",
+        "text": ")",
+        "x": 834,
+        "y": 360,
+        "size": 48,
+        "zone": "main",
+        "fontStyle": "normal",
+        "storyKey": null
+      },
+      {
+        "id": "eq",
+        "text": "=",
+        "x": 600,
+        "y": 360,
+        "size": 40,
+        "zone": "main",
+        "fontStyle": "normal",
+        "storyKey": null
+      },
+      {
+        "id": "rhs_0",
+        "text": "2",
+        "x": 444,
+        "y": 360,
+        "size": 46,
+        "zone": "focus_term",
+        "fontStyle": "italic",
+        "storyKey": "content_1"
+      },
+      {
+        "id": "rhs_1",
+        "text": "*",
+        "x": 470,
+        "y": 360,
+        "size": 34,
+        "zone": "focus_term",
+        "fontStyle": "normal",
+        "storyKey": "content_2"
+      },
+      {
+        "id": "rhs_2",
+        "text": "x",
+        "x": 496,
+        "y": 360,
+        "size": 46,
+        "zone": "focus_term",
+        "fontStyle": "italic",
+        "storyKey": "content_3"
+      },
+      {
+        "id": "rhs_3",
+        "text": "-",
+        "x": 522,
+        "y": 360,
+        "size": 34,
+        "zone": "focus_term",
+        "fontStyle": "normal",
+        "storyKey": "content_4"
+      },
+      {
+        "id": "rhs_4",
+        "text": "1",
+        "x": 548,
+        "y": 360,
+        "size": 46,
+        "zone": "focus_term",
+        "fontStyle": "italic",
+        "storyKey": "content_5"
+      }
+    ],
+    "shells": [
+      {
+        "id": "rhs_group",
+        "kind": "term_group",
+        "x": 426,
+        "y": 326,
+        "width": 146,
+        "height": 56
+      }
+    ]
+  }
+}

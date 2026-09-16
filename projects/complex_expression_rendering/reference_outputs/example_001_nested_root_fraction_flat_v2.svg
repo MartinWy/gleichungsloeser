@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="288.00" height="249.88" viewBox="0 0 288.00 249.88">
+<rect width="100%" height="100%" fill="white" />
+<text x="118.73" y="74.88" font-size="30.00" fill="#111827" font-family="Times New Roman, serif" font-style="normal">1</text>
+<text x="145.73" y="74.88" font-size="30.00" fill="#111827" font-family="Times New Roman, serif" font-style="normal">+</text>
+<text x="169.73" y="74.88" font-size="30.00" fill="#111827" font-family="Times New Roman, serif" font-style="italic">b</text>
+<text x="190.73" y="50.88" font-size="18.60" fill="#111827" font-family="Times New Roman, serif" font-style="normal">2</text>
+<text x="167.50" y="154.88" font-size="30.00" fill="#111827" font-family="Times New Roman, serif" font-style="normal">1</text>
+<text x="142.00" y="208.88" font-size="30.00" fill="#111827" font-family="Times New Roman, serif" font-style="normal">2</text>
+<text x="169.00" y="208.88" font-size="30.00" fill="#111827" font-family="Times New Roman, serif" font-style="normal">-</text>
+<text x="193.00" y="208.88" font-size="30.00" fill="#111827" font-family="Times New Roman, serif" font-style="italic">a</text>
+<line x1="130.00" y1="174.88" x2="222.00" y2="174.88" stroke="#111827" stroke-width="1.6" />
+<text x="114.00" y="174.88" font-size="90.64" fill="#111827" font-family="Times New Roman, serif" font-style="normal">(</text>
+<text x="224.00" y="174.88" font-size="90.64" fill="#111827" font-family="Times New Roman, serif" font-style="normal">)</text>
+<path d="M 80.00 174.88 L 94.28 174.88 L 103.12 227.88 L 114.00 121.88 L 240.00 121.88" fill="none" stroke="#111827" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round" />
+<text x="64.00" y="174.88" font-size="111.24" fill="#111827" font-family="Times New Roman, serif" font-style="normal">(</text>
+<text x="242.00" y="174.88" font-size="111.24" fill="#111827" font-family="Times New Roman, serif" font-style="normal">)</text>
+<line x1="52.00" y1="94.88" x2="268.00" y2="94.88" stroke="#111827" stroke-width="1.6" />
+<path d="M 18.00 94.88 L 32.28 94.88 L 41.12 227.88 L 52.00 27.00 L 270.00 27.00" fill="none" stroke="#111827" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round" />
+</svg>
