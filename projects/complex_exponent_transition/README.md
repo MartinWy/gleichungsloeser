@@ -67,6 +67,12 @@ durchgereichte Kindschale behaelt ihre Boundary-Zellen; neue Huellezellen und
 die geoeffneten Exponentenatome erhalten ausschliesslich die im Landing-Profil
 benannten Zielzellen.
 
+Die neue Funktionshuelle behaelt dabei ab ihrer Geburt dieselben kanonischen
+P4-Rollen: `function_name`, `function_left_paren` und
+`function_right_paren`. B darf diese Rollen in der exklusiven Landing-Zeile
+nicht in kuerzere Darstellungsrollen umbenennen, weil die A2-Folgezeilen sonst
+dieselbe Zelle nicht mehr identitaetsbasiert wiederfinden koennen.
+
 ## Nichtziel
 
 Dieses Projekt darf nicht:

@@ -69,11 +69,11 @@ async function assertIdentityBasedBridge(equation, carrySide) {
     ));
     const landingFunctionLeft = (landingRow.projectionAtoms || []).find((atom) => (
         atom?.side === carrySide
-        && ["function_left", "function_left_paren"].includes(atomRole(atom))
+        && atomRole(atom) === "function_left_paren"
     ));
     const landingFunctionRight = (landingRow.projectionAtoms || []).find((atom) => (
         atom?.side === carrySide
-        && ["function_right", "function_right_paren"].includes(atomRole(atom))
+        && atomRole(atom) === "function_right_paren"
     ));
     const landingFunctionSpan = (landingRow.shellSpans || []).find((span) => (
         span?.side === carrySide
@@ -110,6 +110,43 @@ async function assertIdentityBasedBridge(equation, carrySide) {
         landingFractionLine.colEnd,
         "Die FUNCTION-Schale muss exakt den unveraenderten Bruch als Argumentbereich referenzieren."
     );
+
+    const continuationRowsWithFunction = rows.slice(landingIndex + 1).filter((row) => (
+        (row.projectionAtoms || []).some((atom) => (
+            atom?.side === carrySide
+            && atomRole(atom) === "function_name"
+            && atom?.sourceShellId === landingFunctionName.sourceShellId
+        ))
+    ));
+
+    assert.ok(
+        continuationRowsWithFunction.length > 0,
+        "Der Testfall muss die in B geborene FUNCTION mindestens eine A2-Folgezeile weiterfuehren."
+    );
+
+    for (const continuationRow of continuationRowsWithFunction) {
+        for (const landingFunctionAtom of [
+            landingFunctionName,
+            landingFunctionLeft,
+            landingFunctionRight
+        ]) {
+            const continuationAtom = (continuationRow.projectionAtoms || []).find((atom) => (
+                atom?.side === carrySide
+                && atomRole(atom) === atomRole(landingFunctionAtom)
+                && atomSourceId(atom) === atomSourceId(landingFunctionAtom)
+            ));
+
+            assert.ok(
+                continuationAtom,
+                `${atomRole(landingFunctionAtom)} muss in ${continuationRow.rowId} dieselbe Rollenidentitaet behalten.`
+            );
+            assert.deepEqual(
+                atomColumns(continuationAtom),
+                atomColumns(landingFunctionAtom),
+                `${atomRole(landingFunctionAtom)} darf zwischen B-Landung und ${continuationRow.rowId} nicht wandern.`
+            );
+        }
+    }
 }
 
 await assertIdentityBasedBridge(

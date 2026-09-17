@@ -1363,6 +1363,9 @@ Dabei gilt:
 - eine neue Funktionshuelle wird in den vom A2-Profil gelieferten eigenen
   Slots um die unveraendert durchgereichte Kindschale gelegt; sie darf deren
   Zellen weder verschieben noch aus deren sichtbarer Breite erraten werden
+- Name sowie linke und rechte Funktionsklammer behalten zwischen B-Landung
+  und A2-Folgezeilen ihre kanonischen P4-Rollen; eine umbenannte Rolle waere
+  eine neue Identitaet und duerfte deshalb nicht zur Positionsbindung dienen
 - der Renderer darf eine falsche Landung nicht optisch reparieren
 
 ## 11. Die Medien und ihre Rolle

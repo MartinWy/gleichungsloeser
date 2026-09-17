@@ -49,6 +49,10 @@ Fuer die exklusive Landing-Zeile gilt daher:
 - Shell-Spannen werden aus den gebundenen Kindidentitaeten abgeleitet
 - der neue Funktionskopf, seine optionale Basis und beide Klammern benutzen
   ihre expliziten A2-Profilslots relativ zur unveraenderten Kindschale
+- Funktionskopf und Klammern behalten dabei exakt die kanonischen P4-Rollen
+  `function_name`, `function_left_paren` und `function_right_paren`; diese
+  Rollen duerfen an der Grenze nicht in Darstellungsaliasnamen umgeschrieben
+  werden
 - nur die geoeffneten Exponentenatome werden auf `term_slots` abgebildet
 
 Eine globale Tabelle `sourceCol -> targetCol`, eine Auswahl unter mehreren

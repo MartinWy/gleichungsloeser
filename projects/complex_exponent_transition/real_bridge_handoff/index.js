@@ -1583,13 +1583,9 @@ function buildExclusiveBridgeLandingProjectionRow({
             localRow: shiftMaybeInt(probeFunctionNameAtom?.localRow, termLocalRowDelta)
         }));
         landingAtoms.push(shiftProjectionAtom(probeFunctionLeftAtom, functionPrefixDelta, {
-            role: "function_left",
-            projectionRole: "function_left",
             localRow: shiftMaybeInt(probeFunctionLeftAtom?.localRow, termLocalRowDelta)
         }));
         landingAtoms.push(shiftProjectionAtom(probeFunctionRightAtom, functionSuffixDelta, {
-            role: "function_right",
-            projectionRole: "function_right",
             localRow: shiftMaybeInt(probeFunctionRightAtom?.localRow, termLocalRowDelta)
         }));
 

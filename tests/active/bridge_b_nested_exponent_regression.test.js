@@ -107,8 +107,8 @@ const nestedDivisionSpan = (nestedLandingRow.shellSpans || []).find((span) => (
     && span.shellId === nestedLandingFractionLine.sourceShellId
 ));
 const nestedFunctionName = nestedLandingRow.projectionAtoms.find((cell) => cell.role === "function_name");
-const nestedFunctionLeft = nestedLandingRow.projectionAtoms.find((cell) => cell.role === "function_left");
-const nestedFunctionRight = nestedLandingRow.projectionAtoms.find((cell) => cell.role === "function_right");
+const nestedFunctionLeft = nestedLandingRow.projectionAtoms.find((cell) => cell.role === "function_left_paren");
+const nestedFunctionRight = nestedLandingRow.projectionAtoms.find((cell) => cell.role === "function_right_paren");
 const nestedFunctionSpan = (nestedLandingRow.shellSpans || []).find((span) => (
     span.shellType === "FUNCTION"
     && span.shellId === nestedFunctionName?.sourceShellId
