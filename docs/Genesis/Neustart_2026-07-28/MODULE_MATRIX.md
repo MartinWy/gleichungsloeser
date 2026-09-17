@@ -136,7 +136,7 @@ unter `core/GenesisRuntime/`.
 | :--- | :--- | :--- | :--- | :--- |
 | Bridge-Vertragsfassade | `docs/Architecture/BRIDGE_B_VERTRAG_V1.md`, `bridge_b/README.md` | `bridge_b/index.js`, `contracts_in/`, `contracts_out/`, `layout_bridge/` | `bridge_b_target_entrypoint.test.js`, `bridge_b_position_contract.test.js` | allgemeine Solverregeln oder Rendererlogik |
 | Transition Step | `bridge_b/transition_step/README.md` | `bridge_b/transition_step/index.js` | `bridge_b_transition_step.test.js`, `bridge_process_space_column_transition.test.js` | mehr als genau eine Landing-Zeile erzeugen oder alte A1-Spalten als A2-Termspalten fortschreiben |
-| Reales Handoff | `projects/complex_exponent_transition/README.md` und Bridge-Vertrag | `projects/complex_exponent_transition/real_bridge_handoff/` | `real_bridge_handoff_cli.test.js`, `real_bridge_demo_payload_export.test.js`, `bridge_worksheet_final_render.test.js`, `bridge_arbitrary_log_base_projection.test.js`, `bridge_process_space_column_transition.test.js`, `worksheet_process_space_position_fidelity.test.js`, `worksheet_process_space_width_isolation.test.js` | A1- und A2-Verantwortung, ihre funktionalen Spaltenverteilungen oder ihre horizontalen Breitenprofile im B-Prozessschritt vermischen |
+| Reales Handoff | `projects/complex_exponent_transition/README.md` und Bridge-Vertrag | `projects/complex_exponent_transition/real_bridge_handoff/` | `real_bridge_handoff_cli.test.js`, `real_bridge_demo_payload_export.test.js`, `bridge_worksheet_final_render.test.js`, `bridge_arbitrary_log_base_projection.test.js`, `bridge_process_space_column_transition.test.js`, `bridge_denominator_extension_handoff.test.js`, `worksheet_process_space_position_fidelity.test.js`, `worksheet_process_space_width_isolation.test.js` | A1- und A2-Verantwortung oder ihre Breitenprofile vermischen; mehrzeilige Zellen ueber eine globale Quellspalten-Tabelle statt ueber ihre Identitaeten binden |
 
 Die reine Bridge-Kette ist:
 
@@ -237,7 +237,7 @@ Damit ist eine aktive Testdatei ohne Standardregistrierung technisch ausgeschlos
 Manuelle, diagnostische oder historische Tests gehoeren nicht unter `tests/active/`.
 
 Gemessener Stand am 17. September 2026: 88 Dateien unter `tests/active/`
-plus 5 direkte Core-Validierungen, insgesamt 93 von 93 gruen. Fuenf aktive
+plus 5 direkte Core-Validierungen, insgesamt 94 von 94 gruen. Fuenf aktive
 Tests sichern Laufzeitumgebung, HTTP-Grenze, isolierte Vorschau-Arbeitsraeume
 die zustandslose Vorschauauslieferung und den expliziten Vercel-Containerdienst
 fuer den oeffentlichen Betrieb; der fokussierte Spursegment-Test beweist

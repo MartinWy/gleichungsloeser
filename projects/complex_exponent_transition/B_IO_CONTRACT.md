@@ -1,7 +1,7 @@
 # B IO Contract
 
 Status: Arbeitsvertrag  
-Stand: 2026-09-16
+Stand: 2026-09-17
 
 ## Zweck
 
@@ -36,6 +36,23 @@ Core-Zellprofils, sind aber keine sichtbaren Boundary- oder Landing-Termspuren.
 Alle B-Adapter uebernehmen `isVisible` unveraendert und filtern solche Zellen
 aus sichtbaren `ordered_cells` und `term_slots`; B darf ihre Sichtbarkeit weder
 neu bewerten noch aus ihrem Text ableiten.
+
+Eine Zellidentitaet besteht im Uebergang mindestens aus ihrer stabilen Atom-
+oder Schalenreferenz und ihrer lokalen Zeilenlage. Eine blosse numerische
+Spaltennummer ist keine Identitaet. Insbesondere duerfen Zaehlerzelle,
+Bruchstrich und Nennerzelle in derselben Spalte verschiedener lokaler Zeilen
+liegen und nach der Landung dennoch verschiedene Zielspalten besitzen.
+
+Fuer die exklusive Landing-Zeile gilt daher:
+
+- die Durchreicheseite wird atomweise aus der Boundary uebernommen
+- Shell-Spannen werden aus den gebundenen Kindidentitaeten abgeleitet
+- der neue Funktionskopf, seine optionale Basis und beide Klammern benutzen
+  ihre expliziten A2-Profilslots relativ zur unveraenderten Kindschale
+- nur die geoeffneten Exponentenatome werden auf `term_slots` abgebildet
+
+Eine globale Tabelle `sourceCol -> targetCol`, eine Auswahl unter mehreren
+Treffern oder ein nachtraegliches optisches Ausgleichen ist verboten.
 
 ## Eingabe von B
 

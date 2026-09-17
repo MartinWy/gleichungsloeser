@@ -1087,21 +1087,7 @@ function bindTermAtomsToLandingSlots(atoms = [], landingState = {}) {
     });
 }
 
-function registerExactColumnMapping(columnMap, sourceCol, targetCol, contextLabel) {
-    if (!Number.isInteger(sourceCol) || !Number.isInteger(targetCol)) {
-        return;
-    }
-
-    if (columnMap.has(sourceCol) && columnMap.get(sourceCol) !== targetCol) {
-        throw new Error(
-            `Bridge B erhielt fuer Quellspalte ${sourceCol} mehrere Zielspalten (${contextLabel}).`
-        );
-    }
-
-    columnMap.set(sourceCol, targetCol);
-}
-
-function buildExactProjectionColumnMap(sourceAtoms = [], targetAtoms = []) {
+function buildExactProjectionAtomPairs(sourceAtoms = [], targetAtoms = []) {
     const targetsById = new Map(
         (Array.isArray(targetAtoms) ? targetAtoms : [])
             .filter((atom) => typeof atom?.id === "string" && atom.id.length > 0)
@@ -1111,94 +1097,334 @@ function buildExactProjectionColumnMap(sourceAtoms = [], targetAtoms = []) {
 
     (Array.isArray(targetAtoms) ? targetAtoms : []).forEach((atom) => {
         buildProjectionMatchKeys(atom).forEach((key) => {
-            if (!targetsByKey.has(key)) {
-                targetsByKey.set(key, atom);
-            }
+            const matches = targetsByKey.get(key) || [];
+            matches.push(atom);
+            targetsByKey.set(key, matches);
         });
     });
 
-    return (Array.isArray(sourceAtoms) ? sourceAtoms : []).reduce((columnMap, sourceAtom) => {
-        const targetAtom = targetsById.get(sourceAtom?.id)
-            || resolveMatchedBridgeAtom(sourceAtom, targetsByKey);
+    return (Array.isArray(sourceAtoms) ? sourceAtoms : []).flatMap((sourceAtom) => {
+        const exactTarget = targetsById.get(sourceAtom?.id) || null;
+        const keyedTargets = buildProjectionMatchKeys(sourceAtom)
+            .flatMap((key) => targetsByKey.get(key) || []);
+        const candidates = Array.from(new Set([
+            ...(exactTarget ? [exactTarget] : []),
+            ...keyedTargets
+        ]));
 
-        if (!targetAtom) {
-            return columnMap;
+        if (exactTarget) {
+            return [{ sourceAtom, targetAtom: exactTarget }];
         }
 
-        registerExactColumnMapping(
-            columnMap,
-            sourceAtom?.col,
-            targetAtom?.col,
-            `${sourceAtom?.id || sourceAtom?.role || "unbekanntes Atom"}.col`
-        );
-        registerExactColumnMapping(
-            columnMap,
-            resolveAtomStartCol(sourceAtom),
-            resolveAtomStartCol(targetAtom),
-            `${sourceAtom?.id || sourceAtom?.role || "unbekanntes Atom"}.colStart`
-        );
-        registerExactColumnMapping(
-            columnMap,
-            resolveAtomEndCol(sourceAtom),
-            resolveAtomEndCol(targetAtom),
-            `${sourceAtom?.id || sourceAtom?.role || "unbekanntes Atom"}.colEnd`
-        );
-        return columnMap;
-    }, new Map());
+        if (candidates.length > 1) {
+            throw new Error(
+                `Bridge B kann die Projektionszelle ${sourceAtom?.id || sourceAtom?.role || "unbekannt"} nicht eindeutig ueber ihre Identitaet binden.`
+            );
+        }
+
+        return candidates.length === 1
+            ? [{ sourceAtom, targetAtom: candidates[0] }]
+            : [];
+    });
 }
 
-function remapExactShellColumn(value, columnMap, shellId, fieldName) {
-    if (!Number.isInteger(value)) {
-        return value;
+function resolveProjectionAtomShellId(atom = {}, shellIds = new Set()) {
+    const explicitShellId = atom?.sourceShellId || null;
+    if (explicitShellId && shellIds.has(explicitShellId)) {
+        return explicitShellId;
     }
 
-    if (!columnMap.has(value)) {
-        throw new Error(
-            `Bridge B kann ${shellId}.${fieldName} aus Quellspalte ${value} keiner eindeutigen Landing-Zelle zuordnen.`
-        );
-    }
-
-    return columnMap.get(value);
+    const sourceAtomId = atom?.sourceAtomId || null;
+    return sourceAtomId && shellIds.has(sourceAtomId) ? sourceAtomId : null;
 }
 
-function remapExactCollectionRange(
-    range,
-    columnMap,
-    shellId,
-    collectionName,
-    rangeGroup = "collectionRanges"
-) {
-    if (!range) {
+function buildShellAncestry(shellSpans = []) {
+    const parentById = new Map(
+        (Array.isArray(shellSpans) ? shellSpans : [])
+            .filter((span) => typeof span?.shellId === "string")
+            .map((span) => [span.shellId, span.parentShellId || null])
+    );
+    const shellIds = new Set(parentById.keys());
+
+    function distanceFromAncestor(shellId, ancestorId) {
+        let current = shellId;
+        let distance = 0;
+        const visited = new Set();
+
+        while (current && !visited.has(current)) {
+            if (current === ancestorId) {
+                return distance;
+            }
+            visited.add(current);
+            current = parentById.get(current) || null;
+            distance += 1;
+        }
+
+        return null;
+    }
+
+    return { shellIds, distanceFromAncestor };
+}
+
+function resolveTargetExtent(pairs = []) {
+    const starts = pairs
+        .map(({ targetAtom }) => resolveAtomStartCol(targetAtom))
+        .filter((value) => Number.isInteger(value));
+    const ends = pairs
+        .map(({ targetAtom }) => resolveAtomEndCol(targetAtom))
+        .filter((value) => Number.isInteger(value));
+
+    if (starts.length === 0 || ends.length === 0) {
+        return null;
+    }
+
+    return {
+        colStart: Math.min(...starts),
+        colEnd: Math.max(...ends)
+    };
+}
+
+function sameProjectionRange(left = null, right = null) {
+    return Boolean(left && right)
+        && left.colStart === right.colStart
+        && left.colEnd === right.colEnd;
+}
+
+function remapStoredRange(range = null, targetExtent = null) {
+    if (!range || !targetExtent) {
         return range;
     }
 
     return {
         ...structuredClone(range),
-        colStart: remapExactShellColumn(
-            range.colStart,
-            columnMap,
-            shellId,
-            `${rangeGroup}.${collectionName}.colStart`
-        ),
-        colEnd: remapExactShellColumn(
-            range.colEnd,
-            columnMap,
-            shellId,
-            `${rangeGroup}.${collectionName}.colEnd`
-        )
+        colStart: targetExtent.colStart,
+        colEnd: targetExtent.colEnd
     };
 }
 
+function resolveSpanEndpoint({
+    span,
+    fieldName,
+    sourceValue,
+    pairs,
+    ancestry,
+    edge
+}) {
+    if (!Number.isInteger(sourceValue)) {
+        return sourceValue;
+    }
+
+    const candidates = pairs
+        .map((pair) => {
+            const sourceEdge = edge === "start"
+                ? resolveAtomStartCol(pair.sourceAtom)
+                : resolveAtomEndCol(pair.sourceAtom);
+            const targetEdge = edge === "start"
+                ? resolveAtomStartCol(pair.targetAtom)
+                : resolveAtomEndCol(pair.targetAtom);
+            const ownerShellId = resolveProjectionAtomShellId(
+                pair.sourceAtom,
+                ancestry.shellIds
+            );
+            const distance = ownerShellId
+                ? ancestry.distanceFromAncestor(ownerShellId, span.shellId)
+                : null;
+
+            return {
+                ...pair,
+                sourceEdge,
+                targetEdge,
+                distance
+            };
+        })
+        .filter((candidate) => (
+            candidate.sourceEdge === sourceValue
+            && Number.isInteger(candidate.targetEdge)
+        ));
+
+    if (candidates.length === 0) {
+        throw new Error(
+            `Bridge B kann ${span.shellId}.${fieldName} keiner identitaetsgebundenen Landing-Zelle zuordnen.`
+        );
+    }
+
+    const rankedDistances = candidates
+        .map((candidate) => candidate.distance)
+        .filter((distance) => Number.isInteger(distance));
+    const bestDistance = rankedDistances.length > 0 ? Math.min(...rankedDistances) : null;
+    const bestCandidates = bestDistance == null
+        ? candidates
+        : candidates.filter((candidate) => candidate.distance === bestDistance);
+    const targetValues = Array.from(new Set(bestCandidates.map((candidate) => candidate.targetEdge)));
+
+    if (targetValues.length !== 1) {
+        throw new Error(
+            `Bridge B kann ${span.shellId}.${fieldName} nicht eindeutig aus den gebundenen Kindidentitaeten ableiten.`
+        );
+    }
+
+    return targetValues[0];
+}
+
+function collectSpanPairs(span, allPairs, ancestry) {
+    const contentLeafIds = new Set(span?.contentLeafIds || []);
+
+    return allPairs.filter(({ sourceAtom }) => {
+        const sourceAtomId = sourceAtom?.sourceAtomId || null;
+        const ownerShellId = resolveProjectionAtomShellId(sourceAtom, ancestry.shellIds);
+        const distance = ownerShellId
+            ? ancestry.distanceFromAncestor(ownerShellId, span.shellId)
+            : null;
+
+        return contentLeafIds.has(sourceAtomId) || Number.isInteger(distance);
+    });
+}
+
+function collectContentPairs(span, spanPairs, ancestry) {
+    const contentLeafIds = new Set(span?.contentLeafIds || []);
+
+    return spanPairs.filter(({ sourceAtom }) => {
+        const sourceAtomId = sourceAtom?.sourceAtomId || null;
+        const ownerShellId = resolveProjectionAtomShellId(sourceAtom, ancestry.shellIds);
+        const distance = ownerShellId
+            ? ancestry.distanceFromAncestor(ownerShellId, span.shellId)
+            : null;
+
+        return contentLeafIds.has(sourceAtomId)
+            || (Number.isInteger(distance) && distance > 0);
+    });
+}
+
+function collectCollectionPairs(span, collectionName, spanPairs, shellSpans, ancestry) {
+    const collectionLeafIds = new Set(span?.collectionLeafIds?.[collectionName] || []);
+    if (collectionLeafIds.size === 0) {
+        return [];
+    }
+
+    const collectionShellIds = new Set(
+        (Array.isArray(shellSpans) ? shellSpans : [])
+            .filter((candidate) => {
+                const distance = ancestry.distanceFromAncestor(candidate?.shellId, span?.shellId);
+                return Number.isInteger(distance)
+                    && distance > 0
+                    && (candidate?.contentLeafIds || []).some((id) => collectionLeafIds.has(id));
+            })
+            .map((candidate) => candidate.shellId)
+    );
+
+    return spanPairs.filter(({ sourceAtom }) => {
+        const sourceAtomId = sourceAtom?.sourceAtomId || null;
+        const ownerShellId = resolveProjectionAtomShellId(sourceAtom, ancestry.shellIds);
+
+        if (collectionLeafIds.has(sourceAtomId)) {
+            return true;
+        }
+
+        if (!ownerShellId) {
+            return false;
+        }
+
+        return Array.from(collectionShellIds).some((collectionShellId) => (
+            Number.isInteger(ancestry.distanceFromAncestor(ownerShellId, collectionShellId))
+        ));
+    });
+}
+
 function remapExactShellSpans(shellSpans = [], sourceAtoms = [], targetAtoms = [], rowId = null, sourceRowId = null) {
-    const columnMap = buildExactProjectionColumnMap(sourceAtoms, targetAtoms);
+    const projectionPairs = buildExactProjectionAtomPairs(sourceAtoms, targetAtoms);
+    const ancestry = buildShellAncestry(shellSpans);
 
     return (Array.isArray(shellSpans) ? shellSpans : []).map((span) => {
         const shellId = span?.shellId || "unbekannte-shell";
-        const remap = (fieldName) => remapExactShellColumn(
-            span?.[fieldName],
-            columnMap,
-            shellId,
-            fieldName
+        const spanPairs = collectSpanPairs(span, projectionPairs, ancestry);
+        const contentPairs = collectContentPairs(span, spanPairs, ancestry);
+        const contentExtent = resolveTargetExtent(contentPairs);
+        const remappedColStart = resolveSpanEndpoint({
+            span,
+            fieldName: "colStart",
+            sourceValue: span?.colStart,
+            pairs: spanPairs,
+            ancestry,
+            edge: "start"
+        });
+        const remappedColEnd = resolveSpanEndpoint({
+            span,
+            fieldName: "colEnd",
+            sourceValue: span?.colEnd,
+            pairs: spanPairs,
+            ancestry,
+            edge: "end"
+        });
+        const remappedOuterRange = {
+            colStart: remappedColStart,
+            colEnd: remappedColEnd
+        };
+        const remappedContentRange = contentExtent || remappedOuterRange;
+        const sourceOuterRange = { colStart: span?.colStart, colEnd: span?.colEnd };
+        const sourceContentRange = {
+            colStart: span?.contentColStart,
+            colEnd: span?.contentColEnd
+        };
+        const sourceAlignmentRange = {
+            colStart: span?.alignmentColStart,
+            colEnd: span?.alignmentColEnd
+        };
+        const remappedAlignmentRange = sameProjectionRange(sourceAlignmentRange, sourceOuterRange)
+            ? remappedOuterRange
+            : (sameProjectionRange(sourceAlignmentRange, sourceContentRange)
+                ? remappedContentRange
+                : remappedContentRange);
+        const remappedCollectionRanges = Object.fromEntries(
+            Object.entries(span?.collectionRanges || {}).map(([collectionName, range]) => {
+                if (!range) {
+                    return [collectionName, range];
+                }
+
+                const collectionPairs = collectCollectionPairs(
+                    span,
+                    collectionName,
+                    spanPairs,
+                    shellSpans,
+                    ancestry
+                );
+                const collectionExtent = resolveTargetExtent(collectionPairs);
+
+                if (!collectionExtent) {
+                    throw new Error(
+                        `Bridge B kann ${shellId}.collectionRanges.${collectionName} nicht aus den gebundenen Kindidentitaeten ableiten.`
+                    );
+                }
+
+                return [collectionName, remapStoredRange(range, collectionExtent)];
+            })
+        );
+        const remappedCollectionAlignmentRanges = Object.fromEntries(
+            Object.entries(span?.collectionAlignmentRanges || {}).map(([collectionName, range]) => {
+                if (!range) {
+                    return [collectionName, range];
+                }
+
+                if (sameProjectionRange(range, sourceAlignmentRange)) {
+                    return [collectionName, remapStoredRange(range, remappedAlignmentRange)];
+                }
+
+                const sourceCollectionRange = span?.collectionRanges?.[collectionName] || null;
+                if (sameProjectionRange(range, sourceCollectionRange)) {
+                    return [collectionName, remappedCollectionRanges[collectionName] || range];
+                }
+
+                const collectionPairs = collectCollectionPairs(
+                    span,
+                    collectionName,
+                    spanPairs,
+                    shellSpans,
+                    ancestry
+                );
+                return [
+                    collectionName,
+                    remapStoredRange(range, resolveTargetExtent(collectionPairs))
+                ];
+            })
         );
 
         return {
@@ -1208,30 +1434,14 @@ function remapExactShellSpans(shellSpans = [], sourceAtoms = [], targetAtoms = [
             geometryBirthRowId: span?.geometryBirthRowId === span?.rowId && rowId
                 ? rowId
                 : span?.geometryBirthRowId,
-            colStart: remap("colStart"),
-            colEnd: remap("colEnd"),
-            contentColStart: remap("contentColStart"),
-            contentColEnd: remap("contentColEnd"),
-            alignmentColStart: remap("alignmentColStart"),
-            alignmentColEnd: remap("alignmentColEnd"),
-            collectionRanges: Object.fromEntries(
-                Object.entries(span?.collectionRanges || {}).map(([collectionName, range]) => [
-                    collectionName,
-                    remapExactCollectionRange(range, columnMap, shellId, collectionName)
-                ])
-            ),
-            collectionAlignmentRanges: Object.fromEntries(
-                Object.entries(span?.collectionAlignmentRanges || {}).map(([collectionName, range]) => [
-                    collectionName,
-                    remapExactCollectionRange(
-                        range,
-                        columnMap,
-                        shellId,
-                        collectionName,
-                        "collectionAlignmentRanges"
-                    )
-                ])
-            )
+            colStart: remappedOuterRange.colStart,
+            colEnd: remappedOuterRange.colEnd,
+            contentColStart: remappedContentRange.colStart,
+            contentColEnd: remappedContentRange.colEnd,
+            alignmentColStart: remappedAlignmentRange.colStart,
+            alignmentColEnd: remappedAlignmentRange.colEnd,
+            collectionRanges: remappedCollectionRanges,
+            collectionAlignmentRanges: remappedCollectionAlignmentRanges
         };
     });
 }
@@ -1276,6 +1486,10 @@ function buildExclusiveBridgeLandingProjectionRow({
         )
     ));
     const { functionShell: probeFunctionShell } = resolveLandingLogShell(probeTheoryRow);
+    const probeFunctionProjectionSpan = (probeProjectionRow?.shellSpans || []).find((span) => (
+        span?.shellType === "FUNCTION"
+        && span?.shellId === probeFunctionShell?.id
+    ));
     const probeFunctionBaseAtoms = collectFunctionBaseProjectionAtoms({
         projectionRow: probeProjectionRow,
         projectionAtoms: probeAtoms,
@@ -1303,6 +1517,9 @@ function buildExclusiveBridgeLandingProjectionRow({
         .map((atom) => shiftProjectionAtom(atom, 0, {
             localRow: shiftMaybeInt(atom?.localRow, carryLocalRowDelta)
         }));
+    const carryRange = resolveTargetExtent(
+        carryAtoms.map((atom) => ({ sourceAtom: atom, targetAtom: atom }))
+    );
 
     const termLocalRowDelta = landingAxisLocalRow - probeAnchorLocalRow;
     const termAtoms = probeAtoms
@@ -1346,24 +1563,38 @@ function buildExclusiveBridgeLandingProjectionRow({
             throw new Error("Bridge B erhielt verschiedene inverse Funktionskoepfe aus landing_state und P4-Projektion.");
         }
 
-        landingAtoms.push(shiftProjectionAtom(probeFunctionNameAtom, anchorDelta, {
+        const probeContentRange = probeFunctionProjectionSpan?.collectionRanges?.content || null;
+        if (
+            !carryRange
+            || !Number.isInteger(probeContentRange?.colStart)
+            || !Number.isInteger(probeContentRange?.colEnd)
+        ) {
+            throw new Error(
+                "Bridge B erhielt keine eindeutigen funktionalen Grenzen fuer die unveraenderte Durchreicheschale."
+            );
+        }
+
+        const functionPrefixDelta = carryRange.colStart - probeContentRange.colStart;
+        const functionSuffixDelta = carryRange.colEnd - probeContentRange.colEnd;
+
+        landingAtoms.push(shiftProjectionAtom(probeFunctionNameAtom, functionPrefixDelta, {
             text: probeFunctionName,
             value: probeFunctionName,
             localRow: shiftMaybeInt(probeFunctionNameAtom?.localRow, termLocalRowDelta)
         }));
-        landingAtoms.push(shiftProjectionAtom(probeFunctionLeftAtom, anchorDelta, {
+        landingAtoms.push(shiftProjectionAtom(probeFunctionLeftAtom, functionPrefixDelta, {
             role: "function_left",
             projectionRole: "function_left",
             localRow: shiftMaybeInt(probeFunctionLeftAtom?.localRow, termLocalRowDelta)
         }));
-        landingAtoms.push(shiftProjectionAtom(probeFunctionRightAtom, anchorDelta, {
+        landingAtoms.push(shiftProjectionAtom(probeFunctionRightAtom, functionSuffixDelta, {
             role: "function_right",
             projectionRole: "function_right",
             localRow: shiftMaybeInt(probeFunctionRightAtom?.localRow, termLocalRowDelta)
         }));
 
         probeFunctionBaseAtoms.forEach((atom) => {
-            landingAtoms.push(shiftProjectionAtom(atom, anchorDelta, {
+            landingAtoms.push(shiftProjectionAtom(atom, functionPrefixDelta, {
                 localRow: shiftMaybeInt(atom?.localRow, termLocalRowDelta)
             }));
         });

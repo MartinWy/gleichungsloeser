@@ -60,6 +60,13 @@ Die inverse Funktionshuelle und ihr vollstaendiges Argument muessen gemeinsam
 im zeilenlokalen Raster der Landing-Zeile stehen. B darf Boundary-Kindzeilen
 nicht mit unverschobenen Landing-Schalen-Spans mischen.
 
+Die Abbildung geschieht identitaetsbasiert. Dieselbe numerische Quellspalte
+kann in verschiedenen lokalen Zeilen mehrere verschiedene Zellen tragen und
+darf deshalb nicht als globaler Abbildungsschluessel verwendet werden. Die
+durchgereichte Kindschale behaelt ihre Boundary-Zellen; neue Huellezellen und
+die geoeffneten Exponentenatome erhalten ausschliesslich die im Landing-Profil
+benannten Zielzellen.
+
 ## Nichtziel
 
 Dieses Projekt darf nicht:

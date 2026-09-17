@@ -1354,6 +1354,15 @@ Dabei gilt:
 - nur der gemeinsame `=`-Anker richtet die getrennten Raumprofile
   gegeneinander aus; innerhalb eines Raums bleibt die Positionstreue erhalten
 - der Gleichheitsanker und die unveraenderte Durchreicheseite bleiben stabil
+- innerhalb einer mehrzeiligen Schale bedeutet dieselbe Spaltennummer nicht
+  automatisch dieselbe Zelle: Zaehler, Bruchstrich und Nenner koennen dieselbe
+  Spalte auf verschiedenen lokalen Zeilen benutzen
+- B verfolgt solche Zellen deshalb ueber ihre Atom- und Schalenidentitaet;
+  eine nackte Zuordnung von Quellspalte zu Zielspalte ist keine gueltige
+  Uebergabelogik
+- eine neue Funktionshuelle wird in den vom A2-Profil gelieferten eigenen
+  Slots um die unveraendert durchgereichte Kindschale gelegt; sie darf deren
+  Zellen weder verschieben noch aus deren sichtbarer Breite erraten werden
 - der Renderer darf eine falsche Landung nicht optisch reparieren
 
 ## 11. Die Medien und ihre Rolle
