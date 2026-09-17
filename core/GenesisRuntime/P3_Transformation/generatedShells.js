@@ -241,6 +241,124 @@ function buildGeneratedDivisionShell(oppositeNodes, passiveExpressionSnapshot, d
     };
 }
 
+function buildExtendedDenominatorMultiplicationShell(
+    sourceDivisionNode,
+    passiveExpressionSnapshot,
+    decision,
+    options = {}
+) {
+    const existingDenominatorRoots = cloneVisibleExpressionSnapshot(sourceDivisionNode?.denominator);
+    const passiveRoots = cloneVisibleExpressionSnapshot(passiveExpressionSnapshot);
+    const generatedSide = options.generatedSide;
+
+    if (!["left", "right"].includes(generatedSide)) {
+        throw new Error(
+            "[GenesisRuntime:P3] Eine Nennererweiterung braucht generatedSide left oder right."
+        );
+    }
+
+    if (existingDenominatorRoots.length !== 1 || passiveRoots.length !== 1) {
+        throw new Error(
+            "[GenesisRuntime:P3] Eine Nennererweiterung braucht genau eine alte Nennerwurzel und einen neuen Faktor."
+        );
+    }
+
+    const existingDenominatorRoot = existingDenominatorRoots[0];
+    const extendsExistingProduct = existingDenominatorRoot.type === "MULTIPLICATION";
+    const existingFactors = extendsExistingProduct
+        ? cloneVisibleExpressionSnapshot(existingDenominatorRoot.factors)
+        : existingDenominatorRoots;
+    const existingOperators = extendsExistingProduct
+        ? cloneVisibleExpressionSnapshot(existingDenominatorRoot.operators)
+        : [];
+
+    if (
+        existingFactors.length === 0
+        || existingOperators.length !== Math.max(0, existingFactors.length - 1)
+    ) {
+        throw new Error(
+            "[GenesisRuntime:P3] Der vorhandene Nenner besitzt keine kanonische Faktorenfolge."
+        );
+    }
+
+    const newOperator = buildGeneratedOperator(
+        decision,
+        "*",
+        "denominator-extension",
+        0,
+        sourceDivisionNode.id
+    );
+    const factors = generatedSide === "left"
+        ? [...passiveRoots, ...existingFactors]
+        : [...existingFactors, ...passiveRoots];
+    const operators = generatedSide === "left"
+        ? [newOperator, ...existingOperators]
+        : [...existingOperators, newOperator];
+
+    return {
+        id: buildGeneratedIdFromParts(
+            decision.family,
+            "DENOMINATOR_MULTIPLICATION",
+            sourceDivisionNode.id
+        ),
+        type: "MULTIPLICATION",
+        isVisible: true,
+        label: "Bestehenden Nenner um Faktor erweitern",
+        factors,
+        operators,
+        ...buildGenerationMetadata(decision, { originSourceType: "DIVISION" }),
+        extendedFromDenominatorId: existingDenominatorRoot.id,
+        extendedFromMultiplicationId: extendsExistingProduct ? existingDenominatorRoot.id : null,
+        originPassiveExpressionId: decision.passiveExpressionId || decision.factorId || null,
+        originPassiveExpressionIds: decision.passiveExpressionIds || [],
+        originFactorId: decision.passiveExpressionId || decision.factorId || null
+    };
+}
+
+function buildGeneratedDenominatorExtensionShell(
+    sourceDivisionNode,
+    passiveExpressionSnapshot,
+    decision,
+    options = {}
+) {
+    if (sourceDivisionNode?.type !== "DIVISION") {
+        throw new Error(
+            "[GenesisRuntime:P3] Die Nennererweiterung braucht die von P2 bezeichnete DIVISION."
+        );
+    }
+
+    const numeratorRoots = cloneVisibleExpressionSnapshot(sourceDivisionNode.numerator);
+    if (numeratorRoots.length !== 1) {
+        throw new Error(
+            "[GenesisRuntime:P3] Die Nennererweiterung braucht genau eine vorhandene Zaehlerwurzel."
+        );
+    }
+
+    const denominatorProduct = buildExtendedDenominatorMultiplicationShell(
+        sourceDivisionNode,
+        passiveExpressionSnapshot,
+        decision,
+        options
+    );
+    const passiveExpressionId = decision.passiveExpressionId || decision.factorId || null;
+
+    return {
+        id: buildGeneratedId(decision),
+        type: "DIVISION",
+        isVisible: true,
+        label: "Bestehenden Nenner erweitern",
+        numerator: numeratorRoots,
+        operator: cloneRuntimeValue(sourceDivisionNode.operator),
+        denominator: [denominatorProduct],
+        ...buildGenerationMetadata(decision, { originSourceType: "DIVISION" }),
+        extendedFromDivisionId: sourceDivisionNode.id,
+        denominatorExtensionProductId: denominatorProduct.id,
+        originPassiveExpressionId: passiveExpressionId,
+        originPassiveExpressionIds: decision.passiveExpressionIds || (passiveExpressionId ? [passiveExpressionId] : []),
+        originFactorId: passiveExpressionId
+    };
+}
+
 function buildGeneratedReciprocalDivisionShell(sourceDivisionNode, decision) {
     const passiveExpressionId = decision.passiveExpressionId || decision.factorId || sourceDivisionNode?.id || null;
     const passiveExpressionIds = decision.passiveExpressionIds || (passiveExpressionId ? [passiveExpressionId] : []);
@@ -417,6 +535,7 @@ function buildGeneratedAdditiveShell(oppositeNodes, passiveExpressionSnapshot, d
 export {
     buildGeneratedAdditiveShell,
     buildGeneratedCollectionShell,
+    buildGeneratedDenominatorExtensionShell,
     buildGeneratedDivisionShell,
     buildGeneratedBasedLogFunctionShell,
     buildGeneratedFunctionShell,

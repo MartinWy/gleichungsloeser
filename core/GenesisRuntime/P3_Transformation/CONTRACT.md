@@ -1,7 +1,7 @@
 # GenesisRuntime P3 Transformation Contract
 
 Status: normativer V2-Vertrag
-Stand: 15. September 2026
+Stand: 17. September 2026
 Vertragsversion: `p3_transformation_v2`
 
 ## Aufgabe
@@ -162,6 +162,25 @@ Der Erhalt der bereits geborenen funktionalen Blattspur ist allein Aufgabe von P
   - P3 erkennt dabei keine neue Familie; es folgt ausschliesslich dem expliziten `inverseMode` und der von P2 benannten Divisions-ID
   - auch diese neue Multiplikationsschale folgt der zentralen Aussenanlagerung
     der Seite, auf der sie erzeugt wird
+- trifft `fraction_birth` mit `inverseMode = extend_existing_denominator` auf die
+  von P2 durch `oppositeDivisionId` bezeichnete sichtbare Gegenseiten-`DIVISION`,
+  erweitert P3 deren Nenner ohne Doppelbruch
+  - die alte Divisionsschale wird als historische Quellschale verborgen und
+    genau eine neue sichtbare `DIVISION` mit explizitem `extendedFromDivisionId`
+    erzeugt
+  - ihre Zaehlerrolle ist die unveraenderte sichtbare Zaehlerwurzel der Quelle
+  - ihre Nennerrolle ist genau eine `MULTIPLICATION` aus altem Nenner und neuem
+    Faktor; links lautet die Faktorenfolge `[neuer Faktor, alter Nenner]`,
+    rechts `[alter Nenner, neuer Faktor]`
+  - ist der alte Nenner bereits eine ungruppierte `MULTIPLICATION`, wird deren
+    geordnete Faktorenfolge um genau einen aeusseren Faktor erweitert, nicht in
+    eine zweite Multiplikation verschachtelt
+  - die vorhandene Divisionsoperator-ID sowie alle vorhandenen Kind-IDs bleiben
+    erhalten; nur die neue Nenner-`MULTIPLICATION` und ihr neuer
+    Verknuepfungsoperator erhalten deterministische IDs
+  - fehlt die bezeichnete direkte Gegenseiten-`DIVISION`, muss P3 abbrechen und
+    darf weder eine andere Bruchschale suchen noch auf normalen Doppelbruch
+    zurueckfallen
 
 ## Darf nicht
 - Strategie neu waehlen
@@ -179,6 +198,7 @@ Der Erhalt der bereits geborenen funktionalen Blattspur ist allein Aufgabe von P
 - `tests/active/law_of_sines_numerator_shell_transport.test.js`
 - `tests/active/law_of_sines_right_numerator_shell_transport.test.js`
 - `tests/active/multiplication_side_outward_flow.test.js`
+- `tests/active/fraction_denominator_extension.test.js`
 
 Die beiden Sinussatz-Tests muessen den Einzelblattfall gemaess diesem Vertrag pruefen:
 stabile Atom-ID und stabile P4-Geburtsspur, aber keine erfundene `COLLECTION`.

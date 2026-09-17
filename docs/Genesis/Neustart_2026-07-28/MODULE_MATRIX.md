@@ -1,7 +1,7 @@
 # Modulmatrix fuer den Genesis-Neustart
 
 Status: normativ
-Stand: 15. September 2026
+Stand: 17. September 2026
 
 ## Zweck
 
@@ -78,8 +78,8 @@ Sie sind keine weiteren fachlichen Prozessmodule.
 | :--- | :--- | :--- | :--- | :--- |
 | Runtime-Einstieg und Pipeline | `core/GenesisRuntime/CONTRACT.md` | `core/GenesisRuntime/index.js`, `runtimePipeline.js`, `runtimeRequest.js` | `genesis_runtime_isolation.test.js`, `core_solve_flow.test.js` | eigene Strategie, Umformung oder Ortskorrektur in der Orchestrierung |
 | P1 Input | `core/GenesisRuntime/P1_Input/CONTRACT.md` | `core/GenesisRuntime/P1_Input/` | `genesis_runtime_p1_input.test.js` | Zielvariable, Strategie, Umformung oder Geometrie bestimmen |
-| P2 Strategy | `core/GenesisRuntime/P2_Strategy/CONTRACT.md` | `core/GenesisRuntime/P2_Strategy/` | `genesis_runtime_p2_targeting.test.js`, `genesis_runtime_p2_decisions.test.js`, `genesis_runtime_p2_sequences.test.js`, `subtracted_sum_release.test.js`, `fraction_birth_grouped_reciprocal_factor.test.js` | Struktur veraendern oder Geometrie bestimmen |
-| P3 Transformation | `core/GenesisRuntime/P3_Transformation/CONTRACT.md` | `core/GenesisRuntime/P3_Transformation/` | `genesis_runtime_p3_shells.test.js`, `addition_release_left_prefix_flow.test.js`, `addition_release_multi_term_binding.test.js`, `subtracted_sum_release.test.js`, `fraction_birth_reciprocal_factor.test.js`, `fraction_birth_grouped_reciprocal_factor.test.js`, `multiplication_side_outward_flow.test.js` | Strategie neu waehlen oder Spalten, Baender und Reihen bestimmen |
+| P2 Strategy | `core/GenesisRuntime/P2_Strategy/CONTRACT.md` | `core/GenesisRuntime/P2_Strategy/` | `genesis_runtime_p2_targeting.test.js`, `genesis_runtime_p2_decisions.test.js`, `genesis_runtime_p2_sequences.test.js`, `subtracted_sum_release.test.js`, `fraction_birth_grouped_reciprocal_factor.test.js`, `fraction_denominator_extension.test.js` | Struktur veraendern oder Geometrie bestimmen |
+| P3 Transformation | `core/GenesisRuntime/P3_Transformation/CONTRACT.md` | `core/GenesisRuntime/P3_Transformation/` | `genesis_runtime_p3_shells.test.js`, `addition_release_left_prefix_flow.test.js`, `addition_release_multi_term_binding.test.js`, `subtracted_sum_release.test.js`, `fraction_birth_reciprocal_factor.test.js`, `fraction_birth_grouped_reciprocal_factor.test.js`, `fraction_denominator_extension.test.js`, `multiplication_side_outward_flow.test.js` | Strategie neu waehlen oder Spalten, Baender und Reihen bestimmen |
 | Gesamt-Solve-Flow (Integrationsbeweis, kein Modul) | beide zentralen Genesis-Fassungen und `core/GenesisRuntime/CONTRACT.md` | `core/index.js` plus GenesisRuntime | `core_solve_flow.test.js`, `target_variable_selection.test.js`, `cosine_law_gamma.test.js` | Fehler nachgelagerter Verbraucher als Solvererfolg ausgeben |
 | Legacy-Projektionsadapter | `core/GenesisRuntime/LEGACY_PROJECTION_ADAPTER_CONTRACT.md` | `LegacyProjectionAdapter.js` | `genesis_runtime_bridge.test.js` | Theorie erneut auswerten oder neue Rollen und Ortswahrheit erraten |
 | Legacy-Solve-Adapter | `core/GenesisRuntime/LEGACY_SOLVE_ADAPTER_CONTRACT.md` | `LegacySolveAdapter.js` | `genesis_runtime_bridge.test.js` | Strategie, Umformung oder Projektionslage veraendern |
@@ -95,7 +95,7 @@ Sie ersetzen nicht die direkt zugeordneten GenesisRuntime-Tests.
 | :--- | :--- | :--- | :--- | :--- |
 | Theoriezeilenaufbau | `core/GenesisRuntime/P4_Projection/THEORY_ROWS_CONTRACT.md` | `buildTheoryRows.js` | `genesis_runtime_p4_theory_rows.test.js`, indirekt auch `genesis_runtime_p4_projection.test.js` | eigene Umformungen oder Placements erzeugen |
 | Shell-Bedarfsplan | `core/GenesisRuntime/P4_Projection/SHELL_BLUEPRINTS_CONTRACT.md` | `buildShellBlueprints.js` | `genesis_runtime_p4_module_boundaries.test.js`, `genesis_runtime_p4_projection.test.js` | irgendeine horizontale Koordinate oder ein Projektionsatom erzeugen |
-| Global Semantic Raster | `core/GenesisRuntime/P4_Projection/GLOBAL_SEMANTIC_RASTER_CONTRACT.md` | `buildGlobalSemanticRaster.js`; `planGlobalCellPlacement.js` und `shellLayoutRules.js` sind interne reine Planungshelfer | `genesis_runtime_p4_module_boundaries.test.js`, `global_cell_profile_preflight.test.js`, `p4_function_base_cell_order.test.js`, `p4_positionstreue.test.js`, `p4_mehrschritt_positionstreue.test.js`, `worksheet_process_space_position_fidelity.test.js` | Band-, Reihen- oder Mediengeometrie an spaetere Module delegieren oder Projektionsatome schreiben |
+| Global Semantic Raster | `core/GenesisRuntime/P4_Projection/GLOBAL_SEMANTIC_RASTER_CONTRACT.md` | `buildGlobalSemanticRaster.js`; `planGlobalCellPlacement.js` und `shellLayoutRules.js` sind interne reine Planungshelfer | `genesis_runtime_p4_module_boundaries.test.js`, `global_cell_profile_preflight.test.js`, `p4_function_base_cell_order.test.js`, `p4_positionstreue.test.js`, `p4_mehrschritt_positionstreue.test.js`, `fraction_denominator_extension.test.js`, `worksheet_process_space_position_fidelity.test.js` | Band-, Reihen- oder Mediengeometrie an spaetere Module delegieren oder Projektionsatome schreiben |
 | Semantic Raster Refinement | `core/GenesisRuntime/P4_Projection/SEMANTIC_RASTER_REFINEMENT_CONTRACT.md` | `refineSemanticRaster.js` | `genesis_runtime_p4_module_boundaries.test.js`, `global_cell_profile_preflight.test.js` | Blueprints, neue Zellansprueche, lokale Reihen oder Medienmasse erzeugen |
 | Funktionale Profilmaterialisierung | `core/GenesisRuntime/P4_Projection/LOCAL_GEOMETRY_CONTRACT.md` | `localizeProjectionGeometry.js` | `genesis_runtime_p4_module_boundaries.test.js`, `global_cell_profile_preflight.test.js`, `genesis_runtime_p4_projection.test.js`, `law_of_sines_numerator_shell_transport.test.js`, `law_of_sines_right_numerator_shell_transport.test.js`, `law_of_sines_shell_alignment_contract.test.js` | eine horizontale Zelle veraendern, Shell-Metadaten rekonstruieren, Textrekonstruktion oder visuelle Pixelgeometrie |
 | Projection Blocks | `core/GenesisRuntime/P4_Projection/PROJECTION_BLOCKS_CONTRACT.md` | `buildProjectionBlocks.js`; `projectionTraversal.js` ist reine Rollenbibliothek | `genesis_runtime_p4_module_boundaries.test.js`, `genesis_runtime_p4_projection.test.js`, `root_primitive_cell_separation.test.js` | Spalten oder visuelle Pixelhoehen bestimmen |
@@ -236,8 +236,8 @@ Der Runner entdeckt jede Datei `tests/active/*.test.js` automatisch.
 Damit ist eine aktive Testdatei ohne Standardregistrierung technisch ausgeschlossen.
 Manuelle, diagnostische oder historische Tests gehoeren nicht unter `tests/active/`.
 
-Gemessener Stand am 16. September 2026: 87 Dateien unter `tests/active/`
-plus 5 direkte Core-Validierungen, insgesamt 92 von 92 gruen. Fuenf aktive
+Gemessener Stand am 17. September 2026: 88 Dateien unter `tests/active/`
+plus 5 direkte Core-Validierungen, insgesamt 93 von 93 gruen. Fuenf aktive
 Tests sichern Laufzeitumgebung, HTTP-Grenze, isolierte Vorschau-Arbeitsraeume
 die zustandslose Vorschauauslieferung und den expliziten Vercel-Containerdienst
 fuer den oeffentlichen Betrieb; der fokussierte Spursegment-Test beweist

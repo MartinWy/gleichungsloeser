@@ -4,6 +4,7 @@ import {
     buildGeneratedAdditiveShell,
     buildGeneratedBasedLogFunctionShell,
     buildGeneratedCollectionShell,
+    buildGeneratedDenominatorExtensionShell,
     buildGeneratedDivisionShell,
     buildGeneratedFunctionShell,
     buildGeneratedGroupShell,
@@ -77,6 +78,28 @@ function buildHiddenOppositeSideWithGeneratedShell(oppositeSide = [], generatedS
 }
 
 function buildFractionBirthOppositeShell(oppositeSide = [], passiveSnapshot = [], decision, options = {}) {
+    if (decision?.inverseMode === "extend_existing_denominator") {
+        const visibleOppositeRoots = collectVisibleNodes(oppositeSide);
+        const sourceDivision = visibleOppositeRoots.length === 1
+            && visibleOppositeRoots[0]?.type === "DIVISION"
+            && visibleOppositeRoots[0]?.id === decision?.oppositeDivisionId
+            ? visibleOppositeRoots[0]
+            : null;
+
+        if (!sourceDivision) {
+            throw new Error(
+                `[GenesisRuntime:P3] fraction_birth konnte die bezeichnete Gegenseiten-DIVISION ${decision?.oppositeDivisionId || "<fehlt>"} nicht verifizieren.`
+            );
+        }
+
+        return buildGeneratedDenominatorExtensionShell(
+            sourceDivision,
+            passiveSnapshot,
+            decision,
+            options
+        );
+    }
+
     const reciprocalDivision = passiveSnapshot.length === 1
         ? resolveSingleBoundDivision(passiveSnapshot[0])
         : null;

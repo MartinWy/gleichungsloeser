@@ -1,7 +1,7 @@
 # Genesis Gleichungsloeser Mensch
 
 Status: zentrales Fuehrungsdokument
-Stand: 16. September 2026
+Stand: 17. September 2026
 Rolle heute: verstaendliche Bauanleitung und Rekonstruktionsdokument fuer das gesamte Projekt
 
 ## 0. Warum dieses Dokument zentral ist
@@ -604,6 +604,32 @@ Faktor, setzt `P3` ihn immer an deren aeusseren Rand: links vor den vorhandenen
 Ausdruck, rechts hinter den vorhandenen Ausdruck. Die Zielseite der Decision
 und die Seite der neu erzeugten Produktschale sind dabei nicht dasselbe;
 massgeblich ist ausschliesslich die Seite, auf der das neue Produkt entsteht.
+
+Dieselbe Regel gilt innerhalb eines bereits vorhandenen Bruchs. Wird etwa
+
+```text
+N / D = F * x
+```
+
+nach `x` aufgeloest, entsteht links kein Doppelbruch `(N / D) / F`. Der bereits
+vorhandene Bruch wird zu genau einer neuen Bruchschale mit erweitertem Nenner:
+
+```text
+linke Gegenseite:   N / (F * D) = x
+rechte Gegenseite:  x = N / (D * F)
+```
+
+Der alte Nenner bleibt dabei gleichheitsnah; der neue Faktor waechst am
+aeusseren Rand an. `P2` muss diese Situation an der kanonischen `DIVISION` der
+Gegenseite erkennen und in der Decision ausdruecklich benennen. `P3` fuehrt
+genau diese Nennererweiterung aus und erhaelt die IDs von Zaehler, altem Nenner
+und allen inneren Kindern. P4 plant danach die neue funktionale Geometrie;
+der Renderer darf einen Doppelbruch weder nachtraeglich glatten noch selbst
+einen Nenner verlaengern.
+
+Ist der zu entfernende Faktor selbst ein Bruch, gilt eine andere, vorrangige
+Situation: Durch einen Bruch wird durch Multiplikation mit seinem Kehrbruch
+geteilt. Diese beiden Fallregeln duerfen nicht vermischt werden.
 
 Wichtig ist:
 `P3` entscheidet nicht neu,

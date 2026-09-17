@@ -31,6 +31,7 @@ function buildShellMeta(node) {
             return {
                 generatedByFamily: node.generatedByFamily || null,
                 generatedByAction: node.generatedByAction || null,
+                extendedFromDivisionId: node.extendedFromDivisionId || null,
                 fractionColumnMode: "shared_vertical",
                 operatorId: node.operator?.id || null
             };
@@ -61,6 +62,13 @@ function buildShellMeta(node) {
                 transportLeafIds: Array.isArray(node.transportLeafIds)
                     ? [...new Set(node.transportLeafIds)]
                     : []
+            };
+        case "MULTIPLICATION":
+            return {
+                generatedByFamily: node.generatedByFamily || null,
+                generatedByAction: node.generatedByAction || null,
+                extendedFromDenominatorId: node.extendedFromDenominatorId || null,
+                extendedFromMultiplicationId: node.extendedFromMultiplicationId || null
             };
         case "POWER":
             return {

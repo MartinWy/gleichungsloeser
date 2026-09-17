@@ -86,6 +86,10 @@ function findGroupReleaseDecision(structure, targetVariable) {
 
 function createMultiplicationReleaseDecision(multiplicationShell, targetVariable, options = {}) {
     const {
+        oppositeSideNodes = [],
+        ...decisionOptions
+    } = options;
+    const {
         targetChildren,
         passiveChildren,
         targetIndex
@@ -103,7 +107,20 @@ function createMultiplicationReleaseDecision(multiplicationShell, targetVariable
         ? resolveSingleBoundDivision(passiveChildren[0])
         : null;
     const reciprocalFactorMode = Boolean(reciprocalDivision);
+    const oppositeRoot = getSingleVisibleRoot(oppositeSideNodes);
+    const oppositeDivision = !reciprocalFactorMode && oppositeRoot?.type === "DIVISION"
+        ? oppositeRoot
+        : null;
+    const denominatorExtensionMode = Boolean(oppositeDivision);
     const passiveExpressionIds = collectSegmentIds(passiveChildren);
+    const inverseMode = reciprocalFactorMode
+        ? "reciprocal_factor"
+        : (denominatorExtensionMode ? "extend_existing_denominator" : "denominator_division");
+    const action = reciprocalFactorMode
+        ? "MOVE_PASSIVE_FRACTION_TO_RECIPROCAL_FACTOR"
+        : (denominatorExtensionMode
+            ? "MOVE_PASSIVE_EXPRESSION_TO_EXISTING_DENOMINATOR"
+            : "MOVE_PASSIVE_EXPRESSION_TO_DENOMINATOR");
 
     return shellDecision(multiplicationShell, {
         family: "fraction_birth",
@@ -117,21 +134,25 @@ function createMultiplicationReleaseDecision(multiplicationShell, targetVariable
         operatorIds: collectSegmentIds(multiplicationShell.operators),
         targetFactorIndex: targetIndex,
         inverseType: reciprocalFactorMode ? "MULTIPLICATION" : "DIVISION",
-        inverseMode: reciprocalFactorMode ? "reciprocal_factor" : "denominator_division",
+        inverseMode,
         passiveExpressionForm: reciprocalFactorMode ? "DIVISION" : "GENERIC",
         reciprocalDivisionId: reciprocalDivision?.id || null,
-        action: reciprocalFactorMode
-            ? "MOVE_PASSIVE_FRACTION_TO_RECIPROCAL_FACTOR"
-            : "MOVE_PASSIVE_EXPRESSION_TO_DENOMINATOR",
-        label: options.wrappedByNegation
+        oppositeExpressionForm: denominatorExtensionMode ? "DIVISION" : "GENERIC",
+        oppositeDivisionId: oppositeDivision?.id || null,
+        action,
+        label: decisionOptions.wrappedByNegation
             ? "Negativen Faktorblock in Nenner"
-            : (reciprocalFactorMode ? "Kehrbruch als Faktor" : "Ausdruck in Nenner"),
+            : (reciprocalFactorMode
+                ? "Kehrbruch als Faktor"
+                : (denominatorExtensionMode
+                    ? "Bestehenden Nenner um Faktor erweitern"
+                    : "Ausdruck in Nenner")),
         argumentScope: "whole_opposite_side",
-        ...options
+        ...decisionOptions
     });
 }
 
-function findNegativeMultiplicationDecision(structure, targetVariable) {
+function findNegativeMultiplicationDecision(structure, targetVariable, options = {}) {
     const negationShell = getSingleVisibleRoot(structure);
     if (
         negationShell?.type !== "NEGATION"
@@ -146,6 +167,7 @@ function findNegativeMultiplicationDecision(structure, targetVariable) {
     }
 
     return createMultiplicationReleaseDecision(multiplicationShell, targetVariable, {
+        ...options,
         containerTargetId: negationShell.id,
         wrappedByNegation: true
     });
@@ -347,13 +369,13 @@ function findSubtractedSumReleaseDecision(structure, targetVariable, equationSid
     });
 }
 
-function findFractionBirthDecision(structure, targetVariable) {
+function findFractionBirthDecision(structure, targetVariable, options = {}) {
     const multiplicationShell = getSingleVisibleRoot(structure);
     if (multiplicationShell?.type !== "MULTIPLICATION") {
         return null;
     }
 
-    return createMultiplicationReleaseDecision(multiplicationShell, targetVariable);
+    return createMultiplicationReleaseDecision(multiplicationShell, targetVariable, options);
 }
 
 function findFractionDenominatorReleaseDecision(structure, targetVariable) {
@@ -586,14 +608,14 @@ function findRootPowerDecision(structure, targetVariable) {
     });
 }
 
-function findNextRuntimeDecision(structure, targetVariable) {
+function findNextRuntimeDecision(structure, targetVariable, options = {}) {
     return findGroupReleaseDecision(structure, targetVariable)
-        || findNegativeMultiplicationDecision(structure, targetVariable)
+        || findNegativeMultiplicationDecision(structure, targetVariable, options)
         || findNegativeSignReleaseDecision(structure, targetVariable)
         || findAdditionReleaseDecision(structure, targetVariable)
         || findSubtractionReleaseDecision(structure, targetVariable)
         || findSubtrahendReleaseDecision(structure, targetVariable)
-        || findFractionBirthDecision(structure, targetVariable)
+        || findFractionBirthDecision(structure, targetVariable, options)
         || findFractionDenominatorReleaseDecision(structure, targetVariable)
         || findFractionCollapseDecision(structure, targetVariable)
         || findTrigInverseDecision(structure, targetVariable)

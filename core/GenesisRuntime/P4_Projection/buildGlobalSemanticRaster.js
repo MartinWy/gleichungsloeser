@@ -311,7 +311,8 @@ function buildLocalizedTracks(tracksBySide, rows = []) {
                 const stored = placementByTrackKey.get(placement.trackKey) || null;
                 if (stored && stored.rawCol !== placement.rawCol) {
                     throw new Error(
-                        `[GenesisRuntime:P4] Die globale Spur ${placement.trackKey} besitzt mehrere Zellzentren.`
+                        `[GenesisRuntime:P4] Die globale Spur ${placement.trackKey} besitzt mehrere Zellzentren: `
+                        + `${stored.rowId}@${stored.rawCol} und ${placement.rowId}@${placement.rawCol}.`
                     );
                 }
                 placementByTrackKey.set(placement.trackKey, placement);

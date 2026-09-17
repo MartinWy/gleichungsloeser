@@ -1,7 +1,7 @@
 # Genesis Gleichungsloeser Maschine
 
 Status: zentrales normatives Fuehrungsdokument
-Stand: 16. September 2026
+Stand: 17. September 2026
 Rolle heute: maschinennahe Vertragsbeschreibung des gesamten Projekts
 
 ## 0. Zweck
@@ -62,6 +62,7 @@ Die Projektverfassung lautet:
 25. Ein Bedienziel fuer Farbe oder Hervorhebung folgt immer exakt der vom Core bestimmten Operandengrenze des Prozessschritts. Ist der bewegte Faktor eine zusammengesetzte Schale, ist die vollstaendige Schale mit allen stabilen sichtbaren Nachfahren genau ein Farbziel. Insbesondere umfasst ein als Kehrbruch bewegter `DIVISION`-Faktor vor dem Schritt Zaehlerschale, Bruchschale und Nennerschale und nach dem Schritt die vollstaendige erzeugte Kehrbruchschale. Cockpit und Renderer duerfen dieses Ziel weder auf ein Blattatom verkuerzen noch aus sichtbarem Text neu erraten.
 26. Das Farbziel einer Schalenumkehr folgt der stabilen Herkunftskette von der bezeichneten Quellschale zur durch denselben Prozessschritt erzeugten Gegenschale. Bei `root_power` gehoeren daher die Quell-`POWER`- beziehungsweise Quell-`ROOT`-Schale und die erzeugte inverse `ROOT`- beziehungsweise `POWER`-Schale zum selben Schrittziel. Eine erzeugte `ROOT` ist ueber ihre Schalen-ID zu adressieren; dadurch erhalten `root_hook` und `root_overbar` zwingend gemeinsam dieselbe Farbe, waehrend der Radikand seine eigenen Farbziele behaelt. Veraltete Darstellungsmerkmale wie `visualMode = INVERSE_SHELL` duerfen nicht zur Wiederherstellung dieser Core-Beziehung benutzt werden.
 27. Ein reines Funktionshuellen-Farbziel umfasst ausschliesslich die vorhandenen Huelleprimitive der Funktion, insbesondere Funktionsname, optionale Basis und Klammern. Das Argument bleibt ein eigener Operand und darf durch die Farbe einer Funktionsumkehr nicht implizit mitgefaerbt werden. Bei `trig_inverse` und `inverse_trig` werden deshalb die atomaren Huelleprimitive der bezeichneten Quellfunktion und der erzeugten inversen Funktion ueber deren stabile Quellatom-Identitaet adressiert; ein breiter `shell-id`-Selektor auf die FUNCTION-Schale ist fuer dieses Ziel verboten. Wird das Argument zugleich als Zielvariable gefaerbt, entscheidet ausschliesslich dessen eigener Zielselektor ueber seine Farbe.
+28. Wird bei `fraction_birth` eine bereits als einzelne sichtbare `DIVISION` vorliegende Gegenseite durch einen passiven Nicht-Bruch-Faktor geteilt, darf keine aeussere zweite `DIVISION` entstehen. `P2` muss die Situation als `inverseMode = extend_existing_denominator` entscheiden und die vorhandene Divisions-ID benennen. `P3` erzeugt genau eine neue `DIVISION`: Der vorhandene Zaehler bleibt unveraendert, der vorhandene Nenner wird durch eine `MULTIPLICATION` um den neuen Faktor erweitert. Diese Nennererweiterung folgt demselben Aussenanlagerungsgesetz wie jede neue Multiplikation: auf der linken Gleichungsseite steht der neue Faktor vor dem bisherigen Nenner, auf der rechten dahinter. Vorhandene Kind-IDs und ihre Reihenfolge bleiben erhalten; die neue Divisionsschale referenziert ihre Herkunft explizit. Ist der bewegte Faktor selbst eine `DIVISION`, gilt stattdessen weiterhin vorrangig die Kehrbruchregel. P4 und Renderer duerfen weder einen Doppelbruch glatten noch die Nennererweiterung selbst erfinden.
 
 ## 3. Hauptobjekte
 

@@ -8863,6 +8863,10 @@ const __modules = {
 
     function createMultiplicationReleaseDecision(multiplicationShell, targetVariable, options = {}) {
         const {
+            oppositeSideNodes = [],
+            ...decisionOptions
+        } = options;
+        const {
             targetChildren,
             passiveChildren,
             targetIndex
@@ -8880,7 +8884,20 @@ const __modules = {
             ? resolveSingleBoundDivision(passiveChildren[0])
             : null;
         const reciprocalFactorMode = Boolean(reciprocalDivision);
+        const oppositeRoot = getSingleVisibleRoot(oppositeSideNodes);
+        const oppositeDivision = !reciprocalFactorMode && oppositeRoot?.type === "DIVISION"
+            ? oppositeRoot
+            : null;
+        const denominatorExtensionMode = Boolean(oppositeDivision);
         const passiveExpressionIds = collectSegmentIds(passiveChildren);
+        const inverseMode = reciprocalFactorMode
+            ? "reciprocal_factor"
+            : (denominatorExtensionMode ? "extend_existing_denominator" : "denominator_division");
+        const action = reciprocalFactorMode
+            ? "MOVE_PASSIVE_FRACTION_TO_RECIPROCAL_FACTOR"
+            : (denominatorExtensionMode
+                ? "MOVE_PASSIVE_EXPRESSION_TO_EXISTING_DENOMINATOR"
+                : "MOVE_PASSIVE_EXPRESSION_TO_DENOMINATOR");
 
         return shellDecision(multiplicationShell, {
             family: "fraction_birth",
@@ -8894,21 +8911,25 @@ const __modules = {
             operatorIds: collectSegmentIds(multiplicationShell.operators),
             targetFactorIndex: targetIndex,
             inverseType: reciprocalFactorMode ? "MULTIPLICATION" : "DIVISION",
-            inverseMode: reciprocalFactorMode ? "reciprocal_factor" : "denominator_division",
+            inverseMode,
             passiveExpressionForm: reciprocalFactorMode ? "DIVISION" : "GENERIC",
             reciprocalDivisionId: reciprocalDivision?.id || null,
-            action: reciprocalFactorMode
-                ? "MOVE_PASSIVE_FRACTION_TO_RECIPROCAL_FACTOR"
-                : "MOVE_PASSIVE_EXPRESSION_TO_DENOMINATOR",
-            label: options.wrappedByNegation
+            oppositeExpressionForm: denominatorExtensionMode ? "DIVISION" : "GENERIC",
+            oppositeDivisionId: oppositeDivision?.id || null,
+            action,
+            label: decisionOptions.wrappedByNegation
                 ? "Negativen Faktorblock in Nenner"
-                : (reciprocalFactorMode ? "Kehrbruch als Faktor" : "Ausdruck in Nenner"),
+                : (reciprocalFactorMode
+                    ? "Kehrbruch als Faktor"
+                    : (denominatorExtensionMode
+                        ? "Bestehenden Nenner um Faktor erweitern"
+                        : "Ausdruck in Nenner")),
             argumentScope: "whole_opposite_side",
-            ...options
+            ...decisionOptions
         });
     }
 
-    function findNegativeMultiplicationDecision(structure, targetVariable) {
+    function findNegativeMultiplicationDecision(structure, targetVariable, options = {}) {
         const negationShell = getSingleVisibleRoot(structure);
         if (
             negationShell?.type !== "NEGATION"
@@ -8923,6 +8944,7 @@ const __modules = {
         }
 
         return createMultiplicationReleaseDecision(multiplicationShell, targetVariable, {
+            ...options,
             containerTargetId: negationShell.id,
             wrappedByNegation: true
         });
@@ -9124,13 +9146,13 @@ const __modules = {
         });
     }
 
-    function findFractionBirthDecision(structure, targetVariable) {
+    function findFractionBirthDecision(structure, targetVariable, options = {}) {
         const multiplicationShell = getSingleVisibleRoot(structure);
         if (multiplicationShell?.type !== "MULTIPLICATION") {
             return null;
         }
 
-        return createMultiplicationReleaseDecision(multiplicationShell, targetVariable);
+        return createMultiplicationReleaseDecision(multiplicationShell, targetVariable, options);
     }
 
     function findFractionDenominatorReleaseDecision(structure, targetVariable) {
@@ -9363,14 +9385,14 @@ const __modules = {
         });
     }
 
-    function findNextRuntimeDecision(structure, targetVariable) {
+    function findNextRuntimeDecision(structure, targetVariable, options = {}) {
         return findGroupReleaseDecision(structure, targetVariable)
-            || findNegativeMultiplicationDecision(structure, targetVariable)
+            || findNegativeMultiplicationDecision(structure, targetVariable, options)
             || findNegativeSignReleaseDecision(structure, targetVariable)
             || findAdditionReleaseDecision(structure, targetVariable)
             || findSubtractionReleaseDecision(structure, targetVariable)
             || findSubtrahendReleaseDecision(structure, targetVariable)
-            || findFractionBirthDecision(structure, targetVariable)
+            || findFractionBirthDecision(structure, targetVariable, options)
             || findFractionDenominatorReleaseDecision(structure, targetVariable)
             || findFractionCollapseDecision(structure, targetVariable)
             || findTrigInverseDecision(structure, targetVariable)
@@ -9439,7 +9461,11 @@ const __modules = {
             ? findSubtractedSumReleaseDecision(oppositeSideNodes, targetVariable, oppositeEquationSide)
             : null;
         const nextDecision = equationSideAnalysis.side
-            ? passiveNormalizationDecision || findNextRuntimeDecision(activeSideNodes, targetVariable)
+            ? passiveNormalizationDecision || findNextRuntimeDecision(
+                activeSideNodes,
+                targetVariable,
+                { oppositeSideNodes }
+            )
             : null;
 
         if (
@@ -9941,6 +9967,124 @@ const __modules = {
         };
     }
 
+    function buildExtendedDenominatorMultiplicationShell(
+        sourceDivisionNode,
+        passiveExpressionSnapshot,
+        decision,
+        options = {}
+    ) {
+        const existingDenominatorRoots = cloneVisibleExpressionSnapshot(sourceDivisionNode?.denominator);
+        const passiveRoots = cloneVisibleExpressionSnapshot(passiveExpressionSnapshot);
+        const generatedSide = options.generatedSide;
+
+        if (!["left", "right"].includes(generatedSide)) {
+            throw new Error(
+                "[GenesisRuntime:P3] Eine Nennererweiterung braucht generatedSide left oder right."
+            );
+        }
+
+        if (existingDenominatorRoots.length !== 1 || passiveRoots.length !== 1) {
+            throw new Error(
+                "[GenesisRuntime:P3] Eine Nennererweiterung braucht genau eine alte Nennerwurzel und einen neuen Faktor."
+            );
+        }
+
+        const existingDenominatorRoot = existingDenominatorRoots[0];
+        const extendsExistingProduct = existingDenominatorRoot.type === "MULTIPLICATION";
+        const existingFactors = extendsExistingProduct
+            ? cloneVisibleExpressionSnapshot(existingDenominatorRoot.factors)
+            : existingDenominatorRoots;
+        const existingOperators = extendsExistingProduct
+            ? cloneVisibleExpressionSnapshot(existingDenominatorRoot.operators)
+            : [];
+
+        if (
+            existingFactors.length === 0
+            || existingOperators.length !== Math.max(0, existingFactors.length - 1)
+        ) {
+            throw new Error(
+                "[GenesisRuntime:P3] Der vorhandene Nenner besitzt keine kanonische Faktorenfolge."
+            );
+        }
+
+        const newOperator = buildGeneratedOperator(
+            decision,
+            "*",
+            "denominator-extension",
+            0,
+            sourceDivisionNode.id
+        );
+        const factors = generatedSide === "left"
+            ? [...passiveRoots, ...existingFactors]
+            : [...existingFactors, ...passiveRoots];
+        const operators = generatedSide === "left"
+            ? [newOperator, ...existingOperators]
+            : [...existingOperators, newOperator];
+
+        return {
+            id: buildGeneratedIdFromParts(
+                decision.family,
+                "DENOMINATOR_MULTIPLICATION",
+                sourceDivisionNode.id
+            ),
+            type: "MULTIPLICATION",
+            isVisible: true,
+            label: "Bestehenden Nenner um Faktor erweitern",
+            factors,
+            operators,
+            ...buildGenerationMetadata(decision, { originSourceType: "DIVISION" }),
+            extendedFromDenominatorId: existingDenominatorRoot.id,
+            extendedFromMultiplicationId: extendsExistingProduct ? existingDenominatorRoot.id : null,
+            originPassiveExpressionId: decision.passiveExpressionId || decision.factorId || null,
+            originPassiveExpressionIds: decision.passiveExpressionIds || [],
+            originFactorId: decision.passiveExpressionId || decision.factorId || null
+        };
+    }
+
+    function buildGeneratedDenominatorExtensionShell(
+        sourceDivisionNode,
+        passiveExpressionSnapshot,
+        decision,
+        options = {}
+    ) {
+        if (sourceDivisionNode?.type !== "DIVISION") {
+            throw new Error(
+                "[GenesisRuntime:P3] Die Nennererweiterung braucht die von P2 bezeichnete DIVISION."
+            );
+        }
+
+        const numeratorRoots = cloneVisibleExpressionSnapshot(sourceDivisionNode.numerator);
+        if (numeratorRoots.length !== 1) {
+            throw new Error(
+                "[GenesisRuntime:P3] Die Nennererweiterung braucht genau eine vorhandene Zaehlerwurzel."
+            );
+        }
+
+        const denominatorProduct = buildExtendedDenominatorMultiplicationShell(
+            sourceDivisionNode,
+            passiveExpressionSnapshot,
+            decision,
+            options
+        );
+        const passiveExpressionId = decision.passiveExpressionId || decision.factorId || null;
+
+        return {
+            id: buildGeneratedId(decision),
+            type: "DIVISION",
+            isVisible: true,
+            label: "Bestehenden Nenner erweitern",
+            numerator: numeratorRoots,
+            operator: cloneRuntimeValue(sourceDivisionNode.operator),
+            denominator: [denominatorProduct],
+            ...buildGenerationMetadata(decision, { originSourceType: "DIVISION" }),
+            extendedFromDivisionId: sourceDivisionNode.id,
+            denominatorExtensionProductId: denominatorProduct.id,
+            originPassiveExpressionId: passiveExpressionId,
+            originPassiveExpressionIds: decision.passiveExpressionIds || (passiveExpressionId ? [passiveExpressionId] : []),
+            originFactorId: passiveExpressionId
+        };
+    }
+
     function buildGeneratedReciprocalDivisionShell(sourceDivisionNode, decision) {
         const passiveExpressionId = decision.passiveExpressionId || decision.factorId || sourceDivisionNode?.id || null;
         const passiveExpressionIds = decision.passiveExpressionIds || (passiveExpressionId ? [passiveExpressionId] : []);
@@ -10116,6 +10260,7 @@ const __modules = {
 
     __exports.buildGeneratedAdditiveShell = buildGeneratedAdditiveShell;
     __exports.buildGeneratedCollectionShell = buildGeneratedCollectionShell;
+    __exports.buildGeneratedDenominatorExtensionShell = buildGeneratedDenominatorExtensionShell;
     __exports.buildGeneratedDivisionShell = buildGeneratedDivisionShell;
     __exports.buildGeneratedBasedLogFunctionShell = buildGeneratedBasedLogFunctionShell;
     __exports.buildGeneratedFunctionShell = buildGeneratedFunctionShell;
@@ -10192,7 +10337,7 @@ const __modules = {
   "core/GenesisRuntime/P3_Transformation/applyShellFamilies.js": function(__exports, __require) {
     const { cloneRuntimeValue } = __require("core/GenesisRuntime/runtimeClone.js");
     const { collectVisibleNodes, markNodesEmerged, markNodesHidden } = __require("core/GenesisRuntime/P3_Transformation/transformationMarkers.js");
-    const { buildGeneratedAdditiveShell, buildGeneratedBasedLogFunctionShell, buildGeneratedCollectionShell, buildGeneratedDivisionShell, buildGeneratedFunctionShell, buildGeneratedGroupShell, buildGeneratedIdFromParts, buildGeneratedLogInversePowerShell, buildGeneratedMultiplicationShell, buildGeneratedNegationShell, buildGeneratedOperator, buildGeneratedReciprocalDivisionShell, buildGeneratedReciprocalPowerShell, buildGeneratedRootPowerShell, buildOriginPart, cloneVisibleExpressionSnapshot, collectVisibleLeafIdsFromNodes } = __require("core/GenesisRuntime/P3_Transformation/generatedShells.js");
+    const { buildGeneratedAdditiveShell, buildGeneratedBasedLogFunctionShell, buildGeneratedCollectionShell, buildGeneratedDenominatorExtensionShell, buildGeneratedDivisionShell, buildGeneratedFunctionShell, buildGeneratedGroupShell, buildGeneratedIdFromParts, buildGeneratedLogInversePowerShell, buildGeneratedMultiplicationShell, buildGeneratedNegationShell, buildGeneratedOperator, buildGeneratedReciprocalDivisionShell, buildGeneratedReciprocalPowerShell, buildGeneratedRootPowerShell, buildOriginPart, cloneVisibleExpressionSnapshot, collectVisibleLeafIdsFromNodes } = __require("core/GenesisRuntime/P3_Transformation/generatedShells.js");
     const { createEquationRewriteContext, rebuildRuntimeEquation, resolveOppositeEquationSide } = __require("core/GenesisRuntime/P3_Transformation/rewriteEquation.js");
     function findNodeById(nodes, nodeId) {
         return (nodes || []).find((node) => node?.id === nodeId) || null;
@@ -10246,6 +10391,28 @@ const __modules = {
     }
 
     function buildFractionBirthOppositeShell(oppositeSide = [], passiveSnapshot = [], decision, options = {}) {
+        if (decision?.inverseMode === "extend_existing_denominator") {
+            const visibleOppositeRoots = collectVisibleNodes(oppositeSide);
+            const sourceDivision = visibleOppositeRoots.length === 1
+                && visibleOppositeRoots[0]?.type === "DIVISION"
+                && visibleOppositeRoots[0]?.id === decision?.oppositeDivisionId
+                ? visibleOppositeRoots[0]
+                : null;
+
+            if (!sourceDivision) {
+                throw new Error(
+                    `[GenesisRuntime:P3] fraction_birth konnte die bezeichnete Gegenseiten-DIVISION ${decision?.oppositeDivisionId || "<fehlt>"} nicht verifizieren.`
+                );
+            }
+
+            return buildGeneratedDenominatorExtensionShell(
+                sourceDivision,
+                passiveSnapshot,
+                decision,
+                options
+            );
+        }
+
         const reciprocalDivision = passiveSnapshot.length === 1
             ? resolveSingleBoundDivision(passiveSnapshot[0])
             : null;
@@ -12141,6 +12308,19 @@ const __modules = {
             };
         }
 
+        /*
+         * Eine explizite P3-Nennererweiterung ist keine freie Bruchgeburt:
+         * Zaehler und alter Nenner besitzen bereits ihre fortlaufenden Spuren.
+         * Der neue Nennerfaktor waechst nur am aeusseren Rand an. Eine erneute
+         * Zentrierung wuerde die unveraenderte alte Nennerbahn verschieben.
+         */
+        if (typeof meta?.extendedFromDivisionId === "string" && meta.extendedFromDivisionId.length > 0) {
+            return {
+                numeratorResult,
+                denominatorResult
+            };
+        }
+
         if (
             !Number.isFinite(numeratorWidth)
             || !Number.isFinite(denominatorWidth)
@@ -12316,6 +12496,94 @@ const __modules = {
             alignmentRange: mergeRanges(alignmentRanges),
             leafPlacements,
             isFrozenGeometry
+        };
+    }
+
+    function resolveLocalizedRange(localizedResult = null) {
+        return localizedResult?.alignmentRange || localizedResult?.coverageRange || null;
+    }
+
+    function shiftLocalizedRangeEdge(localizedResult, targetEdge, edge = "start") {
+        const range = resolveLocalizedRange(localizedResult);
+        const currentEdge = edge === "end" ? range?.rawColEnd : range?.rawColStart;
+
+        if (!Number.isFinite(targetEdge) || !Number.isFinite(currentEdge)) {
+            throw new Error("[GenesisRuntime:P4] Die Nennererweiterung besitzt keine eindeutige Aussenkante.");
+        }
+
+        return shiftLocalizedResult(localizedResult, targetEdge - currentEdge);
+    }
+
+    function buildDenominatorExtensionCollections(node, context) {
+        const factors = (node.factors || []).filter(isVisibleRuntimeNode);
+        const operators = (node.operators || []).filter(isVisibleRuntimeNode);
+
+        if (factors.length < 2 || operators.length !== factors.length - 1) {
+            throw new Error(
+                "[GenesisRuntime:P4] Die Nennererweiterung braucht eine kanonische Faktoren- und Operatorfolge."
+            );
+        }
+
+        const growsLeft = context.side === "left";
+        const newFactorIndex = growsLeft ? 0 : factors.length - 1;
+        const joiningOperatorIndex = growsLeft ? 0 : operators.length - 1;
+        const newFactorResult = localizeCollection([factors[newFactorIndex]], context);
+        const joiningOperatorResult = localizeCollection([operators[joiningOperatorIndex]], context);
+        const existingFactorResult = localizeCollection(
+            factors.filter((_, index) => index !== newFactorIndex),
+            context
+        );
+        const existingOperatorResult = localizeCollection(
+            operators.filter((_, index) => index !== joiningOperatorIndex),
+            context
+        );
+        const existingRange = mergeRanges([
+            existingFactorResult.coverageRange,
+            existingOperatorResult.coverageRange
+        ]);
+
+        if (!existingRange) {
+            throw new Error("[GenesisRuntime:P4] Der Nennererweiterung fehlt der bestehende Nennerblock.");
+        }
+
+        let placedNewFactor;
+        let placedJoiningOperator;
+        if (growsLeft) {
+            const operatorCol = existingRange.rawColStart - 2;
+            placedJoiningOperator = shiftLocalizedRangeEdge(joiningOperatorResult, operatorCol, "start");
+            placedNewFactor = shiftLocalizedRangeEdge(newFactorResult, operatorCol - 2, "end");
+        } else {
+            const operatorCol = existingRange.rawColEnd + 2;
+            placedJoiningOperator = shiftLocalizedRangeEdge(joiningOperatorResult, operatorCol, "start");
+            placedNewFactor = shiftLocalizedRangeEdge(newFactorResult, operatorCol + 2, "start");
+        }
+
+        const factorResults = growsLeft
+            ? [placedNewFactor, existingFactorResult]
+            : [existingFactorResult, placedNewFactor];
+        const operatorResults = growsLeft
+            ? [placedJoiningOperator, existingOperatorResult]
+            : [existingOperatorResult, placedJoiningOperator];
+        const allResults = [...factorResults, ...operatorResults];
+
+        return {
+            blueprints: allResults.flatMap((result) => result.blueprints),
+            contentRange: mergeRanges(allResults.map((result) => result.coverageRange)),
+            alignmentRange: mergeRanges(allResults.map((result) => result.alignmentRange)),
+            collectionRanges: {
+                factors: mergeRanges(factorResults.map((result) => result.coverageRange)),
+                operators: mergeRanges(operatorResults.map((result) => result.coverageRange))
+            },
+            collectionAlignmentRanges: {
+                factors: mergeRanges(factorResults.map((result) => result.alignmentRange || result.coverageRange)),
+                operators: mergeRanges(operatorResults.map((result) => result.alignmentRange || result.coverageRange))
+            },
+            collectionLeafIds: {
+                factors: collectUniqueLeafIds(factorResults.flatMap((result) => result.leafPlacements)),
+                operators: collectUniqueLeafIds(operatorResults.flatMap((result) => result.leafPlacements))
+            },
+            leafPlacements: allResults.flatMap((result) => result.leafPlacements),
+            isFrozenGeometry: allResults.some((result) => result.isFrozenGeometry === true)
         };
     }
 
@@ -12506,6 +12774,13 @@ const __modules = {
                 ],
                 isFrozenGeometry: numeratorResult.isFrozenGeometry || denominatorResult.isFrozenGeometry
             };
+        } else if (
+            node.type === "MULTIPLICATION"
+            && typeof meta.extendedFromDenominatorId === "string"
+            && meta.extendedFromDenominatorId.length > 0
+            && meta.generatedByAction === "MOVE_PASSIVE_EXPRESSION_TO_EXISTING_DENOMINATOR"
+        ) {
+            resolvedCollections = buildDenominatorExtensionCollections(node, context);
         } else if (node.type === "COLLECTION") {
             const contentResult = localizeCollection(node.content || [], context);
             const transportedAlignmentRange = node.type === "COLLECTION" && meta.transportAlignmentMode === "preserve_shell_band"
@@ -13050,7 +13325,8 @@ const __modules = {
                     const stored = placementByTrackKey.get(placement.trackKey) || null;
                     if (stored && stored.rawCol !== placement.rawCol) {
                         throw new Error(
-                            `[GenesisRuntime:P4] Die globale Spur ${placement.trackKey} besitzt mehrere Zellzentren.`
+                            `[GenesisRuntime:P4] Die globale Spur ${placement.trackKey} besitzt mehrere Zellzentren: `
+                            + `${stored.rowId}@${stored.rawCol} und ${placement.rowId}@${placement.rawCol}.`
                         );
                     }
                     placementByTrackKey.set(placement.trackKey, placement);
@@ -13269,6 +13545,7 @@ const __modules = {
                 return {
                     generatedByFamily: node.generatedByFamily || null,
                     generatedByAction: node.generatedByAction || null,
+                    extendedFromDivisionId: node.extendedFromDivisionId || null,
                     fractionColumnMode: "shared_vertical",
                     operatorId: node.operator?.id || null
                 };
@@ -13299,6 +13576,13 @@ const __modules = {
                     transportLeafIds: Array.isArray(node.transportLeafIds)
                         ? [...new Set(node.transportLeafIds)]
                         : []
+                };
+            case "MULTIPLICATION":
+                return {
+                    generatedByFamily: node.generatedByFamily || null,
+                    generatedByAction: node.generatedByAction || null,
+                    extendedFromDenominatorId: node.extendedFromDenominatorId || null,
+                    extendedFromMultiplicationId: node.extendedFromMultiplicationId || null
                 };
             case "POWER":
                 return {

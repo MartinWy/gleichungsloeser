@@ -1,7 +1,7 @@
 # GenesisRuntime P2 Strategy Contract
 
 Status: normativer V1-Vertrag; Implementierung wird an den kanonischen P1-Vertrag angeglichen
-Stand: 11. September 2026
+Stand: 17. September 2026
 Vertragsversion: `p2_strategy_v1`
 
 ## Aufgabe
@@ -178,7 +178,9 @@ Er darf nicht nur zur Verkuerzung der dargestellten Historie unterschlagen werde
 | Ziel in Addition | `ADDITION.terms`; genau ein Term traegt das Ziel | `addition_release` |
 | Ziel als Minuend | `SUBTRACTION`, Ziel links | `subtraction_release` |
 | Ziel als Subtrahend | `SUBTRACTION`, Ziel rechts | `subtrahend_release` |
-| Ziel in Faktorstruktur | `MULTIPLICATION.factors`; genau ein Faktor traegt das Ziel | `fraction_birth` |
+| Ziel in Faktorstruktur, generische Gegenseite | `MULTIPLICATION.factors`; genau ein Faktor traegt das Ziel; Gegenseite ist keine einzelne sichtbare `DIVISION` | `fraction_birth` mit `inverseMode = denominator_division` |
+| Ziel in Faktorstruktur, Gegenseite ist Bruch | wie zuvor; bewegter Faktor ist kein Bruch; Gegenseite besitzt genau eine sichtbare aeussere `DIVISION` | `fraction_birth` mit `inverseMode = extend_existing_denominator` und `oppositeDivisionId` |
+| Ziel in Faktorstruktur, bewegter Faktor ist Bruch | wie zuvor; genau ein passiver Faktor ist unmittelbar oder durch genau eine `GROUP` gebundene `DIVISION` | `fraction_birth` mit `inverseMode = reciprocal_factor` und `reciprocalDivisionId` |
 | Ziel im Nenner | `DIVISION`, Zielrolle Nenner | `fraction_denominator_release` |
 | passiver Nenner | `DIVISION`, Ziel ausserhalb des passiven Nenners | `fraction_collapse` |
 | direkte Trigonometrie | `FUNCTION` mit direktem trigonometrischem Namen | `trig_inverse` |
@@ -195,6 +197,15 @@ entweder unmittelbar eine `DIVISION` ist oder wenn genau eine `GROUP` genau
 eine solche `DIVISION` bindet. P2 schreibt dafuer `inverseMode = reciprocal_factor`
 und benennt die gefundene Divisionsschale explizit. Es entfernt oder veraendert
 die Gruppe nicht selbst.
+
+Die Bruchform des bewegten Faktors wird vor der Form der Gegenseite bewertet.
+Ist der bewegte Faktor kein Bruch und besteht die Gegenseite aus genau einer
+sichtbaren aeusseren `DIVISION`, schreibt P2 stattdessen
+`inverseMode = extend_existing_denominator`,
+`action = MOVE_PASSIVE_EXPRESSION_TO_EXISTING_DENOMINATOR`
+und deren unveraenderte ID als `oppositeDivisionId` in die Decision.
+Eine nur vermutete oder textuell erkannte Bruchform ist unzulaessig.
+P2 baut den erweiterten Nenner nicht selbst.
 
 ## Verantwortlicher Code
 
@@ -230,6 +241,7 @@ Direkte Modulbeweise:
 - `tests/active/genesis_runtime_p2_targeting.test.js`
 - `tests/active/genesis_runtime_p2_decisions.test.js`
 - `tests/active/genesis_runtime_p2_sequences.test.js`
+- `tests/active/fraction_denominator_extension.test.js`
 
 Nachbar- und End-to-End-Beweise:
 

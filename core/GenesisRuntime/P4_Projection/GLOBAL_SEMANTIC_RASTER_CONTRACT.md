@@ -1,7 +1,7 @@
 # P4-Teilmodul: globales semantisches Raster
 
 Status: normativ
-Stand: 16. September 2026
+Stand: 17. September 2026
 Vertrag: `p4_global_semantic_raster_v2`
 
 ## Eine Aufgabe
@@ -85,6 +85,16 @@ Breite ist nicht Aufgabe dieses Moduls. Er erweitert die sichtbare
 `containerRange` seiner POWER-Schale nicht, bleibt aber als eigene Belegung im
 globalen Zellprofil erhalten.
 
+Bei einer von P3 explizit mit `extendedFromDivisionId` gekennzeichneten
+Nennererweiterung ist die neue `DIVISION` keine freie Bruchgeburt. Zaehler und
+alter Nenner besitzen bereits gueltige, fortlaufende Geburtsspuren. Der neue
+Nennerfaktor wird gemaess seiner semantischen Faktorenfolge ausschliesslich am
+aeusseren Seitenrand in neue Zellen gesetzt; alle vorhandenen Zaehler- und
+Nennerzellen bleiben unveraendert. Das Bruchband wird ueber die vereinigte neue
+Kindbelegung erweitert, aber weder der alte Nenner noch der Zaehler werden auf
+die neue Gesamtmitte verschoben. Ohne die explizite P3-Herkunft darf diese
+Ausnahme nicht aus einer zufaelligen `MULTIPLICATION` im Nenner geraten werden.
+
 ## Verantwortlicher Codepfad
 
 - `buildGlobalSemanticRaster.js` erzeugt das globale Profil.
@@ -99,3 +109,4 @@ die einmalige globale horizontale Zellvergabe.
 
 - `tests/active/p4_function_base_cell_order.test.js`
 - `tests/active/power_base_parenthesis_slots.test.js`
+- `tests/active/fraction_denominator_extension.test.js`

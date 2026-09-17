@@ -53,7 +53,11 @@ async function runStrategyPhase({ request, inputPhase }) {
         ? findSubtractedSumReleaseDecision(oppositeSideNodes, targetVariable, oppositeEquationSide)
         : null;
     const nextDecision = equationSideAnalysis.side
-        ? passiveNormalizationDecision || findNextRuntimeDecision(activeSideNodes, targetVariable)
+        ? passiveNormalizationDecision || findNextRuntimeDecision(
+            activeSideNodes,
+            targetVariable,
+            { oppositeSideNodes }
+        )
         : null;
 
     if (

@@ -464,6 +464,19 @@ function alignDivisionCollections(numeratorResult, denominatorResult, meta = {})
         };
     }
 
+    /*
+     * Eine explizite P3-Nennererweiterung ist keine freie Bruchgeburt:
+     * Zaehler und alter Nenner besitzen bereits ihre fortlaufenden Spuren.
+     * Der neue Nennerfaktor waechst nur am aeusseren Rand an. Eine erneute
+     * Zentrierung wuerde die unveraenderte alte Nennerbahn verschieben.
+     */
+    if (typeof meta?.extendedFromDivisionId === "string" && meta.extendedFromDivisionId.length > 0) {
+        return {
+            numeratorResult,
+            denominatorResult
+        };
+    }
+
     if (
         !Number.isFinite(numeratorWidth)
         || !Number.isFinite(denominatorWidth)
@@ -639,6 +652,94 @@ function localizeCollection(nodes, context) {
         alignmentRange: mergeRanges(alignmentRanges),
         leafPlacements,
         isFrozenGeometry
+    };
+}
+
+function resolveLocalizedRange(localizedResult = null) {
+    return localizedResult?.alignmentRange || localizedResult?.coverageRange || null;
+}
+
+function shiftLocalizedRangeEdge(localizedResult, targetEdge, edge = "start") {
+    const range = resolveLocalizedRange(localizedResult);
+    const currentEdge = edge === "end" ? range?.rawColEnd : range?.rawColStart;
+
+    if (!Number.isFinite(targetEdge) || !Number.isFinite(currentEdge)) {
+        throw new Error("[GenesisRuntime:P4] Die Nennererweiterung besitzt keine eindeutige Aussenkante.");
+    }
+
+    return shiftLocalizedResult(localizedResult, targetEdge - currentEdge);
+}
+
+function buildDenominatorExtensionCollections(node, context) {
+    const factors = (node.factors || []).filter(isVisibleRuntimeNode);
+    const operators = (node.operators || []).filter(isVisibleRuntimeNode);
+
+    if (factors.length < 2 || operators.length !== factors.length - 1) {
+        throw new Error(
+            "[GenesisRuntime:P4] Die Nennererweiterung braucht eine kanonische Faktoren- und Operatorfolge."
+        );
+    }
+
+    const growsLeft = context.side === "left";
+    const newFactorIndex = growsLeft ? 0 : factors.length - 1;
+    const joiningOperatorIndex = growsLeft ? 0 : operators.length - 1;
+    const newFactorResult = localizeCollection([factors[newFactorIndex]], context);
+    const joiningOperatorResult = localizeCollection([operators[joiningOperatorIndex]], context);
+    const existingFactorResult = localizeCollection(
+        factors.filter((_, index) => index !== newFactorIndex),
+        context
+    );
+    const existingOperatorResult = localizeCollection(
+        operators.filter((_, index) => index !== joiningOperatorIndex),
+        context
+    );
+    const existingRange = mergeRanges([
+        existingFactorResult.coverageRange,
+        existingOperatorResult.coverageRange
+    ]);
+
+    if (!existingRange) {
+        throw new Error("[GenesisRuntime:P4] Der Nennererweiterung fehlt der bestehende Nennerblock.");
+    }
+
+    let placedNewFactor;
+    let placedJoiningOperator;
+    if (growsLeft) {
+        const operatorCol = existingRange.rawColStart - 2;
+        placedJoiningOperator = shiftLocalizedRangeEdge(joiningOperatorResult, operatorCol, "start");
+        placedNewFactor = shiftLocalizedRangeEdge(newFactorResult, operatorCol - 2, "end");
+    } else {
+        const operatorCol = existingRange.rawColEnd + 2;
+        placedJoiningOperator = shiftLocalizedRangeEdge(joiningOperatorResult, operatorCol, "start");
+        placedNewFactor = shiftLocalizedRangeEdge(newFactorResult, operatorCol + 2, "start");
+    }
+
+    const factorResults = growsLeft
+        ? [placedNewFactor, existingFactorResult]
+        : [existingFactorResult, placedNewFactor];
+    const operatorResults = growsLeft
+        ? [placedJoiningOperator, existingOperatorResult]
+        : [existingOperatorResult, placedJoiningOperator];
+    const allResults = [...factorResults, ...operatorResults];
+
+    return {
+        blueprints: allResults.flatMap((result) => result.blueprints),
+        contentRange: mergeRanges(allResults.map((result) => result.coverageRange)),
+        alignmentRange: mergeRanges(allResults.map((result) => result.alignmentRange)),
+        collectionRanges: {
+            factors: mergeRanges(factorResults.map((result) => result.coverageRange)),
+            operators: mergeRanges(operatorResults.map((result) => result.coverageRange))
+        },
+        collectionAlignmentRanges: {
+            factors: mergeRanges(factorResults.map((result) => result.alignmentRange || result.coverageRange)),
+            operators: mergeRanges(operatorResults.map((result) => result.alignmentRange || result.coverageRange))
+        },
+        collectionLeafIds: {
+            factors: collectUniqueLeafIds(factorResults.flatMap((result) => result.leafPlacements)),
+            operators: collectUniqueLeafIds(operatorResults.flatMap((result) => result.leafPlacements))
+        },
+        leafPlacements: allResults.flatMap((result) => result.leafPlacements),
+        isFrozenGeometry: allResults.some((result) => result.isFrozenGeometry === true)
     };
 }
 
@@ -829,6 +930,13 @@ function localizeShell(node, context) {
             ],
             isFrozenGeometry: numeratorResult.isFrozenGeometry || denominatorResult.isFrozenGeometry
         };
+    } else if (
+        node.type === "MULTIPLICATION"
+        && typeof meta.extendedFromDenominatorId === "string"
+        && meta.extendedFromDenominatorId.length > 0
+        && meta.generatedByAction === "MOVE_PASSIVE_EXPRESSION_TO_EXISTING_DENOMINATOR"
+    ) {
+        resolvedCollections = buildDenominatorExtensionCollections(node, context);
     } else if (node.type === "COLLECTION") {
         const contentResult = localizeCollection(node.content || [], context);
         const transportedAlignmentRange = node.type === "COLLECTION" && meta.transportAlignmentMode === "preserve_shell_band"
